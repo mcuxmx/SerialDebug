@@ -19,10 +19,10 @@ namespace SerialDebug
             //  - AssemblyInfo.cs
             this.Text = String.Format("关于 {0}", AssemblyTitle);
             this.LabelProductName.Text = AssemblyProduct + String.Format("  V{0}", AssemblyVersion);
-            this.LabelVersion.Text = "作者 谢明鑫";// String.Format("版本 {0}", AssemblyVersion);
-            this.LabelCopyright.Text = "QQ 516409354";//AssemblyCopyright;
+            this.LabelVersion.Text = "作者：谢明鑫";// String.Format("版本 {0}", AssemblyVersion);
+            this.LabelCopyright.Text = "  QQ：516409354";//AssemblyCopyright;
             //this.labelCompanyName.Text = AssemblyCompany;
-            this.LabelCompanyName.Text = "Email 516409354@qq.com";
+            this.LabelCompanyName.Text = "Mail：mcuxmx@qq.com";
             //this.textBoxDescription.Text = AssemblyDescription;
 
             //this.textBoxDescription.Text
@@ -114,6 +114,11 @@ namespace SerialDebug
             }
         }
         #endregion
+
+        private void TableLayoutPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
 
 
     }

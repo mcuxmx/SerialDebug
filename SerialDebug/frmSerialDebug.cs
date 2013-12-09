@@ -19,18 +19,39 @@ namespace SerialDebug
         private UInt64 RxCounter = 0;
         private UInt64 TxCounter = 0;
         private List<byte[]> reBytesList = new List<byte[]>();
-        private Thread myThread;
+        private Thread recThread;
 
-        private delegate void UpdateRxTxDel(UInt64 txCount);          // 发送时更新显示委托
-        UpdateRxTxDel myUpdateTx;
-        UpdateRxTxDel myUpdateRx;
         private delegate void TextBoxAppendDel(string str);             // 文本框添加字符
         TextBoxAppendDel txtReceiveAppend;
+
+        private delegate void SetLableTextDel(Label lab, string Text);
+        SetLableTextDel SetLableText;
+
+        private bool IsAutoSend = false;    // 自动发送
+        bool HyperTerminalMode = false;      // 超级终端模式
+
+        private void SetMode(bool IsHyperTerminalMode)
+        {
+            groupReceive.Visible = !IsHyperTerminalMode;
+            groupSend.Visible = !IsHyperTerminalMode;
+            splitContainer1.Panel2Collapsed = IsHyperTerminalMode;
+            groupHyperTerminal.Visible = IsHyperTerminalMode;
+
+
+            HyperTerminalMode = IsHyperTerminalMode;
+        }
 
 
         public frmMain()
         {
             InitializeComponent();
+
+            this.Controls.Add(groupHyperTerminal);
+            groupHyperTerminal.Location = groupReceive.Location;
+            groupHyperTerminal.Visible = false;
+
+            SetMode(false);
+
             ////加入波特率
             //cbBaudRate.Items.Add(110);
             //cbBaudRate.Items.Add(300);
@@ -80,16 +101,18 @@ namespace SerialDebug
             picPortState.Image = ImageList.Images["close"];
             picTop.Image = imglistTop.Images["nailoff"];
             cbComName.DataSource = SerialPort.GetPortNames();
-
-
-
+            cbStreamControl.SelectedIndex = 0;
+            serialPort.RtsEnable = chkRTS.Checked;
             this.Text = Application.ProductName + " V" + Application.ProductVersion.Substring(0, 3);
 
             CheckForIllegalCrossThreadCalls = false;
 
-            myUpdateTx = new UpdateRxTxDel(UpdateTx);
-            myUpdateRx = new UpdateRxTxDel(UpdateRx);
+
             txtReceiveAppend = new TextBoxAppendDel(TextBoxReceiveAppend);
+            SetLableText = new SetLableTextDel(setLableText);
+            cbHTEOFChars.SelectedIndex = 0;
+
+
         }
 
 
@@ -107,9 +130,9 @@ namespace SerialDebug
                 if (btnPortOpt.Text == "打开串口")
                 {
 
-                    myThread = new Thread(new ThreadStart(ReceiveThreadHandle));
-                    myThread.IsBackground = true;
-                    myThread.Start();
+                    recThread = new Thread(new ThreadStart(ReceiveThreadHandle));
+                    recThread.IsBackground = true;
+                    recThread.Start();
 
 
                     serialPort.PortName = cbComName.SelectedItem.ToString();
@@ -120,19 +143,11 @@ namespace SerialDebug
 
                     serialPort.ReadBufferSize = 4 * 1024 * 1024;//33554432;           // 32M
                     serialPort.Open();
-                    picPortState.Image = ImageList.Images["open"];
-                    btnPortOpt.Text = "关闭串口";
-                    cbComName.Enabled = false;
-                    UpdatalabText();
+
                 }
                 else
                 {
                     serialPort.Close();
-                    picPortState.Image = ImageList.Images["close"];
-                    btnPortOpt.Text = "打开串口";
-                    cbComName.Enabled = true;
-                    UpdatalabText();
-
                 }
             }
             catch (IOException ex)
@@ -142,6 +157,23 @@ namespace SerialDebug
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                if (serialPort.IsOpen)
+                {
+                    picPortState.Image = ImageList.Images["open"];
+                    btnPortOpt.Text = "关闭串口";
+                    cbComName.Enabled = false;
+                    UpdatalabText();
+                }
+                else
+                {
+                    picPortState.Image = ImageList.Images["close"];
+                    btnPortOpt.Text = "打开串口";
+                    cbComName.Enabled = true;
+                    UpdatalabText();
+                }
             }
         }
 
@@ -246,17 +278,108 @@ namespace SerialDebug
         }
 
         /// <summary>
+        /// 流控制
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cbStreamControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                switch (cbStreamControl.SelectedIndex)
+                {
+                    case 0:
+                        serialPort.Handshake = Handshake.None;
+                        serialPort.RtsEnable = chkRTS.Checked;
+                        serialPort.DtrEnable = chkDTR.Enabled;
+                        break;
+                    case 1:
+                        serialPort.Handshake = Handshake.XOnXOff;
+                        serialPort.RtsEnable = chkRTS.Checked;
+                        serialPort.DtrEnable = chkDTR.Enabled;
+                        break;
+                    case 2:
+                        serialPort.Handshake = Handshake.RequestToSend;
+                        break;
+                    case 3:
+                        serialPort.Handshake = Handshake.RequestToSendXOnXOff;
+                        break;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// 串口号下拉框
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cbComName_DropDown(object sender, EventArgs e)
+        {
+            cbComName.DataSource = SerialPort.GetPortNames();
+        }
+
+        /// <summary>
+        /// 设置RTS
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chkRTS_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPort.Handshake == Handshake.RequestToSend || serialPort.Handshake == Handshake.RequestToSendXOnXOff)
+                {
+                    chkRTS.Checked = !chkRTS.Checked;
+                    MessageBox.Show("当流控制选择“硬件”或“硬件和软件”时无法读取或设置DTS", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    serialPort.RtsEnable = chkRTS.Checked;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// 设置DTR
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chkDTR_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                serialPort.DtrEnable = chkDTR.Checked;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+
+
+        /// <summary>
         /// 刷新状态栏。
         /// </summary>
         private void UpdatalabText()
         {
-
-            string str = serialPort.PortName + "," + serialPort.BaudRate.ToString() + "," +
-                serialPort.Parity + "," + (int)serialPort.DataBits + "," + (float)serialPort.StopBits;
-
             if (serialPort.IsOpen)
             {
-                labIsSerialOpen.Text = "通信正常(" + str + ")";
+                string str = string.Format("通信正常({0},{1},{2},{3},{4})",
+                      serialPort.PortName, serialPort.BaudRate, serialPort.Parity, (int)serialPort.DataBits,
+                      (float)serialPort.StopBits);
+
+                labIsSerialOpen.Text = str;
             }
             else
             {
@@ -558,6 +681,25 @@ namespace SerialDebug
 
         #region 状态栏操作
 
+        /// <summary>
+        /// 设置接收区字体
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void picReceiveFont_Click(object sender, EventArgs e)
+        {
+            fontDlg.Font = txtReceive.Font;
+            if (fontDlg.ShowDialog() == DialogResult.OK)
+            {
+                txtReceive.Font = fontDlg.Font;
+            }
+        }
+
+        /// <summary>
+        /// 置顶设置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void picTop_Click(object sender, EventArgs e)
         {
             this.TopMost = !this.TopMost;
@@ -584,17 +726,32 @@ namespace SerialDebug
             ToolTip.SetToolTip(picTop, textToolTip);
         }
 
+
+        /// <summary>
+        /// 清空接收区
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void labClearReceive_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             txtReceive.Clear();
-            //GC.Collect();
         }
 
+        /// <summary>
+        /// 清空发送区
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void labClearSend_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             txtSend.Clear();
         }
 
+        /// <summary>
+        /// 清空计数
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnClear_Click(object sender, EventArgs e)
         {
             labRx.Text = "RX:0";
@@ -603,13 +760,22 @@ namespace SerialDebug
             TxCounter = 0;
         }
 
-
+        /// <summary>
+        /// 清空接收计数
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void labRx_DoubleClick(object sender, EventArgs e)
         {
             labRx.Text = "RX:0";
             RxCounter = 0;
         }
 
+        /// <summary>
+        /// 清空发送计数
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void labTx_DoubleClick(object sender, EventArgs e)
         {
             labTx.Text = "TX:0";
@@ -617,6 +783,11 @@ namespace SerialDebug
         }
 
 
+        /// <summary>
+        /// 帮助
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnHelp_Click(object sender, EventArgs e)
         {
             bool topmost = this.TopMost;
@@ -627,7 +798,11 @@ namespace SerialDebug
             this.TopMost = topmost;
         }
 
-
+        /// <summary>
+        /// 关闭
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnEnd_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -646,18 +821,26 @@ namespace SerialDebug
         /// <param name="e"></param>
         private void serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            //Thread.Sleep(10);
             try
             {
                 int bytesLen = 0;
-
+                byte[] bytes;
                 do
                 {
                     bytesLen = serialPort.BytesToRead;
-                    if (bytesLen >= 65536)
+                    if (bytesLen >= 4096)
                     {
-                        bytesLen = 65536;
-                        break;
+
+                        bytes = new byte[bytesLen];
+                        if (bytesLen <= 0)
+                        {
+                            return;
+                        }
+                        serialPort.Read(bytes, 0, bytesLen);
+                        lock (reBytesList)
+                        {
+                            reBytesList.Add(bytes);
+                        }
                     }
                     else
                     {
@@ -665,21 +848,11 @@ namespace SerialDebug
                     }
                 } while (bytesLen != serialPort.BytesToRead);
 
-
-                //int cnt = 5;
-                //do
-                //{
-                //    bytesLen = serialPort.BytesToRead;
-                //    if (bytesLen >= 2048)
-                //    {
-                //        bytesLen = 2048;
-                //        break;
-                //    }
-                //    Thread.Sleep(30);
-                //    cnt--;
-                //} while ((bytesLen != serialPort.BytesToRead) || cnt > 0);
-
-                byte[] bytes = new byte[bytesLen];
+                if (bytesLen <= 0)
+                {
+                    return;
+                }
+                bytes = new byte[bytesLen];
                 serialPort.Read(bytes, 0, bytesLen);
                 lock (reBytesList)
                 {
@@ -728,23 +901,28 @@ namespace SerialDebug
                             {
                                 if (bytesLen > 0)
                                 {
-                                    txtReceiveAppend(BitConverter.ToString(bytes).Replace('-', ' '));
-                                    txtReceiveAppend(" ");
+                                    //txtReceiveAppend(BitConverter.ToString(bytes).Replace('-', ' '));
+                                    //txtReceiveAppend(" ");
+                                    TextBoxReceiveAppend(BitConverter.ToString(bytes).Replace('-', ' '));
+                                    TextBoxReceiveAppend(" ");
                                 }
                             }
                             else
                             {
-                                txtReceiveAppend(System.Text.ASCIIEncoding.Default.GetString(bytes));
+                                //txtReceiveAppend(System.Text.ASCIIEncoding.Default.GetString(bytes));
+                                TextBoxReceiveAppend(System.Text.ASCIIEncoding.Default.GetString(bytes));
                             }
 
                             if (chkWrap.Checked)                    // 自动换行
                             {
-                                txtReceiveAppend(Environment.NewLine);
+                                //txtReceiveAppend(Environment.NewLine);
+                                TextBoxReceiveAppend(Environment.NewLine);
                             }
                         }
 
                         RxCounter = RxCounter + (UInt64)bytesLen;
-                        myUpdateRx(RxCounter);
+                        // myUpdateRx(RxCounter);
+                        setLableText(labRx, string.Format("RX:{0}", RxCounter));
 
                         bytes = null;
                         Thread.Sleep(10);
@@ -771,14 +949,58 @@ namespace SerialDebug
             labRx.Refresh();
         }
 
+
+        private void setLableText(Label lab, string text)
+        {
+            if (lab.InvokeRequired)
+            {
+                ////this.BeginInvoke(SetLableText(lab,text));
+                //this.BeginInvoke(new SetLableTextDel(setLableText));
+                lab.BeginInvoke(new MethodInvoker(delegate
+                {
+                    lab.Text = text;
+                }));
+                return;
+            }
+            else
+            {
+                lab.Text = text;
+            }
+        }
+
+
         /// <summary>
         /// 更新接收文本框。
         /// </summary>
         /// <param name="appendText"></param>
         private void TextBoxReceiveAppend(string appendText)
         {
-            txtReceive.AppendText(appendText);
+            if (txtReceive.InvokeRequired)
+            {
+                txtReceive.BeginInvoke(new MethodInvoker(delegate
+                {
+                    //txtReceive.AppendText(appendText);
+                    TextBoxReceiveAppend(appendText);
+                }));
+                return;
+            }
+            else
+            {
+
+                if (HyperTerminalMode == true)
+                {
+                    HyperTerminalShowText(appendText);
+                }
+                else
+                {
+                    txtReceive.AppendText(appendText);
+                }
+            }
         }
+
+
+
+
 
         #endregion
 
@@ -798,6 +1020,8 @@ namespace SerialDebug
             labTx.Refresh();
         }
 
+
+        private bool SerialSendAbort = false;
         /// <summary>
         /// 点击开始发送或者停止发送。
         /// </summary>
@@ -820,21 +1044,31 @@ namespace SerialDebug
                     return;
                 }
 
+                SerialSendAbort = false;
                 mySendThread = new Thread(new ThreadStart(SendThreadHandle));
                 mySendThread.IsBackground = true;
                 mySendThread.Start();
 
-                //btnSend.Text = "停止发送";
                 SetSendEnable(true);
-                myUpdateTx(TxCounter);
+                setLableText(labTx, string.Format("TX:{0}", TxCounter));
             }
             else
             {
-                mySendThread.Abort();
-                // btnSend.Text = "开始发送";
+                //mySendThread.Abort();
+                SerialSendAbort = true;
                 SetSendEnable(false);
-                myUpdateTx(TxCounter);
+                setLableText(labTx, string.Format("TX:{0}", TxCounter));
             }
+        }
+
+        /// <summary>
+        /// 自动发送
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chkAutoSend_CheckedChanged(object sender, EventArgs e)
+        {
+            IsAutoSend = chkAutoSend.Checked;
         }
 
         /// <summary>
@@ -843,6 +1077,15 @@ namespace SerialDebug
         /// <param name="IsEnable">当为True时表示开始发送，False表示停止发送。</param>
         private void SetSendEnable(bool IsEnable)
         {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new MethodInvoker(delegate()
+                {
+                    SetSendEnable(IsEnable);
+                }));
+                return;
+            }
+
             if (IsEnable == true)
             {
                 chkSendHex.Enabled = false;
@@ -873,37 +1116,37 @@ namespace SerialDebug
             if (Convert.ToUInt64(numSendOnceBytes.Value) == 0)        // 一次发送所有字节
             {
                 TxCounter += (UInt64)sendBuff.Length;
-                serialPort.Write(sendBuff, 0, sendBuff.Length);
+                setLableText(labTx, string.Format("TX:{0}", TxCounter));
 
-                myUpdateTx(TxCounter);
+                serialPort.Write(sendBuff, 0, sendBuff.Length);
             }
             else
             {
-                int haveSendCnt = 0;
-                int sendPerOnce = Convert.ToInt32(numSendOnceBytes.Value);
-                int sleepTime = Convert.ToInt32(numSendInterval.Value);
-                while (haveSendCnt < sendBuff.Length)
+                /*分多次发送文本框数据*/
+
+                int AlreadySendIndex = 0;                                               // 已经发送的字节数
+                int BytesToSendPerOnce = Convert.ToInt32(numSendOnceBytes.Value);       // 每次发送的字节数
+                int SendInterval = Convert.ToInt32(numSendInterval.Value);              // 发送间隔
+                while (AlreadySendIndex < sendBuff.Length)
                 {
-                    if ((haveSendCnt + sendPerOnce) < sendBuff.Length)
+                    if ((AlreadySendIndex + BytesToSendPerOnce) < sendBuff.Length)      // 当未到最后一串数据
                     {
+                        TxCounter += (UInt64)BytesToSendPerOnce;
+                        setLableText(labTx, string.Format("TX:{0}", TxCounter));
 
-                        serialPort.Write(sendBuff, haveSendCnt, sendPerOnce);
-                        haveSendCnt += sendPerOnce;
-                        TxCounter += (UInt64)sendPerOnce;
-
-
-                        myUpdateTx(TxCounter);
-                        Thread.Sleep(sleepTime);
+                        serialPort.Write(sendBuff, AlreadySendIndex, BytesToSendPerOnce);
+                        AlreadySendIndex += BytesToSendPerOnce;
+                        Thread.Sleep(SendInterval);
                     }
                     else
                     {
-                        int cnt = sendBuff.Length - haveSendCnt;
-                        serialPort.Write(sendBuff, haveSendCnt, cnt);
-                        haveSendCnt += cnt;
+                        int cnt = sendBuff.Length - AlreadySendIndex;
+
                         TxCounter += (UInt64)cnt;
+                        setLableText(labTx, string.Format("TX:{0}", TxCounter));
 
-
-                        myUpdateTx(TxCounter);
+                        serialPort.Write(sendBuff, AlreadySendIndex, cnt);
+                        AlreadySendIndex += cnt;
                     }
 
 
@@ -917,6 +1160,8 @@ namespace SerialDebug
         /// </summary>
         private void SendThreadHandle()
         {
+            SerialSendAbort = false;
+
             byte[] sendBuff;
             try
             {
@@ -939,24 +1184,25 @@ namespace SerialDebug
 
                 SetSendEnable(false);
                 MessageBox.Show(ex.Message, "发送数据", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                if (mySendThread.ThreadState != System.Threading.ThreadState.Aborted)
-                {
-                    mySendThread.Abort();
-                }
+                //if (mySendThread.ThreadState != System.Threading.ThreadState.Aborted)
+                //{
+                //    mySendThread.Abort();
+                //}
+                SerialSendAbort = true;
                 return;
             }
 
-            while (true)
+            while (SerialSendAbort == false)
             {
                 try
                 {
-                    if (chkAutoSend.Checked)        // 自动发送
+                    if (IsAutoSend)        // 自动发送
                     {
                         int reSendCnt = Convert.ToInt32(numSendCount.Value);
                         int sleepTime = Convert.ToInt32(numSendInterval.Value);
                         if (reSendCnt == 0)
                         {
-                            while (true)
+                            while (SerialSendAbort == false)
                             {
                                 SendOnce(sendBuff);
                                 Thread.Sleep(sleepTime);
@@ -974,7 +1220,8 @@ namespace SerialDebug
                                 }
                             }
                             SetSendEnable(false);
-                            mySendThread.Abort();
+                            //mySendThread.Abort();
+                            SerialSendAbort = true;
                             return;
                         }
                     }
@@ -982,7 +1229,7 @@ namespace SerialDebug
                     {
                         SendOnce(sendBuff);
                         SetSendEnable(false);
-                        mySendThread.Abort();
+                        //mySendThread.Abort();
                         return;
                     }
 
@@ -1152,6 +1399,313 @@ namespace SerialDebug
         #endregion
 
 
+        #region 超级终端模式
+
+
+        /// <summary>
+        /// 超级终端显示文本
+        /// </summary>
+        /// <param name="appendText"></param>
+        private void HyperTerminalShowText(string appendText)
+        {
+
+            HyperTerminal_HandleMessage(appendText);
+            return;
+
+            #region 超级终端模式显示
+            string[] textBoxArray = txtReceive.Lines;
+            int indexLines = txtReceive.Lines.Length;
+            if (indexLines > 0)
+            {
+                indexLines = indexLines - 1;
+            }
+
+            int strIndex = -1;
+
+            string[] textLines = appendText.Split(new string[] { "\r\n", "\n\r", "\n" }, StringSplitOptions.None);
+
+            int index = 0;
+            foreach (string strLine in textLines)
+            {
+                string str = strLine;
+                textBoxArray = txtReceive.Lines;
+
+                do
+                {
+                    strIndex = str.IndexOf('\b');
+                    if (strIndex == 0)
+                    {
+                        string tempStr = string.Empty;
+
+                        str = str.Remove(0, 1);
+                        if (txtReceive.Text.Length > 0)
+                        {
+                            txtReceive.Text = txtReceive.Text.Remove(txtReceive.Text.Length - 1, 1);
+                            textBoxArray = txtReceive.Lines;
+                            indexLines = txtReceive.Lines.Length;
+                            if (indexLines > 0)
+                            {
+                                indexLines = indexLines - 1;
+                            }
+                        }
+                    }
+                    else if (strIndex > 0)
+                    {
+                        str = str.Remove(strIndex - 1, 2);
+                    }
+                } while (strIndex >= 0);
+
+                strIndex = str.IndexOf('\r');
+                if (strIndex >= 0)
+                {
+                    string[] rArray = str.Split(new char[] { '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                    string rText = string.Empty;
+                    foreach (string rStr in rArray)
+                    {
+                        if (rStr.Length > rText.Length)
+                        {
+                            rText = rStr;
+                        }
+                        else
+                        {
+                            rText.Replace(rText.Substring(0, rStr.Length), rStr);
+                        }
+                    }
+                    if (rText.Length != 0)
+                    {
+                        textBoxArray[indexLines] = rText;
+                        txtReceive.Lines = textBoxArray;
+                        if (str.EndsWith("\r") == false)
+                        {
+                            txtReceive.AppendText(Environment.NewLine);
+                            indexLines++;
+                        }
+                    }
+                    else
+                    {
+                        txtReceive.SelectionStart = txtReceive.GetFirstCharIndexFromLine(indexLines);
+                    }
+                }
+                else
+                {
+                    txtReceive.AppendText(str);
+                    if (index < textLines.Length - 1)
+                    {
+                        txtReceive.AppendText(Environment.NewLine);
+                        indexLines++;
+                    }
+                }
+                index++;
+            }
+            #endregion
+
+
+        }
+
+        /// <summary>
+        /// V3.1处理
+        /// </summary>
+        /// <param name="message"></param>
+        private void HyperTerminal_HandleMessage(string message)
+        {
+           
+            string[] txtArray = txtReceive.Lines;
+            string[] appendLines = message.Split(new string[] { "\r\n", "\n\r", "\n" }, StringSplitOptions.None);
+
+            int appendLineIndex = 0;
+            int rowIndex = 0;
+            int searchCharIndex = -1;
+            string outStr;
+            string inStr;
+            foreach (string appendStr in appendLines)
+            {
+                inStr = appendStr;
+                rowIndex = 0;
+                do
+                {
+                    if (rowIndex >= appendStr.Length) break;
+
+                    searchCharIndex = appendStr.IndexOf('\b', rowIndex);
+                    if (searchCharIndex > 0)
+                    {
+                        inStr = inStr.Remove(searchCharIndex - 1, 2);
+
+                    }
+                    else if (searchCharIndex == 0)
+                    {
+                        inStr = inStr.Remove(0, 1);
+                        if (txtReceive.SelectionStart > 0)
+                        {
+                            txtReceive.SelectionStart--;
+                            txtReceive.SelectionLength = 1;
+                            txtReceive.SelectedText = "";
+                        }
+                    }
+                    rowIndex += searchCharIndex + 1;
+
+                } while (searchCharIndex >= 0);
+
+
+                outStr = inStr;
+                rowIndex = 0;
+                do
+                {
+                    if (rowIndex >= inStr.Length)
+                    {
+                        outStr = "";
+                        break;
+                    }
+                    else
+                    {
+                        outStr = inStr.Substring(rowIndex, inStr.Length - rowIndex);
+                    }
+
+                    searchCharIndex = inStr.IndexOf('\r', rowIndex);
+                    if (searchCharIndex < 0)
+                    {
+                        break;
+                    }
+  
+
+                    outStr = inStr.Substring(rowIndex + 1);
+                    if (searchCharIndex == 0)
+                    {
+                        txtReceive.SelectionStart = txtReceive.GetFirstCharIndexOfCurrentLine();
+                    }
+                    else if (searchCharIndex > 0)
+                    {
+                        txtReceive.SelectionLength = searchCharIndex - rowIndex;
+                        txtReceive.SelectedText = inStr.Substring(rowIndex, searchCharIndex - rowIndex);
+                        txtReceive.SelectionStart = txtReceive.GetFirstCharIndexOfCurrentLine();
+                    }
+                    rowIndex += searchCharIndex + 1;
+
+
+                } while (searchCharIndex >= 0);
+
+                appendLineIndex++;
+                txtReceive.SelectionLength = outStr.Length;
+                txtReceive.SelectedText = outStr;
+                if (appendLineIndex < appendLines.Length)
+                {
+                    txtReceive.SelectionStart = txtReceive.Text.Length;
+                    txtReceive.SelectedText = Environment.NewLine;
+                }
+
+            }
+
+        }
+
+
+        string htSendString = string.Empty;
+        /// <summary>
+        /// 按键按下
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txtReceive_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //txtSend.Text = string.Format("KeyChar:{0}", (int)e.KeyChar);
+            if (HyperTerminalMode == false || serialPort.IsOpen == false)
+            {
+                return;
+            }
+
+            if (chkSendByEnter.Checked)
+            {
+                if (e.KeyChar == 8)     // 退格
+                {
+                    if (htSendString.Length > 0)
+                    {
+                        htSendString = htSendString.Remove(htSendString.Length - 1, 1);
+                    }
+                }
+                if (e.KeyChar == 13)    // 回车
+                {
+                    serialPort.Write(string.Format("{0}{1}", htSendString, HtEofChars));
+                    htSendString = string.Empty;
+                }
+                else
+                {
+                    htSendString += (char)e.KeyChar;
+                }
+            }
+            else
+            {
+                serialPort.Write(new byte[] { (byte)e.KeyChar }, 0, 1);
+            }
+            if (chkHTShowback.Checked == false)
+            {
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// 普通模式到超级终端模式
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnNormalToHyperTerminal_Click(object sender, EventArgs e)
+        {
+            SetMode(true);
+        }
+
+        /// <summary>
+        /// 超级终端模式到普通模式
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnHyperTerminalToNormal_Click(object sender, EventArgs e)
+        {
+            SetMode(false);
+        }
+
+        string HtEofChars = string.Empty;       // 回车发送时跟的终止符
+        /// <summary>
+        /// 选择结束符
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cbHTEOFChars_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //NONE
+            //NULL（\0）
+            //LF（\n）
+            //CR+LF（\r\n）
+            //LF+CR（\n\r）
+            //CR（\r）
+
+            switch (cbHTEOFChars.SelectedIndex)
+            {
+                case 0:
+                    HtEofChars = string.Empty;
+                    break;
+                case 1:
+                    HtEofChars = "\0";
+                    break;
+                case 2:
+                    HtEofChars = "\n";
+                    break;
+                case 3:
+                    HtEofChars = "\r\n";
+                    break;
+                case 4:
+                    HtEofChars = "\n\r";
+                    break;
+                case 5:
+                    HtEofChars = "\r";
+                    break;
+
+
+            }
+        }
+
+
+        #endregion
+
+
+
+
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
@@ -1160,18 +1714,23 @@ namespace SerialDebug
                 {
                     serialPort.Close();
                 }
-                if (myThread.IsAlive)
+
+                if (recThread != null)
                 {
-                    myThread.Abort();
+                    if (recThread.IsAlive)
+                    {
+                        recThread.Abort();
+                    }
                 }
             }
-            catch { }
-        }
-
-
-        private void cbComName_DropDown(object sender, EventArgs e)
-        {
-            cbComName.DataSource = SerialPort.GetPortNames();
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                recThread = null;
+            }
         }
 
 
