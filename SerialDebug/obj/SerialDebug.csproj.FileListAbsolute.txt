@@ -1,0 +1,9 @@
+E:\Programs\CSharp\SerialDebug\SerialDebug\bin\Debug\SerialDebug.exe
+E:\Programs\CSharp\SerialDebug\SerialDebug\bin\Debug\SerialDebug.pdb
+E:\Programs\CSharp\SerialDebug\SerialDebug\obj\Debug\ResolveAssemblyReference.cache
+E:\Programs\CSharp\SerialDebug\SerialDebug\obj\Debug\SerialDebug.frmMain.resources
+E:\Programs\CSharp\SerialDebug\SerialDebug\obj\Debug\SerialDebug.Properties.Resources.resources
+E:\Programs\CSharp\SerialDebug\SerialDebug\obj\Debug\SerialDebug.csproj.GenerateResource.Cache
+E:\Programs\CSharp\SerialDebug\SerialDebug\obj\Debug\SerialDebug.exe
+E:\Programs\CSharp\SerialDebug\SerialDebug\obj\Debug\SerialDebug.pdb
+E:\Programs\CSharp\SerialDebug\SerialDebug\obj\Debug\SerialDebug.AboutBox.resources
