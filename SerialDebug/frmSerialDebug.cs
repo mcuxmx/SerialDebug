@@ -9,6 +9,7 @@ using System.IO;
 using System.IO.Ports;
 using System.Threading;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 
 namespace SerialDebug
@@ -39,6 +40,15 @@ namespace SerialDebug
 
 
             HyperTerminalMode = IsHyperTerminalMode;
+
+            if (IsHyperTerminalMode)
+            {
+                txtReceive.KeyPress+=new KeyPressEventHandler(txtReceive_KeyPress);
+            }
+            else
+            {
+                txtReceive.KeyPress -= txtReceive_KeyPress;
+            }
         }
 
 
@@ -96,6 +106,7 @@ namespace SerialDebug
             cbStopBit.SelectedItem = System.IO.Ports.StopBits.One;
         }
 
+
         private void frmMain_Load(object sender, EventArgs e)
         {
             picPortState.Image = ImageList.Images["close"];
@@ -114,6 +125,37 @@ namespace SerialDebug
 
 
         }
+
+
+        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                if (serialPort.IsOpen)
+                {
+                    serialPort.Close();
+                }
+
+                if (recThread != null)
+                {
+                    if (recThread.IsAlive)
+                    {
+                        recThread.Abort();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                recThread = null;
+            }
+        }
+
+
+
 
 
         #region 串口区操作
@@ -649,6 +691,29 @@ namespace SerialDebug
             txtBoxMenu = txtSend;
         }
 
+
+        private void txtSend_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                txtSend.ContextMenuStrip = cmenuStrip;
+            }
+
+        }
+
+        private void txtReceive_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                txtReceive.ContextMenuStrip = cmenuStrip;
+            }
+        }
+
+        private void cmenuStrip_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+        {
+            txtBoxMenu.ContextMenuStrip = null;
+        }
+
         #endregion
 
 
@@ -1167,8 +1232,25 @@ namespace SerialDebug
             {
                 if (chkSendHex.Checked)
                 {
-                    //string[] strArray = txtSend.Text.TrimEnd().Split(new char[] { ' '}, StringSplitOptions.RemoveEmptyEntries);
-                    string[] strArray = txtSend.Text.TrimEnd().Replace(Environment.NewLine, " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    #region V3.1以前
+                    //string[] strArray = txtSend.Text.TrimEnd().Replace(Environment.NewLine, " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    #endregion
+
+
+                    string inputText = Regex.Replace(txtSend.Text, @"(?<=[0-9A-F]{2})[0-9A-F]{2}", " $0");
+                    string[] strArray = inputText.Split(new string[] { ",", " ", "0x", ",0X", "，" }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (chkFormat.Checked)
+                    {
+                        StringBuilder sbOut = new StringBuilder();
+                        foreach (string s in strArray)
+                        {
+                            sbOut.AppendFormat("{0} ", s);
+                        }
+                        txtSend.Text = sbOut.ToString().TrimEnd(' ');
+                    }
+
+
                     sendBuff = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(HexStringToByte));
                 }
                 else
@@ -1702,42 +1784,6 @@ namespace SerialDebug
 
 
         #endregion
-
-
-
-
-        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            try
-            {
-                if (serialPort.IsOpen)
-                {
-                    serialPort.Close();
-                }
-
-                if (recThread != null)
-                {
-                    if (recThread.IsAlive)
-                    {
-                        recThread.Abort();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            finally
-            {
-                recThread = null;
-            }
-        }
-
-
-
-
-
-
 
 
 

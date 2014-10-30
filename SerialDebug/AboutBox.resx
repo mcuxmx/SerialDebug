@@ -129,6 +129,11 @@
   </data>
   <data name="TextBoxDescription.Text" xml:space="preserve">
     <value>更新说明：
+v3.2版本更新
+1、智能识别发送区的十六进制数据
+2、可将发送区十六进制数据格式化成标准模式（01 02 03）
+3、修复发送区和接收区无法使用Delete键的BUG
+
 v3.1版本更新
 1、优化超级终端显示
 2、修复超级终端连续按回车发送出现的BUG
