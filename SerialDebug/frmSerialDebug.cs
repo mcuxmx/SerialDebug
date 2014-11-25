@@ -1237,15 +1237,16 @@ namespace SerialDebug
                     #endregion
 
 
-                    string inputText = Regex.Replace(txtSend.Text, @"(?<=[0-9A-F]{2})[0-9A-F]{2}", " $0");
-                    string[] strArray = inputText.Split(new string[] { ",", " ", "0x", ",0X", "£¬" }, StringSplitOptions.RemoveEmptyEntries);
+                    //string inputText = Regex.Replace(txtSend.Text, @"(?<=[0-9A-F]{2})[0-9A-F]{2}", " $0");
+                    string inputText = Regex.Replace(txtSend.Text, @"[0-9A-Fa-f]{2}", "$0 ");
+                    string[] strArray = inputText.Split(new string[] { ",", " ", "0x", ",0X", "£¬","(",")" }, StringSplitOptions.RemoveEmptyEntries);
 
                     if (chkFormat.Checked)
                     {
                         StringBuilder sbOut = new StringBuilder();
                         foreach (string s in strArray)
                         {
-                            sbOut.AppendFormat("{0} ", s);
+                            sbOut.AppendFormat("{0:X2} ", Convert.ToByte(s, 16));
                         }
                         txtSend.Text = sbOut.ToString().TrimEnd(' ');
                     }

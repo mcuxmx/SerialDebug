@@ -129,6 +129,9 @@
   </data>
   <data name="TextBoxDescription.Text" xml:space="preserve">
     <value>更新说明：
+v3.3版本更新
+修复十六进制发送框中有小写字母时出现错误
+
 v3.2版本更新
 1、智能识别发送区的十六进制数据
 2、可将发送区十六进制数据格式化成标准模式（01 02 03）
