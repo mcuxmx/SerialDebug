@@ -1081,7 +1081,6 @@
             this.txtSend.TabIndex = 32;
             this.txtSend.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSend_KeyDown);
             this.txtSend.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtSend_MouseDown);
-            this.txtSend.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSend_KeyPress);
             this.txtSend.MouseEnter += new System.EventHandler(this.txtSend_MouseEnter);
             // 
             // Label7

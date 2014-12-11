@@ -129,6 +129,9 @@
   </data>
   <data name="TextBoxDescription.Text" xml:space="preserve">
     <value>更新说明：
+v3.5版本更新
+增加Ctrl+Enter键发送功能
+
 v3.4版本更新
 增加发送框发送历史记录，通过键盘上下键可快速键入历史输入
 

@@ -24,6 +24,7 @@ namespace SerialDebug
 
         private List<string> SendTempList = new List<string>();
         private int SendTempIndex = 0;
+        private bool IsSendByKey = false;
 
 
         private delegate void TextBoxAppendDel(string str);             // 文本框添加字符
@@ -1067,8 +1068,7 @@ namespace SerialDebug
             }
         }
 
-
-
+       
 
 
         #endregion
@@ -1087,6 +1087,79 @@ namespace SerialDebug
         {
             labTx.Text = "TX:" + count.ToString();
             labTx.Refresh();
+        }
+
+        /// <summary>
+        /// 更新发送区文本
+        /// </summary>
+        /// <param name="text"></param>
+        private void txtSendUpdate(string text)
+        {
+            if (txtSend.InvokeRequired)
+            {
+                txtSend.BeginInvoke(new MethodInvoker(delegate
+                {
+                    txtSendUpdate(text);
+                }));
+            }
+            else
+            {
+                txtSend.Text = text;
+            }
+        }
+
+        /// <summary>
+        /// 按下按键的特殊操作
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txtSend_KeyDown(object sender, KeyEventArgs e)
+        {
+            string text = "";
+
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Enter)
+            {
+                IsSendByKey = true;
+                btnSend.PerformClick();
+                return;
+            }
+
+            if (e.KeyCode == Keys.Up)
+            {
+                SendTempIndex--;
+                if (SendTempIndex < 0)
+                {
+                    SendTempIndex = 0;
+                    Console.Beep();
+                }
+            }
+            else if (e.KeyCode == Keys.Down)
+            {
+                SendTempIndex++;
+                if (SendTempIndex > SendTempList.Count)
+                {
+                    SendTempIndex = SendTempList.Count;
+                    Console.Beep();
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            lock (SendTempList)
+            {
+                if (SendTempList.Count > 0)
+                {
+                    if (SendTempIndex < SendTempList.Count)
+                    {
+                        text = SendTempList[SendTempIndex];
+                    }
+                }
+            }
+
+            txtSend.Clear();
+            txtSend.AppendText(text);
         }
 
 
@@ -1112,6 +1185,8 @@ namespace SerialDebug
                     MessageBox.Show("没有可发送的数据", "发送数据", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return;
                 }
+
+
 
                 SerialSendAbort = false;
                 mySendThread = new Thread(new ThreadStart(SendThreadHandle));
@@ -1230,10 +1305,23 @@ namespace SerialDebug
         private void SendThreadHandle()
         {
             SerialSendAbort = false;
-
+            string sendText;
             byte[] sendBuff;
             try
             {
+
+                sendText = txtSend.Text;
+
+                if (IsSendByKey)
+                {
+                    if (sendText.EndsWith(Environment.NewLine))
+                    {
+                        sendText = sendText.Substring(0, sendText.Length - Environment.NewLine.Length);
+                        txtSendUpdate(sendText);
+                    }
+                    IsSendByKey = false;
+                }
+
                 if (chkSendHex.Checked)
                 {
                     #region V3.1以前
@@ -1242,7 +1330,7 @@ namespace SerialDebug
 
 
                     //string inputText = Regex.Replace(txtSend.Text, @"(?<=[0-9A-F]{2})[0-9A-F]{2}", " $0");
-                    string inputText = Regex.Replace(txtSend.Text, @"[0-9A-Fa-f]{2}", "$0 ");
+                    string inputText = Regex.Replace(sendText, @"[0-9A-Fa-f]{2}", "$0 ");
                     string[] strArray = inputText.Split(new string[] { ",", " ", "0x", ",0X", "，", "(", ")" }, StringSplitOptions.RemoveEmptyEntries);
 
                     if (chkFormat.Checked)
@@ -1252,7 +1340,7 @@ namespace SerialDebug
                         {
                             sbOut.AppendFormat("{0:X2} ", Convert.ToByte(s, 16));
                         }
-                        txtSend.Text = sbOut.ToString().TrimEnd(' ');
+                        txtSendUpdate(sbOut.ToString().TrimEnd(' '));
                     }
 
                     sendBuff = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(HexStringToByte));
@@ -1264,9 +1352,9 @@ namespace SerialDebug
 
                 lock (SendTempList)
                 {
-                    SendTempList.Add(txtSend.Text);
+                    SendTempList.Add(sendText);
                     SendTempIndex = SendTempList.Count;
-                    txtSend.Text = "";
+                    txtSendUpdate("");
                 }
                 int sendLen = sendBuff.Length;
 
@@ -1503,7 +1591,7 @@ namespace SerialDebug
 
             HyperTerminal_HandleMessage(appendText);
             return;
-
+#if OLD_SHOW_HYPER
             #region 超级终端模式显示
             string[] textBoxArray = txtReceive.Lines;
             int indexLines = txtReceive.Lines.Length;
@@ -1590,7 +1678,7 @@ namespace SerialDebug
                 index++;
             }
             #endregion
-
+#endif
 
         }
 
@@ -1795,60 +1883,8 @@ namespace SerialDebug
 
         #endregion
 
-        private void txtSend_KeyPress(object sender, KeyPressEventArgs e)
-        {
 
-        }
-
-        private void txtSend_KeyDown(object sender, KeyEventArgs e)
-        {
-            string text = "";
-
-            //if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Enter)
-            //{
-            //    //txtSend.Text.TrimEnd(new char[] { '\r', '\n' });
-            //    btnSend.PerformClick();
-            //    return;
-            //}
-
-            if (e.KeyCode == Keys.Up)
-            {
-                SendTempIndex--;
-                if (SendTempIndex < 0)
-                {
-                    SendTempIndex = 0;
-                    Console.Beep();
-                }
-            }
-            else if (e.KeyCode == Keys.Down)
-            {
-                SendTempIndex++;
-                if (SendTempIndex > SendTempList.Count)
-                {
-                    SendTempIndex = SendTempList.Count;
-                    Console.Beep();
-                }
-            }
-            else
-            {
-                return;
-            }
-
-            lock (SendTempList)
-            {
-                if (SendTempList.Count > 0)
-                {
-                    if (SendTempIndex < SendTempList.Count)
-                    {
-                        text = SendTempList[SendTempIndex];
-                    }
-                }
-            }
-
-            txtSend.Clear();
-            txtSend.AppendText(text);
-        }
-
+       
 
 
     }
