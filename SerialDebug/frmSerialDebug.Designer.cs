@@ -88,6 +88,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.btnSend = new System.Windows.Forms.Button();
             this.chkAutoSend = new System.Windows.Forms.CheckBox();
+            this.chkFormat = new System.Windows.Forms.CheckBox();
             this.chkSendHex = new System.Windows.Forms.CheckBox();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
@@ -119,7 +120,6 @@
             this.Label7 = new System.Windows.Forms.Label();
             this.lnkOpen = new System.Windows.Forms.LinkLabel();
             this.fontDlg = new System.Windows.Forms.FontDialog();
-            this.chkFormat = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPortState)).BeginInit();
             this.cmenuStrip.SuspendLayout();
@@ -386,7 +386,7 @@
             this.menuStringToDec,
             this.menuDecToString});
             this.cmenuStrip.Name = "ContextMenuStrip1";
-            this.cmenuStrip.Size = new System.Drawing.Size(197, 320);
+            this.cmenuStrip.Size = new System.Drawing.Size(197, 298);
             this.cmenuStrip.Opened += new System.EventHandler(this.cmenuStrip_Opened);
             this.cmenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.cmenuStrip_Closed);
             // 
@@ -765,6 +765,17 @@
             this.chkAutoSend.UseVisualStyleBackColor = false;
             this.chkAutoSend.CheckedChanged += new System.EventHandler(this.chkAutoSend_CheckedChanged);
             // 
+            // chkFormat
+            // 
+            this.chkFormat.AutoSize = true;
+            this.chkFormat.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkFormat.Location = new System.Drawing.Point(10, 44);
+            this.chkFormat.Name = "chkFormat";
+            this.chkFormat.Size = new System.Drawing.Size(84, 17);
+            this.chkFormat.TabIndex = 8;
+            this.chkFormat.Text = "HEX格式化";
+            this.chkFormat.UseVisualStyleBackColor = true;
+            // 
             // chkSendHex
             // 
             this.chkSendHex.AutoSize = true;
@@ -1068,7 +1079,9 @@
             this.txtSend.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtSend.Size = new System.Drawing.Size(528, 111);
             this.txtSend.TabIndex = 32;
+            this.txtSend.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSend_KeyDown);
             this.txtSend.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtSend_MouseDown);
+            this.txtSend.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSend_KeyPress);
             this.txtSend.MouseEnter += new System.EventHandler(this.txtSend_MouseEnter);
             // 
             // Label7
@@ -1093,17 +1106,6 @@
             this.lnkOpen.TabStop = true;
             this.lnkOpen.Text = "打开文件";
             this.lnkOpen.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkOpen_LinkClicked);
-            // 
-            // chkFormat
-            // 
-            this.chkFormat.AutoSize = true;
-            this.chkFormat.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkFormat.Location = new System.Drawing.Point(10, 44);
-            this.chkFormat.Name = "chkFormat";
-            this.chkFormat.Size = new System.Drawing.Size(84, 17);
-            this.chkFormat.TabIndex = 8;
-            this.chkFormat.Text = "HEX格式化";
-            this.chkFormat.UseVisualStyleBackColor = true;
             // 
             // frmMain
             // 

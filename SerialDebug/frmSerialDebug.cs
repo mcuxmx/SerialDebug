@@ -22,6 +22,10 @@ namespace SerialDebug
         private List<byte[]> reBytesList = new List<byte[]>();
         private Thread recThread;
 
+        private List<string> SendTempList = new List<string>();
+        private int SendTempIndex = 0;
+
+
         private delegate void TextBoxAppendDel(string str);             // ÎÄ±¾¿òÌí¼Ó×Ö·û
         TextBoxAppendDel txtReceiveAppend;
 
@@ -43,7 +47,7 @@ namespace SerialDebug
 
             if (IsHyperTerminalMode)
             {
-                txtReceive.KeyPress+=new KeyPressEventHandler(txtReceive_KeyPress);
+                txtReceive.KeyPress += new KeyPressEventHandler(txtReceive_KeyPress);
             }
             else
             {
@@ -1239,7 +1243,7 @@ namespace SerialDebug
 
                     //string inputText = Regex.Replace(txtSend.Text, @"(?<=[0-9A-F]{2})[0-9A-F]{2}", " $0");
                     string inputText = Regex.Replace(txtSend.Text, @"[0-9A-Fa-f]{2}", "$0 ");
-                    string[] strArray = inputText.Split(new string[] { ",", " ", "0x", ",0X", "£¬","(",")" }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] strArray = inputText.Split(new string[] { ",", " ", "0x", ",0X", "£¬", "(", ")" }, StringSplitOptions.RemoveEmptyEntries);
 
                     if (chkFormat.Checked)
                     {
@@ -1251,7 +1255,6 @@ namespace SerialDebug
                         txtSend.Text = sbOut.ToString().TrimEnd(' ');
                     }
 
-
                     sendBuff = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(HexStringToByte));
                 }
                 else
@@ -1259,6 +1262,12 @@ namespace SerialDebug
                     sendBuff = System.Text.ASCIIEncoding.Default.GetBytes(txtSend.Text);
                 }
 
+                lock (SendTempList)
+                {
+                    SendTempList.Add(txtSend.Text);
+                    SendTempIndex = SendTempList.Count;
+                    txtSend.Text = "";
+                }
                 int sendLen = sendBuff.Length;
 
             }
@@ -1591,7 +1600,7 @@ namespace SerialDebug
         /// <param name="message"></param>
         private void HyperTerminal_HandleMessage(string message)
         {
-           
+
             string[] txtArray = txtReceive.Lines;
             string[] appendLines = message.Split(new string[] { "\r\n", "\n\r", "\n" }, StringSplitOptions.None);
 
@@ -1648,7 +1657,7 @@ namespace SerialDebug
                     {
                         break;
                     }
-  
+
 
                     outStr = inStr.Substring(rowIndex + 1);
                     if (searchCharIndex == 0)
@@ -1785,6 +1794,60 @@ namespace SerialDebug
 
 
         #endregion
+
+        private void txtSend_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+        }
+
+        private void txtSend_KeyDown(object sender, KeyEventArgs e)
+        {
+            string text = "";
+
+            //if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Enter)
+            //{
+            //    //txtSend.Text.TrimEnd(new char[] { '\r', '\n' });
+            //    btnSend.PerformClick();
+            //    return;
+            //}
+
+            if (e.KeyCode == Keys.Up)
+            {
+                SendTempIndex--;
+                if (SendTempIndex < 0)
+                {
+                    SendTempIndex = 0;
+                    Console.Beep();
+                }
+            }
+            else if (e.KeyCode == Keys.Down)
+            {
+                SendTempIndex++;
+                if (SendTempIndex > SendTempList.Count)
+                {
+                    SendTempIndex = SendTempList.Count;
+                    Console.Beep();
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            lock (SendTempList)
+            {
+                if (SendTempList.Count > 0)
+                {
+                    if (SendTempIndex < SendTempList.Count)
+                    {
+                        text = SendTempList[SendTempIndex];
+                    }
+                }
+            }
+
+            txtSend.Clear();
+            txtSend.AppendText(text);
+        }
 
 
 
