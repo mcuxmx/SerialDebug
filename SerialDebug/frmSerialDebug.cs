@@ -1116,11 +1116,20 @@ namespace SerialDebug
         private void txtSend_KeyDown(object sender, KeyEventArgs e)
         {
             string text = "";
+            if (e.Modifiers == Keys.Control)
+            {
+                IsCtrlPressed = true;
+            }
+            else
+            {
+                IsCtrlPressed = false;
+            }
 
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Enter)
             {
                 IsSendByKey = true;
                 btnSend.PerformClick();
+                e.Handled = true;
                 return;
             }
 
@@ -1132,6 +1141,7 @@ namespace SerialDebug
                     SendTempIndex = 0;
                     Console.Beep();
                 }
+                e.Handled = true;
             }
             else if (e.KeyCode == Keys.Down)
             {
@@ -1141,6 +1151,7 @@ namespace SerialDebug
                     SendTempIndex = SendTempList.Count;
                     Console.Beep();
                 }
+                e.Handled = true;
             }
             else
             {
@@ -1160,6 +1171,19 @@ namespace SerialDebug
 
             txtSend.Clear();
             txtSend.AppendText(text);
+        }
+
+        private bool IsCtrlPressed = false;
+        private void txtSend_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (IsCtrlPressed)
+            {
+                if (e.KeyChar=='\r' || e.KeyChar=='\n') // »Ø³µ
+                {
+                    e.Handled = true;
+                }
+            }
+
         }
 
 
@@ -1314,11 +1338,11 @@ namespace SerialDebug
 
                 if (IsSendByKey)
                 {
-                    if (sendText.EndsWith(Environment.NewLine))
-                    {
-                        sendText = sendText.Substring(0, sendText.Length - Environment.NewLine.Length);
-                        txtSendUpdate(sendText);
-                    }
+                    //if (sendText.EndsWith(Environment.NewLine))
+                    //{
+                    //    sendText = sendText.Substring(0, sendText.Length - Environment.NewLine.Length);
+                    //    txtSendUpdate(sendText);
+                    //}
                     IsSendByKey = false;
                 }
 
@@ -1353,8 +1377,15 @@ namespace SerialDebug
                 lock (SendTempList)
                 {
                     SendTempList.Add(sendText);
-                    SendTempIndex = SendTempList.Count;
-                    txtSendUpdate("");
+                    if (chkSendThenClear.Checked)
+                    {
+                        SendTempIndex = SendTempList.Count;
+                        txtSendUpdate("");
+                    }
+                    else
+                    {
+                        SendTempIndex = SendTempList.Count - 1;
+                    }
                 }
                 int sendLen = sendBuff.Length;
 
@@ -1882,6 +1913,8 @@ namespace SerialDebug
 
 
         #endregion
+
+
 
 
        

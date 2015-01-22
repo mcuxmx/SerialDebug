@@ -120,6 +120,7 @@
             this.Label7 = new System.Windows.Forms.Label();
             this.lnkOpen = new System.Windows.Forms.LinkLabel();
             this.fontDlg = new System.Windows.Forms.FontDialog();
+            this.chkSendThenClear = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPortState)).BeginInit();
             this.cmenuStrip.SuspendLayout();
@@ -744,9 +745,9 @@
             // btnSend
             // 
             this.btnSend.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnSend.Location = new System.Drawing.Point(84, 23);
+            this.btnSend.Location = new System.Drawing.Point(84, 21);
             this.btnSend.Name = "btnSend";
-            this.btnSend.Size = new System.Drawing.Size(69, 35);
+            this.btnSend.Size = new System.Drawing.Size(69, 40);
             this.btnSend.TabIndex = 12;
             this.btnSend.Text = "开始发送";
             this.btnSend.UseVisualStyleBackColor = true;
@@ -914,6 +915,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.txtSend);
             this.splitContainer1.Panel2.Controls.Add(this.Label7);
             this.splitContainer1.Panel2.Controls.Add(this.lnkOpen);
+            this.splitContainer1.Panel2.Controls.Add(this.chkSendThenClear);
             this.splitContainer1.Size = new System.Drawing.Size(536, 448);
             this.splitContainer1.SplitterDistance = 307;
             this.splitContainer1.TabIndex = 42;
@@ -1081,6 +1083,7 @@
             this.txtSend.TabIndex = 32;
             this.txtSend.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSend_KeyDown);
             this.txtSend.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtSend_MouseDown);
+            this.txtSend.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSend_KeyPress);
             this.txtSend.MouseEnter += new System.EventHandler(this.txtSend_MouseEnter);
             // 
             // Label7
@@ -1106,6 +1109,18 @@
             this.lnkOpen.Text = "打开文件";
             this.lnkOpen.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkOpen_LinkClicked);
             // 
+            // chkSendThenClear
+            // 
+            this.chkSendThenClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkSendThenClear.AutoSize = true;
+            this.chkSendThenClear.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkSendThenClear.Location = new System.Drawing.Point(446, 3);
+            this.chkSendThenClear.Name = "chkSendThenClear";
+            this.chkSendThenClear.Size = new System.Drawing.Size(90, 17);
+            this.chkSendThenClear.TabIndex = 8;
+            this.chkSendThenClear.Text = "发送后清除";
+            this.chkSendThenClear.UseVisualStyleBackColor = true;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1123,7 +1138,7 @@
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.groupBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(620, 450);
+            this.MinimumSize = new System.Drawing.Size(720, 520);
             this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
@@ -1246,6 +1261,7 @@
         private System.Windows.Forms.PictureBox picReceiveFont;
         internal System.Windows.Forms.CheckBox chkFormat;
         private System.Windows.Forms.TextBox txtSend;
+        internal System.Windows.Forms.CheckBox chkSendThenClear;
 
     }
 }
