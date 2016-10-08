@@ -43,6 +43,7 @@
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="CSerialDebug.cs" />
     <Compile Include="frmSerialDebug.cs">
       <SubType>Form</SubType>
     </Compile>

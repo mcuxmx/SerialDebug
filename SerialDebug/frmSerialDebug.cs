@@ -17,6 +17,8 @@ namespace SerialDebug
     public partial class frmMain : Form
     {
 
+        CSerialDebug sp = new CSerialDebug();
+
         private UInt64 RxCounter = 0;
         private UInt64 TxCounter = 0;
         private List<byte[]> reBytesList = new List<byte[]>();
@@ -191,10 +193,14 @@ namespace SerialDebug
                     serialPort.ReadBufferSize = 4 * 1024 * 1024;//33554432;           // 32M
                     serialPort.Open();
 
+                    sp.serialPort = serialPort;
+                    sp.Start();
                 }
                 else
                 {
                     serialPort.Close();
+                    sp.Stop();
+
                 }
             }
             catch (IOException ex)
@@ -941,66 +947,54 @@ namespace SerialDebug
         /// </summary>
         private void ReceiveThreadHandle()
         {
-            byte[] bytes = null;
-            int bytesLen = 0;
-
             while (true)
             {
                 try
                 {
-                    //bytes = null;
-                    lock (reBytesList)
+                    SerialDebugReceiveData data = null;
+                    lock (sp.ReceiveQueue)
                     {
-                        if (reBytesList.Count > 0)
+                        if (sp.ReceiveQueue.Count > 0)
                         {
-                            if (reBytesList[0] != null)
-                            {
-                                bytes = reBytesList[0];
-                                reBytesList[0] = null;
-                            }
-                            reBytesList.RemoveAt(0);
+                            data = sp.ReceiveQueue.Dequeue();
                         }
                     }
 
-                    if (bytes != null)
+                    if (data != null)
                     {
-                        bytesLen = bytes.Length;
-                        if (chkDisplay.Checked)
+                        StringBuilder sbMsg = new StringBuilder();
+
+                        if (chkDisplay.Checked)  // 是否显示
                         {
-                            if (chkReceiveHex.Checked)
+                            if (chkTimeStamp.Checked)
                             {
-                                if (bytesLen > 0)
-                                {
-                                    //txtReceiveAppend(BitConverter.ToString(bytes).Replace('-', ' '));
-                                    //txtReceiveAppend(" ");
-                                    TextBoxReceiveAppend(BitConverter.ToString(bytes).Replace('-', ' '));
-                                    TextBoxReceiveAppend(" ");
-                                }
+                                sbMsg.AppendFormat("{0}", data.TimeString);
+                            }
+
+                            if (chkReceiveHex.Checked) // 十六进制显示
+                            {
+                                sbMsg.AppendFormat("{0}", data.HexString);
+
                             }
                             else
                             {
-                                //txtReceiveAppend(System.Text.ASCIIEncoding.Default.GetString(bytes));
-                                TextBoxReceiveAppend(System.Text.ASCIIEncoding.Default.GetString(bytes));
+                                sbMsg.AppendFormat("{0}", data.ASCIIString);
                             }
 
-                            if (chkWrap.Checked)                    // 自动换行
+                            if (chkWrap.Checked || chkTimeStamp.Checked)                    // 自动换行
                             {
-                                //txtReceiveAppend(Environment.NewLine);
-                                TextBoxReceiveAppend(Environment.NewLine);
+                                sbMsg.Append(Environment.NewLine);
                             }
                         }
-
-                        RxCounter = RxCounter + (UInt64)bytesLen;
-                        // myUpdateRx(RxCounter);
+                        TextBoxReceiveAppend(sbMsg.ToString());
+                        RxCounter = RxCounter + (UInt64)data.DataLen;
                         setLableText(labRx, string.Format("RX:{0}", RxCounter));
-
-                        bytes = null;
-                        Thread.Sleep(10);
                     }
                     else
                     {
                         Thread.Sleep(100);
                     }
+
                 }
                 catch (Exception ex)
                 {
@@ -1026,9 +1020,10 @@ namespace SerialDebug
             {
                 ////this.BeginInvoke(SetLableText(lab,text));
                 //this.BeginInvoke(new SetLableTextDel(setLableText));
-                lab.BeginInvoke(new MethodInvoker(delegate
+                lab.Invoke(new MethodInvoker(delegate
                 {
-                    lab.Text = text;
+                    //lab.Text = text;
+                    SetLableText(lab, text);
                 }));
                 return;
             }
@@ -1049,7 +1044,6 @@ namespace SerialDebug
             {
                 txtReceive.BeginInvoke(new MethodInvoker(delegate
                 {
-                    //txtReceive.AppendText(appendText);
                     TextBoxReceiveAppend(appendText);
                 }));
                 return;
@@ -1068,7 +1062,7 @@ namespace SerialDebug
             }
         }
 
-       
+
 
 
         #endregion
@@ -1178,7 +1172,7 @@ namespace SerialDebug
         {
             if (IsCtrlPressed)
             {
-                if (e.KeyChar=='\r' || e.KeyChar=='\n') // 回车
+                if (e.KeyChar == '\r' || e.KeyChar == '\n') // 回车
                 {
                     e.Handled = true;
                 }
@@ -1917,7 +1911,7 @@ namespace SerialDebug
 
 
 
-       
+
 
 
     }

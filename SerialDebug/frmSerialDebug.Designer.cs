@@ -119,8 +119,9 @@
             this.txtSend = new System.Windows.Forms.TextBox();
             this.Label7 = new System.Windows.Forms.Label();
             this.lnkOpen = new System.Windows.Forms.LinkLabel();
-            this.fontDlg = new System.Windows.Forms.FontDialog();
             this.chkSendThenClear = new System.Windows.Forms.CheckBox();
+            this.fontDlg = new System.Windows.Forms.FontDialog();
+            this.chkTimeStamp = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPortState)).BeginInit();
             this.cmenuStrip.SuspendLayout();
@@ -158,7 +159,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(2, 2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(161, 221);
+            this.groupBox1.Size = new System.Drawing.Size(161, 210);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "串口设置";
@@ -167,7 +168,7 @@
             // 
             this.chkDTR.AutoSize = true;
             this.chkDTR.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkDTR.Location = new System.Drawing.Point(107, 163);
+            this.chkDTR.Location = new System.Drawing.Point(107, 153);
             this.chkDTR.Name = "chkDTR";
             this.chkDTR.Size = new System.Drawing.Size(48, 17);
             this.chkDTR.TabIndex = 41;
@@ -181,7 +182,7 @@
             this.chkRTS.Checked = true;
             this.chkRTS.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkRTS.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkRTS.Location = new System.Drawing.Point(53, 163);
+            this.chkRTS.Location = new System.Drawing.Point(53, 153);
             this.chkRTS.Name = "chkRTS";
             this.chkRTS.Size = new System.Drawing.Size(48, 17);
             this.chkRTS.TabIndex = 40;
@@ -191,7 +192,7 @@
             // 
             // btnPortOpt
             // 
-            this.btnPortOpt.Location = new System.Drawing.Point(51, 185);
+            this.btnPortOpt.Location = new System.Drawing.Point(51, 172);
             this.btnPortOpt.Name = "btnPortOpt";
             this.btnPortOpt.Size = new System.Drawing.Size(104, 28);
             this.btnPortOpt.TabIndex = 5;
@@ -201,7 +202,7 @@
             // 
             // picPortState
             // 
-            this.picPortState.Location = new System.Drawing.Point(10, 181);
+            this.picPortState.Location = new System.Drawing.Point(10, 167);
             this.picPortState.Name = "picPortState";
             this.picPortState.Size = new System.Drawing.Size(34, 34);
             this.picPortState.TabIndex = 2;
@@ -216,7 +217,7 @@
             "软件Xon/Xoff",
             "硬件",
             "硬件和软件"});
-            this.cbStreamControl.Location = new System.Drawing.Point(53, 140);
+            this.cbStreamControl.Location = new System.Drawing.Point(53, 130);
             this.cbStreamControl.Name = "cbStreamControl";
             this.cbStreamControl.Size = new System.Drawing.Size(102, 20);
             this.cbStreamControl.TabIndex = 4;
@@ -226,7 +227,7 @@
             // 
             this.cbStopBit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbStopBit.FormattingEnabled = true;
-            this.cbStopBit.Location = new System.Drawing.Point(53, 115);
+            this.cbStopBit.Location = new System.Drawing.Point(53, 107);
             this.cbStopBit.Name = "cbStopBit";
             this.cbStopBit.Size = new System.Drawing.Size(102, 20);
             this.cbStopBit.TabIndex = 4;
@@ -236,7 +237,7 @@
             // 
             this.cbDataBit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbDataBit.FormattingEnabled = true;
-            this.cbDataBit.Location = new System.Drawing.Point(53, 90);
+            this.cbDataBit.Location = new System.Drawing.Point(53, 84);
             this.cbDataBit.Name = "cbDataBit";
             this.cbDataBit.Size = new System.Drawing.Size(102, 20);
             this.cbDataBit.TabIndex = 3;
@@ -246,7 +247,7 @@
             // 
             this.cbParity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbParity.FormattingEnabled = true;
-            this.cbParity.Location = new System.Drawing.Point(53, 65);
+            this.cbParity.Location = new System.Drawing.Point(53, 61);
             this.cbParity.Name = "cbParity";
             this.cbParity.Size = new System.Drawing.Size(102, 20);
             this.cbParity.TabIndex = 2;
@@ -274,7 +275,7 @@
             "128000",
             "115200",
             "256000"});
-            this.cbBaudRate.Location = new System.Drawing.Point(53, 40);
+            this.cbBaudRate.Location = new System.Drawing.Point(53, 38);
             this.cbBaudRate.Name = "cbBaudRate";
             this.cbBaudRate.Size = new System.Drawing.Size(102, 20);
             this.cbBaudRate.TabIndex = 1;
@@ -294,7 +295,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(6, 145);
+            this.label13.Location = new System.Drawing.Point(6, 134);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(41, 12);
             this.label13.TabIndex = 0;
@@ -303,7 +304,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 119);
+            this.label5.Location = new System.Drawing.Point(6, 111);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(41, 12);
             this.label5.TabIndex = 0;
@@ -312,7 +313,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 94);
+            this.label4.Location = new System.Drawing.Point(6, 88);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(41, 12);
             this.label4.TabIndex = 0;
@@ -321,7 +322,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 69);
+            this.label3.Location = new System.Drawing.Point(6, 65);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(41, 12);
             this.label3.TabIndex = 0;
@@ -330,7 +331,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 44);
+            this.label2.Location = new System.Drawing.Point(6, 42);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 12);
             this.label2.TabIndex = 0;
@@ -355,7 +356,6 @@
             // serialPort
             // 
             this.serialPort.WriteBufferSize = 65536;
-            this.serialPort.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPort_DataReceived);
             // 
             // imglistTop
             // 
@@ -609,12 +609,13 @@
             // groupReceive
             // 
             this.groupReceive.Controls.Add(this.btnNormalToHyperTerminal);
+            this.groupReceive.Controls.Add(this.chkTimeStamp);
             this.groupReceive.Controls.Add(this.chkWrap);
             this.groupReceive.Controls.Add(this.chkReceiveHex);
             this.groupReceive.Controls.Add(this.chkDisplay);
-            this.groupReceive.Location = new System.Drawing.Point(2, 229);
+            this.groupReceive.Location = new System.Drawing.Point(2, 215);
             this.groupReceive.Name = "groupReceive";
-            this.groupReceive.Size = new System.Drawing.Size(161, 77);
+            this.groupReceive.Size = new System.Drawing.Size(161, 88);
             this.groupReceive.TabIndex = 40;
             this.groupReceive.TabStop = false;
             this.groupReceive.Text = "接收显示";
@@ -622,9 +623,9 @@
             // btnNormalToHyperTerminal
             // 
             this.btnNormalToHyperTerminal.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnNormalToHyperTerminal.Location = new System.Drawing.Point(84, 45);
+            this.btnNormalToHyperTerminal.Location = new System.Drawing.Point(81, 43);
             this.btnNormalToHyperTerminal.Name = "btnNormalToHyperTerminal";
-            this.btnNormalToHyperTerminal.Size = new System.Drawing.Size(69, 28);
+            this.btnNormalToHyperTerminal.Size = new System.Drawing.Size(69, 39);
             this.btnNormalToHyperTerminal.TabIndex = 40;
             this.btnNormalToHyperTerminal.Text = "超级终端";
             this.btnNormalToHyperTerminal.UseVisualStyleBackColor = true;
@@ -634,7 +635,7 @@
             // 
             this.chkWrap.AutoSize = true;
             this.chkWrap.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkWrap.Location = new System.Drawing.Point(10, 50);
+            this.chkWrap.Location = new System.Drawing.Point(10, 42);
             this.chkWrap.Name = "chkWrap";
             this.chkWrap.Size = new System.Drawing.Size(78, 17);
             this.chkWrap.TabIndex = 26;
@@ -645,7 +646,7 @@
             // 
             this.chkReceiveHex.AutoSize = true;
             this.chkReceiveHex.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkReceiveHex.Location = new System.Drawing.Point(86, 20);
+            this.chkReceiveHex.Location = new System.Drawing.Point(83, 20);
             this.chkReceiveHex.Name = "chkReceiveHex";
             this.chkReceiveHex.Size = new System.Drawing.Size(72, 17);
             this.chkReceiveHex.TabIndex = 6;
@@ -917,7 +918,8 @@
             this.splitContainer1.Panel2.Controls.Add(this.lnkOpen);
             this.splitContainer1.Panel2.Controls.Add(this.chkSendThenClear);
             this.splitContainer1.Size = new System.Drawing.Size(536, 448);
-            this.splitContainer1.SplitterDistance = 307;
+            this.splitContainer1.SplitterDistance = 300;
+            this.splitContainer1.SplitterWidth = 6;
             this.splitContainer1.TabIndex = 42;
             // 
             // groupHyperTerminal
@@ -1040,7 +1042,7 @@
             this.txtReceive.Multiline = true;
             this.txtReceive.Name = "txtReceive";
             this.txtReceive.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtReceive.Size = new System.Drawing.Size(528, 280);
+            this.txtReceive.Size = new System.Drawing.Size(528, 275);
             this.txtReceive.TabIndex = 35;
             this.txtReceive.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtReceive_MouseDown);
             this.txtReceive.MouseEnter += new System.EventHandler(this.txtReceive_MouseEnter);
@@ -1079,7 +1081,7 @@
             this.txtSend.Multiline = true;
             this.txtSend.Name = "txtSend";
             this.txtSend.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtSend.Size = new System.Drawing.Size(528, 111);
+            this.txtSend.Size = new System.Drawing.Size(528, 116);
             this.txtSend.TabIndex = 32;
             this.txtSend.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSend_KeyDown);
             this.txtSend.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtSend_MouseDown);
@@ -1120,6 +1122,17 @@
             this.chkSendThenClear.TabIndex = 8;
             this.chkSendThenClear.Text = "发送后清除";
             this.chkSendThenClear.UseVisualStyleBackColor = true;
+            // 
+            // chkTimeStamp
+            // 
+            this.chkTimeStamp.AutoSize = true;
+            this.chkTimeStamp.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkTimeStamp.Location = new System.Drawing.Point(10, 64);
+            this.chkTimeStamp.Name = "chkTimeStamp";
+            this.chkTimeStamp.Size = new System.Drawing.Size(66, 17);
+            this.chkTimeStamp.TabIndex = 26;
+            this.chkTimeStamp.Text = "时间戳";
+            this.chkTimeStamp.UseVisualStyleBackColor = true;
             // 
             // frmMain
             // 
@@ -1262,6 +1275,7 @@
         internal System.Windows.Forms.CheckBox chkFormat;
         private System.Windows.Forms.TextBox txtSend;
         internal System.Windows.Forms.CheckBox chkSendThenClear;
+        internal System.Windows.Forms.CheckBox chkTimeStamp;
 
     }
 }
