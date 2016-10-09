@@ -43,6 +43,7 @@
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="CSendParam.cs" />
     <Compile Include="CSerialDebug.cs" />
     <Compile Include="frmSerialDebug.cs">
       <SubType>Form</SubType>
@@ -68,6 +69,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -81,6 +83,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="port.ico" />
+    <None Include="Resources\round_minus.png" />
+    <None Include="Resources\round_plus.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

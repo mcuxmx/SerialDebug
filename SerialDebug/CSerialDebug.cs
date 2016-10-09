@@ -10,10 +10,21 @@ namespace SerialDebug
     class CSerialDebug
     {
         private Queue<SerialDebugReceiveData> receiveQueue = new Queue<SerialDebugReceiveData>();
+        private List<CSendParam> sendList = new List<CSendParam>();
 
         private SerialPort _serialPort = new SerialPort();
-        private bool IsStart = false;
+        private bool IsReceiveStart = false;
         private Thread receiveThread;
+        private bool IsSendStart = false;
+        private Thread sendThread;
+        private TimeSpan delayTime = new TimeSpan(10 * 400);
+
+        public delegate void SendCompletedEventHandler(object sender, SendCompletedEventArgs e);
+        public event SendCompletedEventHandler SendCompletedEvent;
+
+
+        //private AutoResetEvent waitReceiveEvent = new AutoResetEvent(false);
+        private ManualResetEvent waitReceiveEvent = new ManualResetEvent(false);
 
         public SerialPort serialPort
         {
@@ -24,10 +35,17 @@ namespace SerialDebug
 
         public void Start()
         {
-            IsStart = true;
+            //waitReceiveEvent = new AutoResetEvent(false);
+
+            IsReceiveStart = true;
             lock (receiveQueue)
             {
                 receiveQueue.Clear();
+            }
+
+            lock (sendList)
+            {
+                sendList.Clear();
             }
 
             receiveThread = new Thread(new ThreadStart(ReceiveThreadHandler));
@@ -38,7 +56,20 @@ namespace SerialDebug
 
         public void Stop()
         {
-            IsStart = false;
+            IsReceiveStart = false;
+            IsSendStart = false;
+        }
+
+        public void Send(List<CSendParam> list)
+        {
+            sendList = list;
+            IsSendStart = true;
+
+
+            sendThread = new Thread(new ThreadStart(SendThreadHandler));
+            sendThread.IsBackground = true;
+            sendThread.Name = "sendThread";
+            sendThread.Start();
         }
 
         public Queue<SerialDebugReceiveData> ReceiveQueue
@@ -46,9 +77,12 @@ namespace SerialDebug
             get { return receiveQueue; }
         }
 
+        /// <summary>
+        /// 接收线程
+        /// </summary>
         private void ReceiveThreadHandler()
         {
-            while (IsStart)
+            while (IsReceiveStart)
             {
                 try
                 {
@@ -65,7 +99,7 @@ namespace SerialDebug
 
                             while (true)
                             {
-                                Thread.Sleep(new TimeSpan(10 * 500));
+                                Thread.Sleep(delayTime);
                                 TimeSpan ts = DateTime.Now - startTime;
                                 if (ts.TotalMilliseconds >= 3)
                                 {
@@ -84,6 +118,8 @@ namespace SerialDebug
                             {
                                 receiveQueue.Enqueue(new SerialDebugReceiveData(bytes));
                             }
+
+                            waitReceiveEvent.Set();
                         }
                     }
                     else
@@ -98,6 +134,69 @@ namespace SerialDebug
                 }
 
             }
+        }
+
+        /// <summary>
+        /// 发送线程
+        /// </summary>
+        private void SendThreadHandler()
+        {
+            waitReceiveEvent.Reset();
+
+            int index = 0;
+            while (index < sendList.Count && IsSendStart)
+            {
+                CSendParam sendParam = null;
+                lock (sendList)
+                {
+                    sendParam = sendList[index];
+                }
+                index++;
+
+                if (sendParam != null)
+                {
+                    if (sendParam.Mode == SendParamMode.SendAfterLastSend)
+                    {
+
+                    }
+                    else if (sendParam.Mode == SendParamMode.SendAfterReceived)
+                    {
+                        
+                        waitReceiveEvent.WaitOne();
+
+                    }
+
+
+                    if (sendParam.DelayTime > 0)
+                    {
+                        DateTime startTime = DateTime.Now;
+                        TimeSpan ts = DateTime.Now - startTime;
+                        do
+                        {
+                            Thread.Sleep(delayTime);
+                            ts = DateTime.Now - startTime;
+                        } while (ts.TotalMilliseconds <= sendParam.DelayTime);
+                    }
+
+                    waitReceiveEvent.Reset();
+                    if (_serialPort.IsOpen)
+                    {
+                        _serialPort.Write(sendParam.DataBytes, 0, sendParam.DataBytes.Length);
+
+                        if (SendCompletedEvent != null)
+                        {
+                            SendCompletedEvent(this, new SendCompletedEventArgs(sendParam));
+                        }
+                    }
+                }
+
+            }
+
+            if (SendCompletedEvent != null)
+            {
+                SendCompletedEvent(this, new SendCompletedEventArgs(null));
+            }
+
         }
     }
 
@@ -172,6 +271,36 @@ namespace SerialDebug
                 return sb.ToString();
             }
 
+        }
+    }
+
+    public class SendCompletedEventArgs : EventArgs
+    {
+        private readonly DateTime _SendTime;
+        private CSendParam _SendParam;
+
+        public SendCompletedEventArgs(CSendParam sendParam)
+        {
+            _SendTime = DateTime.Now;
+            _SendParam = sendParam;
+        }
+
+        public DateTime SendTime
+        {
+            get { return _SendTime; }
+        }
+
+        public CSendParam SendParam
+        {
+            get { return _SendParam; }
+        }
+
+        public string TimeString
+        {
+            get
+            {
+                return string.Format("[{0}.{1:D3}]", _SendTime.ToString("yyyy-MM-dd HH:mm:ss"), _SendTime.Millisecond);
+            }
         }
     }
 }

@@ -78,6 +78,7 @@
             this.chkDisplay = new System.Windows.Forms.CheckBox();
             this.groupReceive = new System.Windows.Forms.GroupBox();
             this.btnNormalToHyperTerminal = new System.Windows.Forms.Button();
+            this.chkTimeStamp = new System.Windows.Forms.CheckBox();
             this.chkWrap = new System.Windows.Forms.CheckBox();
             this.chkReceiveHex = new System.Windows.Forms.CheckBox();
             this.groupSend = new System.Windows.Forms.GroupBox();
@@ -96,6 +97,10 @@
             this.oFileDlg = new System.Windows.Forms.OpenFileDialog();
             this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.picReceiveFont = new System.Windows.Forms.PictureBox();
+            this.btnAddSendList = new System.Windows.Forms.Button();
+            this.btnDeleteSendList = new System.Windows.Forms.Button();
+            this.btnSetupSendList = new System.Windows.Forms.Button();
+            this.btnSetdownSendList = new System.Windows.Forms.Button();
             this.sFileDlg = new System.Windows.Forms.SaveFileDialog();
             this.cmenuSave = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuSaveStringToText = new System.Windows.Forms.ToolStripMenuItem();
@@ -104,6 +109,21 @@
             this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
             this.menuSaveHexToBinary = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.panelSendParam = new System.Windows.Forms.Panel();
+            this.label18 = new System.Windows.Forms.Label();
+            this.numSendListDelayTime = new System.Windows.Forms.NumericUpDown();
+            this.cbSendMode = new System.Windows.Forms.ComboBox();
+            this.cbFormat = new System.Windows.Forms.ComboBox();
+            this.txtSendParamData = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.lbFormat = new System.Windows.Forms.Label();
+            this.panelSendList = new System.Windows.Forms.Panel();
+            this.label15 = new System.Windows.Forms.Label();
+            this.dgvSendList = new System.Windows.Forms.DataGridView();
+            this.colNo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colMode = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colData = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupHyperTerminal = new System.Windows.Forms.GroupBox();
             this.cbHTEOFChars = new System.Windows.Forms.ComboBox();
             this.btnHyperTerminalToNormal = new System.Windows.Forms.Button();
@@ -115,13 +135,17 @@
             this.Label8 = new System.Windows.Forms.Label();
             this.txtReceive = new System.Windows.Forms.TextBox();
             this.lnkSaveData = new System.Windows.Forms.LinkLabel();
-            this.labClearSend = new System.Windows.Forms.LinkLabel();
+            this.panelNormalSend = new System.Windows.Forms.Panel();
             this.txtSend = new System.Windows.Forms.TextBox();
+            this.chkSendThenClear = new System.Windows.Forms.CheckBox();
+            this.labClearSend = new System.Windows.Forms.LinkLabel();
             this.Label7 = new System.Windows.Forms.Label();
             this.lnkOpen = new System.Windows.Forms.LinkLabel();
-            this.chkSendThenClear = new System.Windows.Forms.CheckBox();
             this.fontDlg = new System.Windows.Forms.FontDialog();
-            this.chkTimeStamp = new System.Windows.Forms.CheckBox();
+            this.btnSaveSendParam = new System.Windows.Forms.Button();
+            this.btnCancelSaveParam = new System.Windows.Forms.Button();
+            this.linkLabelClearData = new System.Windows.Forms.LinkLabel();
+            this.chkShowSend = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPortState)).BeginInit();
             this.cmenuStrip.SuspendLayout();
@@ -136,7 +160,12 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.panelSendParam.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numSendListDelayTime)).BeginInit();
+            this.panelSendList.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvSendList)).BeginInit();
             this.groupHyperTerminal.SuspendLayout();
+            this.panelNormalSend.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -609,6 +638,7 @@
             // groupReceive
             // 
             this.groupReceive.Controls.Add(this.btnNormalToHyperTerminal);
+            this.groupReceive.Controls.Add(this.chkShowSend);
             this.groupReceive.Controls.Add(this.chkTimeStamp);
             this.groupReceive.Controls.Add(this.chkWrap);
             this.groupReceive.Controls.Add(this.chkReceiveHex);
@@ -623,13 +653,24 @@
             // btnNormalToHyperTerminal
             // 
             this.btnNormalToHyperTerminal.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnNormalToHyperTerminal.Location = new System.Drawing.Point(81, 43);
+            this.btnNormalToHyperTerminal.Location = new System.Drawing.Point(81, 62);
             this.btnNormalToHyperTerminal.Name = "btnNormalToHyperTerminal";
-            this.btnNormalToHyperTerminal.Size = new System.Drawing.Size(69, 39);
+            this.btnNormalToHyperTerminal.Size = new System.Drawing.Size(69, 24);
             this.btnNormalToHyperTerminal.TabIndex = 40;
             this.btnNormalToHyperTerminal.Text = "超级终端";
             this.btnNormalToHyperTerminal.UseVisualStyleBackColor = true;
             this.btnNormalToHyperTerminal.Click += new System.EventHandler(this.btnNormalToHyperTerminal_Click);
+            // 
+            // chkTimeStamp
+            // 
+            this.chkTimeStamp.AutoSize = true;
+            this.chkTimeStamp.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkTimeStamp.Location = new System.Drawing.Point(10, 64);
+            this.chkTimeStamp.Name = "chkTimeStamp";
+            this.chkTimeStamp.Size = new System.Drawing.Size(66, 17);
+            this.chkTimeStamp.TabIndex = 26;
+            this.chkTimeStamp.Text = "时间戳";
+            this.chkTimeStamp.UseVisualStyleBackColor = true;
             // 
             // chkWrap
             // 
@@ -843,6 +884,50 @@
             this.ToolTip.SetToolTip(this.picReceiveFont, "设置接收区字体");
             this.picReceiveFont.Click += new System.EventHandler(this.picReceiveFont_Click);
             // 
+            // btnAddSendList
+            // 
+            this.btnAddSendList.Image = ((System.Drawing.Image)(resources.GetObject("btnAddSendList.Image")));
+            this.btnAddSendList.Location = new System.Drawing.Point(62, 0);
+            this.btnAddSendList.Name = "btnAddSendList";
+            this.btnAddSendList.Size = new System.Drawing.Size(30, 24);
+            this.btnAddSendList.TabIndex = 35;
+            this.ToolTip.SetToolTip(this.btnAddSendList, "添加");
+            this.btnAddSendList.UseVisualStyleBackColor = true;
+            this.btnAddSendList.Click += new System.EventHandler(this.btnAddSendList_Click);
+            // 
+            // btnDeleteSendList
+            // 
+            this.btnDeleteSendList.Image = ((System.Drawing.Image)(resources.GetObject("btnDeleteSendList.Image")));
+            this.btnDeleteSendList.Location = new System.Drawing.Point(91, 0);
+            this.btnDeleteSendList.Name = "btnDeleteSendList";
+            this.btnDeleteSendList.Size = new System.Drawing.Size(30, 24);
+            this.btnDeleteSendList.TabIndex = 35;
+            this.ToolTip.SetToolTip(this.btnDeleteSendList, "删除");
+            this.btnDeleteSendList.UseVisualStyleBackColor = true;
+            this.btnDeleteSendList.Click += new System.EventHandler(this.btnDeleteSendList_Click);
+            // 
+            // btnSetupSendList
+            // 
+            this.btnSetupSendList.Image = ((System.Drawing.Image)(resources.GetObject("btnSetupSendList.Image")));
+            this.btnSetupSendList.Location = new System.Drawing.Point(120, 0);
+            this.btnSetupSendList.Name = "btnSetupSendList";
+            this.btnSetupSendList.Size = new System.Drawing.Size(30, 24);
+            this.btnSetupSendList.TabIndex = 35;
+            this.ToolTip.SetToolTip(this.btnSetupSendList, "上移");
+            this.btnSetupSendList.UseVisualStyleBackColor = true;
+            this.btnSetupSendList.Click += new System.EventHandler(this.btnSetupSendList_Click);
+            // 
+            // btnSetdownSendList
+            // 
+            this.btnSetdownSendList.Image = ((System.Drawing.Image)(resources.GetObject("btnSetdownSendList.Image")));
+            this.btnSetdownSendList.Location = new System.Drawing.Point(149, 0);
+            this.btnSetdownSendList.Name = "btnSetdownSendList";
+            this.btnSetdownSendList.Size = new System.Drawing.Size(30, 24);
+            this.btnSetdownSendList.TabIndex = 35;
+            this.ToolTip.SetToolTip(this.btnSetdownSendList, "下移");
+            this.btnSetdownSendList.UseVisualStyleBackColor = true;
+            this.btnSetdownSendList.Click += new System.EventHandler(this.btnSetdownSendList_Click);
+            // 
             // sFileDlg
             // 
             this.sFileDlg.Title = "保存接收区数据";
@@ -903,6 +988,8 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.panelSendParam);
+            this.splitContainer1.Panel1.Controls.Add(this.panelSendList);
             this.splitContainer1.Panel1.Controls.Add(this.groupHyperTerminal);
             this.splitContainer1.Panel1.Controls.Add(this.picReceiveFont);
             this.splitContainer1.Panel1.Controls.Add(this.labClearReceive);
@@ -912,15 +999,200 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.labClearSend);
-            this.splitContainer1.Panel2.Controls.Add(this.txtSend);
-            this.splitContainer1.Panel2.Controls.Add(this.Label7);
-            this.splitContainer1.Panel2.Controls.Add(this.lnkOpen);
-            this.splitContainer1.Panel2.Controls.Add(this.chkSendThenClear);
+            this.splitContainer1.Panel2.Controls.Add(this.panelNormalSend);
             this.splitContainer1.Size = new System.Drawing.Size(536, 448);
             this.splitContainer1.SplitterDistance = 300;
             this.splitContainer1.SplitterWidth = 6;
             this.splitContainer1.TabIndex = 42;
+            // 
+            // panelSendParam
+            // 
+            this.panelSendParam.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelSendParam.Controls.Add(this.linkLabelClearData);
+            this.panelSendParam.Controls.Add(this.btnCancelSaveParam);
+            this.panelSendParam.Controls.Add(this.btnSaveSendParam);
+            this.panelSendParam.Controls.Add(this.label18);
+            this.panelSendParam.Controls.Add(this.numSendListDelayTime);
+            this.panelSendParam.Controls.Add(this.cbSendMode);
+            this.panelSendParam.Controls.Add(this.cbFormat);
+            this.panelSendParam.Controls.Add(this.txtSendParamData);
+            this.panelSendParam.Controls.Add(this.label17);
+            this.panelSendParam.Controls.Add(this.label16);
+            this.panelSendParam.Controls.Add(this.lbFormat);
+            this.panelSendParam.Location = new System.Drawing.Point(7, 61);
+            this.panelSendParam.Name = "panelSendParam";
+            this.panelSendParam.Size = new System.Drawing.Size(506, 95);
+            this.panelSendParam.TabIndex = 47;
+            this.panelSendParam.Visible = false;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(4, 34);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(65, 12);
+            this.label18.TabIndex = 4;
+            this.label18.Text = "数据内容：";
+            // 
+            // numSendListDelayTime
+            // 
+            this.numSendListDelayTime.Location = new System.Drawing.Point(423, 5);
+            this.numSendListDelayTime.Maximum = new decimal(new int[] {
+            86400000,
+            0,
+            0,
+            0});
+            this.numSendListDelayTime.Name = "numSendListDelayTime";
+            this.numSendListDelayTime.Size = new System.Drawing.Size(80, 21);
+            this.numSendListDelayTime.TabIndex = 2;
+            // 
+            // cbSendMode
+            // 
+            this.cbSendMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbSendMode.FormattingEnabled = true;
+            this.cbSendMode.Items.AddRange(new object[] {
+            "上帧发送完成后",
+            "接收到数据帧后"});
+            this.cbSendMode.Location = new System.Drawing.Point(220, 5);
+            this.cbSendMode.Name = "cbSendMode";
+            this.cbSendMode.Size = new System.Drawing.Size(139, 20);
+            this.cbSendMode.TabIndex = 1;
+            // 
+            // cbFormat
+            // 
+            this.cbFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbFormat.FormattingEnabled = true;
+            this.cbFormat.Items.AddRange(new object[] {
+            "ASCII",
+            "HEX"});
+            this.cbFormat.Location = new System.Drawing.Point(59, 5);
+            this.cbFormat.Name = "cbFormat";
+            this.cbFormat.Size = new System.Drawing.Size(84, 20);
+            this.cbFormat.TabIndex = 1;
+            // 
+            // txtSendParamData
+            // 
+            this.txtSendParamData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSendParamData.Location = new System.Drawing.Point(3, 49);
+            this.txtSendParamData.Multiline = true;
+            this.txtSendParamData.Name = "txtSendParamData";
+            this.txtSendParamData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtSendParamData.Size = new System.Drawing.Size(439, 43);
+            this.txtSendParamData.TabIndex = 0;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(365, 9);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(65, 12);
+            this.label17.TabIndex = 3;
+            this.label17.Text = "延时(ms)：";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(160, 9);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(65, 12);
+            this.label16.TabIndex = 3;
+            this.label16.Text = "发送模式：";
+            // 
+            // lbFormat
+            // 
+            this.lbFormat.AutoSize = true;
+            this.lbFormat.Location = new System.Drawing.Point(3, 9);
+            this.lbFormat.Name = "lbFormat";
+            this.lbFormat.Size = new System.Drawing.Size(65, 12);
+            this.lbFormat.TabIndex = 3;
+            this.lbFormat.Text = "数据格式：";
+            // 
+            // panelSendList
+            // 
+            this.panelSendList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelSendList.Controls.Add(this.btnSetdownSendList);
+            this.panelSendList.Controls.Add(this.btnSetupSendList);
+            this.panelSendList.Controls.Add(this.btnDeleteSendList);
+            this.panelSendList.Controls.Add(this.btnAddSendList);
+            this.panelSendList.Controls.Add(this.label15);
+            this.panelSendList.Controls.Add(this.dgvSendList);
+            this.panelSendList.Location = new System.Drawing.Point(20, 160);
+            this.panelSendList.Name = "panelSendList";
+            this.panelSendList.Size = new System.Drawing.Size(506, 131);
+            this.panelSendList.TabIndex = 46;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.BackColor = System.Drawing.Color.Transparent;
+            this.label15.Location = new System.Drawing.Point(3, 6);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(53, 12);
+            this.label15.TabIndex = 34;
+            this.label15.Text = "发送区：";
+            this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // dgvSendList
+            // 
+            this.dgvSendList.AllowUserToAddRows = false;
+            this.dgvSendList.AllowUserToResizeRows = false;
+            this.dgvSendList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvSendList.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvSendList.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.dgvSendList.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dgvSendList.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.dgvSendList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvSendList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colNo,
+            this.colMode,
+            this.colData});
+            this.dgvSendList.Location = new System.Drawing.Point(3, 26);
+            this.dgvSendList.MultiSelect = false;
+            this.dgvSendList.Name = "dgvSendList";
+            this.dgvSendList.ReadOnly = true;
+            this.dgvSendList.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.dgvSendList.RowHeadersVisible = false;
+            this.dgvSendList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.dgvSendList.RowTemplate.Height = 23;
+            this.dgvSendList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvSendList.Size = new System.Drawing.Size(500, 102);
+            this.dgvSendList.TabIndex = 0;
+            // 
+            // colNo
+            // 
+            this.colNo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.colNo.FillWeight = 48.73096F;
+            this.colNo.HeaderText = "序号";
+            this.colNo.Name = "colNo";
+            this.colNo.ReadOnly = true;
+            this.colNo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.colNo.Width = 36;
+            // 
+            // colMode
+            // 
+            this.colMode.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.colMode.FillWeight = 117.0897F;
+            this.colMode.HeaderText = "模式";
+            this.colMode.Name = "colMode";
+            this.colMode.ReadOnly = true;
+            this.colMode.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.colMode.Width = 72;
+            // 
+            // colData
+            // 
+            this.colData.FillWeight = 114.2795F;
+            this.colData.HeaderText = "数据";
+            this.colData.Name = "colData";
+            this.colData.ReadOnly = true;
+            this.colData.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // groupHyperTerminal
             // 
@@ -1060,10 +1332,52 @@
             this.lnkSaveData.Enter += new System.EventHandler(this.lnkSaveData_Enter);
             this.lnkSaveData.MouseEnter += new System.EventHandler(this.lnkSaveData_Enter);
             // 
+            // panelNormalSend
+            // 
+            this.panelNormalSend.Controls.Add(this.txtSend);
+            this.panelNormalSend.Controls.Add(this.chkSendThenClear);
+            this.panelNormalSend.Controls.Add(this.labClearSend);
+            this.panelNormalSend.Controls.Add(this.Label7);
+            this.panelNormalSend.Controls.Add(this.lnkOpen);
+            this.panelNormalSend.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelNormalSend.Location = new System.Drawing.Point(0, 0);
+            this.panelNormalSend.Name = "panelNormalSend";
+            this.panelNormalSend.Size = new System.Drawing.Size(536, 142);
+            this.panelNormalSend.TabIndex = 36;
+            // 
+            // txtSend
+            // 
+            this.txtSend.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSend.Location = new System.Drawing.Point(3, 17);
+            this.txtSend.MaxLength = 0;
+            this.txtSend.Multiline = true;
+            this.txtSend.Name = "txtSend";
+            this.txtSend.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtSend.Size = new System.Drawing.Size(530, 122);
+            this.txtSend.TabIndex = 32;
+            this.txtSend.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSend_KeyDown);
+            this.txtSend.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtSend_MouseDown);
+            this.txtSend.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSend_KeyPress);
+            this.txtSend.MouseEnter += new System.EventHandler(this.txtSend_MouseEnter);
+            // 
+            // chkSendThenClear
+            // 
+            this.chkSendThenClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkSendThenClear.AutoSize = true;
+            this.chkSendThenClear.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkSendThenClear.Location = new System.Drawing.Point(443, 0);
+            this.chkSendThenClear.Name = "chkSendThenClear";
+            this.chkSendThenClear.Size = new System.Drawing.Size(90, 17);
+            this.chkSendThenClear.TabIndex = 8;
+            this.chkSendThenClear.Text = "发送后清除";
+            this.chkSendThenClear.UseVisualStyleBackColor = true;
+            // 
             // labClearSend
             // 
             this.labClearSend.AutoSize = true;
-            this.labClearSend.Location = new System.Drawing.Point(64, 5);
+            this.labClearSend.Location = new System.Drawing.Point(62, 2);
             this.labClearSend.Name = "labClearSend";
             this.labClearSend.Size = new System.Drawing.Size(77, 12);
             this.labClearSend.TabIndex = 35;
@@ -1071,28 +1385,11 @@
             this.labClearSend.Text = " 清空发送区 ";
             this.labClearSend.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labClearSend_LinkClicked);
             // 
-            // txtSend
-            // 
-            this.txtSend.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSend.Location = new System.Drawing.Point(5, 20);
-            this.txtSend.MaxLength = 0;
-            this.txtSend.Multiline = true;
-            this.txtSend.Name = "txtSend";
-            this.txtSend.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtSend.Size = new System.Drawing.Size(528, 116);
-            this.txtSend.TabIndex = 32;
-            this.txtSend.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSend_KeyDown);
-            this.txtSend.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtSend_MouseDown);
-            this.txtSend.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSend_KeyPress);
-            this.txtSend.MouseEnter += new System.EventHandler(this.txtSend_MouseEnter);
-            // 
             // Label7
             // 
             this.Label7.AutoSize = true;
             this.Label7.BackColor = System.Drawing.Color.Transparent;
-            this.Label7.Location = new System.Drawing.Point(5, 5);
+            this.Label7.Location = new System.Drawing.Point(3, 2);
             this.Label7.Name = "Label7";
             this.Label7.Size = new System.Drawing.Size(53, 12);
             this.Label7.TabIndex = 33;
@@ -1103,7 +1400,7 @@
             // 
             this.lnkOpen.AutoSize = true;
             this.lnkOpen.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.lnkOpen.Location = new System.Drawing.Point(163, 5);
+            this.lnkOpen.Location = new System.Drawing.Point(161, 2);
             this.lnkOpen.Name = "lnkOpen";
             this.lnkOpen.Size = new System.Drawing.Size(53, 12);
             this.lnkOpen.TabIndex = 34;
@@ -1111,28 +1408,50 @@
             this.lnkOpen.Text = "打开文件";
             this.lnkOpen.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkOpen_LinkClicked);
             // 
-            // chkSendThenClear
+            // btnSaveSendParam
             // 
-            this.chkSendThenClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkSendThenClear.AutoSize = true;
-            this.chkSendThenClear.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkSendThenClear.Location = new System.Drawing.Point(446, 3);
-            this.chkSendThenClear.Name = "chkSendThenClear";
-            this.chkSendThenClear.Size = new System.Drawing.Size(90, 17);
-            this.chkSendThenClear.TabIndex = 8;
-            this.chkSendThenClear.Text = "发送后清除";
-            this.chkSendThenClear.UseVisualStyleBackColor = true;
+            this.btnSaveSendParam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveSendParam.Location = new System.Drawing.Point(448, 46);
+            this.btnSaveSendParam.Name = "btnSaveSendParam";
+            this.btnSaveSendParam.Size = new System.Drawing.Size(55, 23);
+            this.btnSaveSendParam.TabIndex = 5;
+            this.btnSaveSendParam.Text = "确定";
+            this.btnSaveSendParam.UseVisualStyleBackColor = true;
+            this.btnSaveSendParam.Click += new System.EventHandler(this.btnSaveSendParam_Click);
             // 
-            // chkTimeStamp
+            // btnCancelSaveParam
             // 
-            this.chkTimeStamp.AutoSize = true;
-            this.chkTimeStamp.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkTimeStamp.Location = new System.Drawing.Point(10, 64);
-            this.chkTimeStamp.Name = "chkTimeStamp";
-            this.chkTimeStamp.Size = new System.Drawing.Size(66, 17);
-            this.chkTimeStamp.TabIndex = 26;
-            this.chkTimeStamp.Text = "时间戳";
-            this.chkTimeStamp.UseVisualStyleBackColor = true;
+            this.btnCancelSaveParam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancelSaveParam.Location = new System.Drawing.Point(448, 69);
+            this.btnCancelSaveParam.Name = "btnCancelSaveParam";
+            this.btnCancelSaveParam.Size = new System.Drawing.Size(55, 23);
+            this.btnCancelSaveParam.TabIndex = 5;
+            this.btnCancelSaveParam.Text = "取消";
+            this.btnCancelSaveParam.UseVisualStyleBackColor = true;
+            this.btnCancelSaveParam.Click += new System.EventHandler(this.btnCancelSaveParam_Click);
+            // 
+            // linkLabelClearData
+            // 
+            this.linkLabelClearData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkLabelClearData.AutoSize = true;
+            this.linkLabelClearData.Location = new System.Drawing.Point(389, 36);
+            this.linkLabelClearData.Name = "linkLabelClearData";
+            this.linkLabelClearData.Size = new System.Drawing.Size(53, 12);
+            this.linkLabelClearData.TabIndex = 6;
+            this.linkLabelClearData.TabStop = true;
+            this.linkLabelClearData.Text = "清空数据";
+            this.linkLabelClearData.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelClearData_LinkClicked);
+            // 
+            // chkShowSend
+            // 
+            this.chkShowSend.AutoSize = true;
+            this.chkShowSend.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkShowSend.Location = new System.Drawing.Point(83, 42);
+            this.chkShowSend.Name = "chkShowSend";
+            this.chkShowSend.Size = new System.Drawing.Size(78, 17);
+            this.chkShowSend.TabIndex = 6;
+            this.chkShowSend.Text = "显示发送";
+            this.chkShowSend.UseVisualStyleBackColor = true;
             // 
             // frmMain
             // 
@@ -1174,10 +1493,17 @@
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
             this.splitContainer1.ResumeLayout(false);
+            this.panelSendParam.ResumeLayout(false);
+            this.panelSendParam.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numSendListDelayTime)).EndInit();
+            this.panelSendList.ResumeLayout(false);
+            this.panelSendList.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvSendList)).EndInit();
             this.groupHyperTerminal.ResumeLayout(false);
             this.groupHyperTerminal.PerformLayout();
+            this.panelNormalSend.ResumeLayout(false);
+            this.panelNormalSend.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1276,6 +1602,30 @@
         private System.Windows.Forms.TextBox txtSend;
         internal System.Windows.Forms.CheckBox chkSendThenClear;
         internal System.Windows.Forms.CheckBox chkTimeStamp;
+        private System.Windows.Forms.Panel panelSendList;
+        private System.Windows.Forms.DataGridView dgvSendList;
+        internal System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Panel panelSendParam;
+        private System.Windows.Forms.ComboBox cbSendMode;
+        private System.Windows.Forms.ComboBox cbFormat;
+        private System.Windows.Forms.TextBox txtSendParamData;
+        private System.Windows.Forms.NumericUpDown numSendListDelayTime;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label lbFormat;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Button btnAddSendList;
+        private System.Windows.Forms.Button btnSetdownSendList;
+        private System.Windows.Forms.Button btnSetupSendList;
+        private System.Windows.Forms.Button btnDeleteSendList;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colNo;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colMode;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colData;
+        private System.Windows.Forms.Panel panelNormalSend;
+        private System.Windows.Forms.Button btnCancelSaveParam;
+        private System.Windows.Forms.Button btnSaveSendParam;
+        private System.Windows.Forms.LinkLabel linkLabelClearData;
+        internal System.Windows.Forms.CheckBox chkShowSend;
 
     }
 }
