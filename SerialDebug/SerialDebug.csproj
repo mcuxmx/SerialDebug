@@ -45,17 +45,28 @@
     </Compile>
     <Compile Include="CSendParam.cs" />
     <Compile Include="CSerialDebug.cs" />
+    <Compile Include="FormNormalSend.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormNormalSend.Designer.cs">
+      <DependentUpon>FormNormalSend.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmSerialDebug.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmSerialDebug.Designer.cs">
       <DependentUpon>frmSerialDebug.cs</DependentUpon>
     </Compile>
+    <Compile Include="ISendForm.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AboutBox.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormNormalSend.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FormNormalSend.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmSerialDebug.resx">
       <SubType>Designer</SubType>
@@ -64,6 +75,14 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormQueueSend.resx">
+      <DependentUpon>FormQueueSend.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormFileSend.resx">
+      <DependentUpon>FormFileSend.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -79,6 +98,18 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="FormQueueSend.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormQueueSend.Designer.cs">
+      <DependentUpon>FormQueueSend.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormFileSend.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormFileSend.Designer.cs">
+      <DependentUpon>FormFileSend.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

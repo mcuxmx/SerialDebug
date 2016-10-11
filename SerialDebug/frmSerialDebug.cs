@@ -19,6 +19,10 @@ namespace SerialDebug
 
         CSerialDebug sp = new CSerialDebug();
 
+        FormQueueSend frmQSend;
+
+
+
         private UInt64 RxCounter = 0;
         private UInt64 TxCounter = 0;
         private List<byte[]> reBytesList = new List<byte[]>();
@@ -34,6 +38,8 @@ namespace SerialDebug
 
         private delegate void SetLableTextDel(Label lab, string Text);
         SetLableTextDel SetLableText;
+
+        private double splitPercent = 0.0f;
 
         private bool IsAutoSend = false;    // 自动发送
         bool HyperTerminalMode = false;      // 超级终端模式
@@ -130,16 +136,43 @@ namespace SerialDebug
             SetLableText = new SetLableTextDel(setLableText);
             cbHTEOFChars.SelectedIndex = 0;
 
-            panelSendList.Parent = splitContainer1.Panel2;
-            panelSendList.Top = panelNormalSend.Top;
-            panelSendList.Left = panelNormalSend.Left;
-            panelSendList.Width = panelNormalSend.Width;
-            panelSendList.Height = panelNormalSend.Height;
+            //panelSendList.Parent = splitContainer1.Panel2;
+            //panelSendList.Top = panelNormalSend.Top;
+            //panelSendList.Left = panelNormalSend.Left;
+            //panelSendList.Width = panelNormalSend.Width;
+            //panelSendList.Height = panelNormalSend.Height;
+            //panelNormalSend.Visible = false;
+
+            ////panelSendList.Visible = false;
+            ////panelNormalSend.Visible = true;
+
             panelNormalSend.Visible = false;
 
-            //panelSendList.Visible = false;
-            //panelNormalSend.Visible = true;
 
+            frmQSend = new FormQueueSend();
+            frmQSend.ParamSetOpend += new EventHandler(frmQSend_ParamSetOpend);
+            frmQSend.ParamSetClosed += new EventHandler(frmQSend_ParamSetClosed);
+            frmQSend.Dock = DockStyle.Fill;
+            frmQSend.FormBorderStyle = FormBorderStyle.None;
+            frmQSend.TopLevel = false;
+            frmQSend.Parent = splitContainer1.Panel2;
+            frmQSend.Show();
+
+
+            splitPercent = (double)splitContainer1.SplitterDistance / splitContainer1.Height;
+
+        }
+
+        void frmQSend_ParamSetClosed(object sender, EventArgs e)
+        {
+            splitContainer1.SplitterDistance += frmQSend.ParamSetHeight;
+
+           // splitContainer1.SplitterDistance = Convert.ToInt32(splitPercent * splitContainer1.Height);
+        }
+
+        void frmQSend_ParamSetOpend(object sender, EventArgs e)
+        {
+            splitContainer1.SplitterDistance -= frmQSend.ParamSetHeight;
         }
 
 
@@ -1209,18 +1242,25 @@ namespace SerialDebug
                     return;
                 }
 
-                List<CSendParam> list = new List<CSendParam>();
-                foreach (DataGridViewRow row in dgvSendList.Rows)
-                {
-                    string[] paramsArray = row.Cells[1].Value.ToString().Split(new char[] { ':' });
-                    CSendParam sendParam = new CSendParam(
-                        (SendParamFormat)Convert.ToInt32(paramsArray[0]),
-                        (SendParamMode)Convert.ToInt32(paramsArray[1]),
-                        Convert.ToInt32(paramsArray[2]),
-                        row.Cells[2].Value.ToString());
-                    list.Add(sendParam);
-                }
-                sp.Send(list);
+                ISendForm o = (ISendForm)frmQSend;
+
+                List<CSendParam> list = o.getSendList();
+
+                sp.Send(list, o.LoopCount);
+
+
+                //List<CSendParam> list = new List<CSendParam>();
+                //foreach (DataGridViewRow row in dgvSendList.Rows)
+                //{
+                //    string[] paramsArray = row.Cells[1].Value.ToString().Split(new char[] { ':' });
+                //    CSendParam sendParam = new CSendParam(
+                //        (SendParamFormat)Convert.ToInt32(paramsArray[0]),
+                //        (SendParamMode)Convert.ToInt32(paramsArray[1]),
+                //        Convert.ToInt32(paramsArray[2]),
+                //        row.Cells[2].Value.ToString());
+                //    list.Add(sendParam);
+                //}
+                //sp.Send(list);
 
                 //if (txtSend.Text == "")
                 //{
@@ -1932,215 +1972,6 @@ namespace SerialDebug
 
         #endregion
 
-        private void btnAddSendList_Click(object sender, EventArgs e)
-        {
-            if (panelSendParam.Visible == false)
-            {
-                panelSendParam.Left = panelSendList.Left;
-                panelSendParam.Width = panelSendList.Width;
-                panelSendParam.Top = splitContainer1.Panel1.Top + splitContainer1.Panel1.Height - panelSendParam.Height;
-
-                if (cbFormat.SelectedIndex == -1)
-                {
-                    cbFormat.SelectedIndex = 0;
-                }
-
-                if (cbSendMode.SelectedIndex == -1)
-                {
-                    cbSendMode.SelectedIndex = 0;
-                }
-
-
-
-                panelSendParam.Visible = true;
-
-
-                btnAddSendList.Image = Properties.Resources.round_minus;
-                //btnAddSendList.Enabled = false;
-                btnDeleteSendList.Enabled = false;
-                btnSetupSendList.Enabled = false;
-                btnSetdownSendList.Enabled = false;
-            }
-            else
-            {
-                panelSendParam.Visible = false;
-
-
-                btnAddSendList.Image = Properties.Resources.round_plus;
-                //btnAddSendList.Enabled = false;
-                btnDeleteSendList.Enabled = true;
-                btnSetupSendList.Enabled = true;
-                btnSetdownSendList.Enabled = true;
-            }
-
-        }
-
-        /// <summary>
-        /// 退出保存
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnCancelSaveParam_Click(object sender, EventArgs e)
-        {
-            cbFormat.SelectedIndex = 0;
-            cbSendMode.SelectedIndex = 0;
-            numSendListDelayTime.Value = 0;
-            txtSendParamData.Clear();
-            panelSendParam.Visible = false;
-
-            btnAddSendList.Image = Properties.Resources.round_plus;
-
-            btnAddSendList.Enabled = true;
-            btnDeleteSendList.Enabled = true;
-            btnSetupSendList.Enabled = true;
-            btnSetdownSendList.Enabled = true;
-
-        }
-
-        /// <summary>
-        /// 保存发送参数
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnSaveSendParam_Click(object sender, EventArgs e)
-        {
-
-            if (txtSendParamData.Text == string.Empty)
-            {
-                MessageBox.Show("发送数据不能为空", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
-
-            try
-            {
-
-                CSendParam param = new CSendParam((SendParamFormat)cbFormat.SelectedIndex,
-                (SendParamMode)cbSendMode.SelectedIndex,
-                Convert.ToInt32(numSendListDelayTime.Value),
-                txtSendParamData.Text);
-
-                object[] array = new object[3];
-                array[0] = dgvSendList.Rows.Count;
-                array[1] = param.ParameterString;
-                array[2] = param.Data;
-                dgvSendList.Rows.Add(array);
-
-                btnCancelSaveParam.PerformClick();
-
-            }
-            catch (System.Exception ex)
-            {
-                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-
-
-
-
-
-
-
-            //btnAddSendList.Enabled = true;
-            //btnDeleteSendList.Enabled = true;
-            //btnSetupSendList.Enabled = true;
-            //btnSetdownSendList.Enabled = true;
-
-            //panelSendParam.Visible = false;
-            //btnAddSendList.Image = Properties.Resources.round_plus;
-
-        }
-
-        /// <summary>
-        /// 删除发送项
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnDeleteSendList_Click(object sender, EventArgs e)
-        {
-
-            if (dgvSendList.SelectedRows == null)
-            {
-                return;
-            }
-
-            if (dgvSendList.SelectedRows.Count <= 0)
-            {
-                return;
-            }
-            DataGridViewRow selectedRow = dgvSendList.SelectedRows[0];
-
-
-            int rowNo = Convert.ToInt32(selectedRow.Cells[0].Value);
-            dgvSendList.Rows.RemoveAt(selectedRow.Index);
-            while (rowNo < dgvSendList.Rows.Count)
-            {
-                dgvSendList.Rows[rowNo].Cells[0].Value = rowNo;
-                rowNo++;
-            }
-
-        }
-
-        /// <summary>
-        /// 发送项上移
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnSetupSendList_Click(object sender, EventArgs e)
-        {
-            if (dgvSendList.SelectedRows == null)
-            {
-                return;
-            }
-            DataGridViewRow selectedRow = dgvSendList.SelectedRows[0];
-
-            if (selectedRow.Index > 0)
-            {
-                DataGridViewRow row = dgvSendList.Rows[selectedRow.Index - 1];
-                for (int i = 1; i < dgvSendList.Columns.Count; i++)
-                {
-                    object value = selectedRow.Cells[i].Value;
-                    selectedRow.Cells[i].Value = row.Cells[i].Value;
-                    row.Cells[i].Value = value;
-
-                }
-
-                row.Selected = true;
-            }
-
-        }
-
-        /// <summary>
-        /// 发送项下移
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnSetdownSendList_Click(object sender, EventArgs e)
-        {
-            if (dgvSendList.SelectedRows == null)
-            {
-                return;
-            }
-            DataGridViewRow selectedRow = dgvSendList.SelectedRows[0];
-
-            if (selectedRow.Index < dgvSendList.Rows.Count - 1)
-            {
-                DataGridViewRow row = dgvSendList.Rows[selectedRow.Index + 1];
-                for (int i = 1; i < dgvSendList.Columns.Count; i++)
-                {
-                    object value = selectedRow.Cells[i].Value;
-                    selectedRow.Cells[i].Value = row.Cells[i].Value;
-                    row.Cells[i].Value = value;
-
-                }
-
-                row.Selected = true;
-            }
-        }
-
-        private void linkLabelClearData_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            txtSendParamData.Clear();
-        }
 
 
         /// <summary>
