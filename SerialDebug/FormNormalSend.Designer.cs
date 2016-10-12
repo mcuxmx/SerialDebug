@@ -30,27 +30,27 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panelNormalSend = new System.Windows.Forms.Panel();
+            this.numSendCount = new System.Windows.Forms.NumericUpDown();
+            this.chkAutoSend = new System.Windows.Forms.CheckBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.numSendInterval = new System.Windows.Forms.NumericUpDown();
+            this.label10 = new System.Windows.Forms.Label();
+            this.Label9 = new System.Windows.Forms.Label();
+            this.numSendOnceBytes = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.chkFormat = new System.Windows.Forms.CheckBox();
+            this.chkSendHex = new System.Windows.Forms.CheckBox();
             this.txtSend = new System.Windows.Forms.TextBox();
             this.chkSendThenClear = new System.Windows.Forms.CheckBox();
             this.labClearSend = new System.Windows.Forms.LinkLabel();
             this.Label7 = new System.Windows.Forms.Label();
             this.lnkOpen = new System.Windows.Forms.LinkLabel();
-            this.chkSendHex = new System.Windows.Forms.CheckBox();
-            this.chkFormat = new System.Windows.Forms.CheckBox();
-            this.numSendOnceBytes = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.numSendInterval = new System.Windows.Forms.NumericUpDown();
-            this.label10 = new System.Windows.Forms.Label();
-            this.Label9 = new System.Windows.Forms.Label();
-            this.numSendCount = new System.Windows.Forms.NumericUpDown();
-            this.chkAutoSend = new System.Windows.Forms.CheckBox();
-            this.label11 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panelNormalSend.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numSendOnceBytes)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numSendInterval)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSendCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numSendInterval)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numSendOnceBytes)).BeginInit();
             this.SuspendLayout();
             // 
             // panelNormalSend
@@ -77,6 +77,148 @@
             this.panelNormalSend.Size = new System.Drawing.Size(536, 142);
             this.panelNormalSend.TabIndex = 37;
             // 
+            // numSendCount
+            // 
+            this.numSendCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.numSendCount.Location = new System.Drawing.Point(89, 118);
+            this.numSendCount.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.numSendCount.Name = "numSendCount";
+            this.numSendCount.Size = new System.Drawing.Size(48, 21);
+            this.numSendCount.TabIndex = 46;
+            // 
+            // chkAutoSend
+            // 
+            this.chkAutoSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkAutoSend.AutoSize = true;
+            this.chkAutoSend.BackColor = System.Drawing.SystemColors.Control;
+            this.chkAutoSend.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkAutoSend.Location = new System.Drawing.Point(15, 120);
+            this.chkAutoSend.Name = "chkAutoSend";
+            this.chkAutoSend.Size = new System.Drawing.Size(90, 17);
+            this.chkAutoSend.TabIndex = 44;
+            this.chkAutoSend.Text = "循环发送：";
+            this.chkAutoSend.UseVisualStyleBackColor = false;
+            // 
+            // label11
+            // 
+            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label11.AutoSize = true;
+            this.label11.BackColor = System.Drawing.Color.Transparent;
+            this.label11.Location = new System.Drawing.Point(137, 122);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(17, 12);
+            this.label11.TabIndex = 45;
+            this.label11.Text = "次";
+            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // numSendInterval
+            // 
+            this.numSendInterval.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.numSendInterval.Location = new System.Drawing.Point(420, 118);
+            this.numSendInterval.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.numSendInterval.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numSendInterval.Name = "numSendInterval";
+            this.numSendInterval.Size = new System.Drawing.Size(48, 21);
+            this.numSendInterval.TabIndex = 43;
+            this.numSendInterval.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            // 
+            // label10
+            // 
+            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(359, 122);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(65, 12);
+            this.label10.TabIndex = 42;
+            this.label10.Text = "发送间隔：";
+            // 
+            // Label9
+            // 
+            this.Label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.Label9.AutoSize = true;
+            this.Label9.BackColor = System.Drawing.Color.Transparent;
+            this.Label9.Location = new System.Drawing.Point(468, 122);
+            this.Label9.Name = "Label9";
+            this.Label9.Size = new System.Drawing.Size(29, 12);
+            this.Label9.TabIndex = 41;
+            this.Label9.Text = "毫秒";
+            this.Label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // numSendOnceBytes
+            // 
+            this.numSendOnceBytes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.numSendOnceBytes.Location = new System.Drawing.Point(261, 118);
+            this.numSendOnceBytes.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.numSendOnceBytes.Name = "numSendOnceBytes";
+            this.numSendOnceBytes.Size = new System.Drawing.Size(48, 21);
+            this.numSendOnceBytes.TabIndex = 40;
+            this.toolTip1.SetToolTip(this.numSendOnceBytes, "0表示不分包");
+            // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(173, 122);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(89, 12);
+            this.label6.TabIndex = 39;
+            this.label6.Text = "分包发送：每包";
+            // 
+            // label12
+            // 
+            this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label12.AutoSize = true;
+            this.label12.BackColor = System.Drawing.Color.Transparent;
+            this.label12.Location = new System.Drawing.Point(309, 122);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(29, 12);
+            this.label12.TabIndex = 38;
+            this.label12.Text = "字节";
+            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // chkFormat
+            // 
+            this.chkFormat.AutoSize = true;
+            this.chkFormat.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkFormat.Location = new System.Drawing.Point(329, 2);
+            this.chkFormat.Name = "chkFormat";
+            this.chkFormat.Size = new System.Drawing.Size(108, 17);
+            this.chkFormat.TabIndex = 37;
+            this.chkFormat.Text = "HEX格式化显示";
+            this.chkFormat.UseVisualStyleBackColor = true;
+            this.chkFormat.CheckedChanged += new System.EventHandler(this.chkFormat_CheckedChanged);
+            // 
+            // chkSendHex
+            // 
+            this.chkSendHex.AutoSize = true;
+            this.chkSendHex.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkSendHex.Location = new System.Drawing.Point(254, 2);
+            this.chkSendHex.Name = "chkSendHex";
+            this.chkSendHex.Size = new System.Drawing.Size(72, 17);
+            this.chkSendHex.TabIndex = 36;
+            this.chkSendHex.Text = "HEX发送";
+            this.chkSendHex.UseVisualStyleBackColor = true;
+            // 
             // txtSend
             // 
             this.txtSend.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -89,10 +231,11 @@
             this.txtSend.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtSend.Size = new System.Drawing.Size(530, 97);
             this.txtSend.TabIndex = 32;
+            this.txtSend.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSend_KeyDown);
+            this.txtSend.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSend_KeyPress);
             // 
             // chkSendThenClear
             // 
-            this.chkSendThenClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkSendThenClear.AutoSize = true;
             this.chkSendThenClear.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.chkSendThenClear.Location = new System.Drawing.Point(440, 2);
@@ -134,138 +277,6 @@
             this.lnkOpen.TabStop = true;
             this.lnkOpen.Text = "加载文件";
             // 
-            // chkSendHex
-            // 
-            this.chkSendHex.AutoSize = true;
-            this.chkSendHex.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkSendHex.Location = new System.Drawing.Point(254, 2);
-            this.chkSendHex.Name = "chkSendHex";
-            this.chkSendHex.Size = new System.Drawing.Size(72, 17);
-            this.chkSendHex.TabIndex = 36;
-            this.chkSendHex.Text = "HEX发送";
-            this.chkSendHex.UseVisualStyleBackColor = true;
-            // 
-            // chkFormat
-            // 
-            this.chkFormat.AutoSize = true;
-            this.chkFormat.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkFormat.Location = new System.Drawing.Point(329, 2);
-            this.chkFormat.Name = "chkFormat";
-            this.chkFormat.Size = new System.Drawing.Size(108, 17);
-            this.chkFormat.TabIndex = 37;
-            this.chkFormat.Text = "HEX格式化显示";
-            this.chkFormat.UseVisualStyleBackColor = true;
-            // 
-            // numSendOnceBytes
-            // 
-            this.numSendOnceBytes.Location = new System.Drawing.Point(261, 118);
-            this.numSendOnceBytes.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numSendOnceBytes.Name = "numSendOnceBytes";
-            this.numSendOnceBytes.Size = new System.Drawing.Size(48, 21);
-            this.numSendOnceBytes.TabIndex = 40;
-            this.toolTip1.SetToolTip(this.numSendOnceBytes, "0表示不分包");
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(173, 122);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(89, 12);
-            this.label6.TabIndex = 39;
-            this.label6.Text = "分包发送：每包";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.BackColor = System.Drawing.Color.Transparent;
-            this.label12.Location = new System.Drawing.Point(309, 122);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(29, 12);
-            this.label12.TabIndex = 38;
-            this.label12.Text = "字节";
-            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // numSendInterval
-            // 
-            this.numSendInterval.Location = new System.Drawing.Point(420, 118);
-            this.numSendInterval.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numSendInterval.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numSendInterval.Name = "numSendInterval";
-            this.numSendInterval.Size = new System.Drawing.Size(48, 21);
-            this.numSendInterval.TabIndex = 43;
-            this.numSendInterval.Value = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(359, 122);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(65, 12);
-            this.label10.TabIndex = 42;
-            this.label10.Text = "发送间隔：";
-            // 
-            // Label9
-            // 
-            this.Label9.AutoSize = true;
-            this.Label9.BackColor = System.Drawing.Color.Transparent;
-            this.Label9.Location = new System.Drawing.Point(468, 122);
-            this.Label9.Name = "Label9";
-            this.Label9.Size = new System.Drawing.Size(29, 12);
-            this.Label9.TabIndex = 41;
-            this.Label9.Text = "毫秒";
-            this.Label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // numSendCount
-            // 
-            this.numSendCount.Location = new System.Drawing.Point(89, 118);
-            this.numSendCount.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numSendCount.Name = "numSendCount";
-            this.numSendCount.Size = new System.Drawing.Size(48, 21);
-            this.numSendCount.TabIndex = 46;
-            // 
-            // chkAutoSend
-            // 
-            this.chkAutoSend.AutoSize = true;
-            this.chkAutoSend.BackColor = System.Drawing.SystemColors.Control;
-            this.chkAutoSend.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkAutoSend.Location = new System.Drawing.Point(15, 120);
-            this.chkAutoSend.Name = "chkAutoSend";
-            this.chkAutoSend.Size = new System.Drawing.Size(90, 17);
-            this.chkAutoSend.TabIndex = 44;
-            this.chkAutoSend.Text = "循环发送：";
-            this.chkAutoSend.UseVisualStyleBackColor = false;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.BackColor = System.Drawing.Color.Transparent;
-            this.label11.Location = new System.Drawing.Point(137, 122);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(17, 12);
-            this.label11.TabIndex = 45;
-            this.label11.Text = "次";
-            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // FormNormalSend
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -277,9 +288,9 @@
             this.Text = "FormNormalSend";
             this.panelNormalSend.ResumeLayout(false);
             this.panelNormalSend.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numSendOnceBytes)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numSendInterval)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSendCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numSendInterval)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numSendOnceBytes)).EndInit();
             this.ResumeLayout(false);
 
         }

@@ -19,8 +19,17 @@ namespace SerialDebug
 
         CSerialDebug sp = new CSerialDebug();
 
-        FormQueueSend frmQSend;
 
+        enum SendModeType
+        {
+            Normal,
+            Queue,
+            File,
+        }
+        FormQueueSend frmQSend;
+        FormNormalSend frmNormalSend;
+        FormFileSend frmFileSend;
+        SendModeType sendModeType = SendModeType.Normal;
 
 
         private UInt64 RxCounter = 0;
@@ -149,6 +158,14 @@ namespace SerialDebug
             panelNormalSend.Visible = false;
 
 
+            frmNormalSend = new FormNormalSend();
+            frmNormalSend.Dock = DockStyle.Fill;
+            frmNormalSend.FormBorderStyle = FormBorderStyle.None;
+            frmNormalSend.TopLevel = false;
+            frmNormalSend.Parent = splitContainer1.Panel2;
+            frmNormalSend.Show();
+
+
             frmQSend = new FormQueueSend();
             frmQSend.ParamSetOpend += new EventHandler(frmQSend_ParamSetOpend);
             frmQSend.ParamSetClosed += new EventHandler(frmQSend_ParamSetClosed);
@@ -156,8 +173,18 @@ namespace SerialDebug
             frmQSend.FormBorderStyle = FormBorderStyle.None;
             frmQSend.TopLevel = false;
             frmQSend.Parent = splitContainer1.Panel2;
-            frmQSend.Show();
+            //frmQSend.Show();
 
+
+            frmFileSend = new FormFileSend();
+            frmFileSend.Dock = DockStyle.Fill;
+            frmFileSend.FormBorderStyle = FormBorderStyle.None;
+            frmFileSend.TopLevel = false;
+            frmFileSend.Parent = splitContainer1.Panel2;
+            //frmFileSend.Show();
+
+            radSendModeNormal.Checked = true;
+            setSendMode(SendModeType.Normal);
 
             splitPercent = (double)splitContainer1.SplitterDistance / splitContainer1.Height;
 
@@ -167,7 +194,7 @@ namespace SerialDebug
         {
             splitContainer1.SplitterDistance += frmQSend.ParamSetHeight;
 
-           // splitContainer1.SplitterDistance = Convert.ToInt32(splitPercent * splitContainer1.Height);
+            // splitContainer1.SplitterDistance = Convert.ToInt32(splitPercent * splitContainer1.Height);
         }
 
         void frmQSend_ParamSetOpend(object sender, EventArgs e)
@@ -241,10 +268,13 @@ namespace SerialDebug
                 }
                 else
                 {
-                    serialPort.Close();
-                    sp.SendCompletedEvent -= new CSerialDebug.SendCompletedEventHandler(sp_SendCompletedEvent);
-                    sp.Stop();
 
+
+                    sp.Stop();
+                    sp.SendCompletedEvent -= new CSerialDebug.SendCompletedEventHandler(sp_SendCompletedEvent);
+
+
+                    serialPort.Close();
                 }
             }
             catch (IOException ex)
@@ -270,6 +300,7 @@ namespace SerialDebug
                     btnPortOpt.Text = "打开串口";
                     cbComName.Enabled = true;
                     UpdatalabText();
+                    SetSendEnable(false);
                 }
             }
         }
@@ -1242,11 +1273,22 @@ namespace SerialDebug
                     return;
                 }
 
-                ISendForm o = (ISendForm)frmQSend;
 
-                List<CSendParam> list = o.getSendList();
+                ISendForm sendForm = (ISendForm)frmNormalSend;
+                switch (sendModeType)
+                {
+                    case SendModeType.Normal:
+                        sendForm = (ISendForm)frmNormalSend;
+                        break;
+                    case SendModeType.Queue:
+                        sendForm = (ISendForm)frmQSend;
+                        break;
+                    case SendModeType.File:
 
-                sp.Send(list, o.LoopCount);
+                        break;
+                }
+                List<CSendParam> list = sendForm.getSendList();
+                sp.Send(list, sendForm.LoopCount);
 
 
                 //List<CSendParam> list = new List<CSendParam>();
@@ -1280,6 +1322,8 @@ namespace SerialDebug
             }
             else
             {
+                sp.StopSend();
+
                 //mySendThread.Abort();
                 SerialSendAbort = true;
                 SetSendEnable(false);
@@ -1287,15 +1331,6 @@ namespace SerialDebug
             }
         }
 
-        /// <summary>
-        /// 自动发送
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void chkAutoSend_CheckedChanged(object sender, EventArgs e)
-        {
-            IsAutoSend = chkAutoSend.Checked;
-        }
 
         /// <summary>
         /// 设置发送使能。
@@ -1314,209 +1349,209 @@ namespace SerialDebug
 
             if (IsEnable == true)
             {
-                chkSendHex.Enabled = false;
-                chkAutoSend.Enabled = false;
-                numSendCount.Enabled = false;
-                numSendInterval.Enabled = false;
-                numSendOnceBytes.Enabled = false;
+                //chkSendHex.Enabled = false;
+                //chkAutoSend.Enabled = false;
+                //numSendCount.Enabled = false;
+                //numSendInterval.Enabled = false;
+                //numSendOnceBytes.Enabled = false;
                 btnSend.Text = "停止发送";
             }
             else
             {
-                chkSendHex.Enabled = true;
-                chkAutoSend.Enabled = true;
-                numSendCount.Enabled = true;
-                numSendInterval.Enabled = true;
-                numSendOnceBytes.Enabled = true;
+                //chkSendHex.Enabled = true;
+                //chkAutoSend.Enabled = true;
+                //numSendCount.Enabled = true;
+                //numSendInterval.Enabled = true;
+                //numSendOnceBytes.Enabled = true;
                 btnSend.Text = "开始发送";
             }
 
         }
 
-        /// <summary>
-        /// 发送一次数据。
-        /// </summary>
-        /// <param name="sendBuff"></param>
-        private void SendOnce(byte[] sendBuff)
-        {
-            if (Convert.ToUInt64(numSendOnceBytes.Value) == 0)        // 一次发送所有字节
-            {
-                TxCounter += (UInt64)sendBuff.Length;
-                setLableText(labTx, string.Format("TX:{0}", TxCounter));
+        ///// <summary>
+        ///// 发送一次数据。
+        ///// </summary>
+        ///// <param name="sendBuff"></param>
+        //private void SendOnce(byte[] sendBuff)
+        //{
+        //    if (Convert.ToUInt64(numSendOnceBytes.Value) == 0)        // 一次发送所有字节
+        //    {
+        //        TxCounter += (UInt64)sendBuff.Length;
+        //        setLableText(labTx, string.Format("TX:{0}", TxCounter));
 
-                serialPort.Write(sendBuff, 0, sendBuff.Length);
-            }
-            else
-            {
-                /*分多次发送文本框数据*/
+        //        serialPort.Write(sendBuff, 0, sendBuff.Length);
+        //    }
+        //    else
+        //    {
+        //        /*分多次发送文本框数据*/
 
-                int AlreadySendIndex = 0;                                               // 已经发送的字节数
-                int BytesToSendPerOnce = Convert.ToInt32(numSendOnceBytes.Value);       // 每次发送的字节数
-                int SendInterval = Convert.ToInt32(numSendInterval.Value);              // 发送间隔
-                while (AlreadySendIndex < sendBuff.Length)
-                {
-                    if ((AlreadySendIndex + BytesToSendPerOnce) < sendBuff.Length)      // 当未到最后一串数据
-                    {
-                        TxCounter += (UInt64)BytesToSendPerOnce;
-                        setLableText(labTx, string.Format("TX:{0}", TxCounter));
+        //        int AlreadySendIndex = 0;                                               // 已经发送的字节数
+        //        int BytesToSendPerOnce = Convert.ToInt32(numSendOnceBytes.Value);       // 每次发送的字节数
+        //        int SendInterval = Convert.ToInt32(numSendInterval.Value);              // 发送间隔
+        //        while (AlreadySendIndex < sendBuff.Length)
+        //        {
+        //            if ((AlreadySendIndex + BytesToSendPerOnce) < sendBuff.Length)      // 当未到最后一串数据
+        //            {
+        //                TxCounter += (UInt64)BytesToSendPerOnce;
+        //                setLableText(labTx, string.Format("TX:{0}", TxCounter));
 
-                        serialPort.Write(sendBuff, AlreadySendIndex, BytesToSendPerOnce);
-                        AlreadySendIndex += BytesToSendPerOnce;
-                        Thread.Sleep(SendInterval);
-                    }
-                    else
-                    {
-                        int cnt = sendBuff.Length - AlreadySendIndex;
+        //                serialPort.Write(sendBuff, AlreadySendIndex, BytesToSendPerOnce);
+        //                AlreadySendIndex += BytesToSendPerOnce;
+        //                Thread.Sleep(SendInterval);
+        //            }
+        //            else
+        //            {
+        //                int cnt = sendBuff.Length - AlreadySendIndex;
 
-                        TxCounter += (UInt64)cnt;
-                        setLableText(labTx, string.Format("TX:{0}", TxCounter));
+        //                TxCounter += (UInt64)cnt;
+        //                setLableText(labTx, string.Format("TX:{0}", TxCounter));
 
-                        serialPort.Write(sendBuff, AlreadySendIndex, cnt);
-                        AlreadySendIndex += cnt;
-                    }
-
-
-
-                }
-            }
-        }
-
-        /// <summary>
-        /// 发送数据线程。
-        /// </summary>
-        private void SendThreadHandle()
-        {
-            SerialSendAbort = false;
-            string sendText;
-            byte[] sendBuff;
-            try
-            {
-
-                sendText = txtSend.Text;
-
-                if (IsSendByKey)
-                {
-                    //if (sendText.EndsWith(Environment.NewLine))
-                    //{
-                    //    sendText = sendText.Substring(0, sendText.Length - Environment.NewLine.Length);
-                    //    txtSendUpdate(sendText);
-                    //}
-                    IsSendByKey = false;
-                }
-
-                if (chkSendHex.Checked)
-                {
-                    #region V3.1以前
-                    //string[] strArray = txtSend.Text.TrimEnd().Replace(Environment.NewLine, " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    #endregion
+        //                serialPort.Write(sendBuff, AlreadySendIndex, cnt);
+        //                AlreadySendIndex += cnt;
+        //            }
 
 
-                    //string inputText = Regex.Replace(txtSend.Text, @"(?<=[0-9A-F]{2})[0-9A-F]{2}", " $0");
-                    string inputText = Regex.Replace(sendText, @"[0-9A-Fa-f]{2}", "$0 ");
-                    string[] strArray = inputText.Split(new string[] { ",", " ", "0x", ",0X", "，", "(", ")" }, StringSplitOptions.RemoveEmptyEntries);
 
-                    if (chkFormat.Checked)
-                    {
-                        StringBuilder sbOut = new StringBuilder();
-                        foreach (string s in strArray)
-                        {
-                            sbOut.AppendFormat("{0:X2} ", Convert.ToByte(s, 16));
-                        }
-                        txtSendUpdate(sbOut.ToString().TrimEnd(' '));
-                    }
+        //        }
+        //    }
+        //}
 
-                    sendBuff = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(HexStringToByte));
-                }
-                else
-                {
-                    sendBuff = System.Text.ASCIIEncoding.Default.GetBytes(txtSend.Text);
-                }
+        ///// <summary>
+        ///// 发送数据线程。
+        ///// </summary>
+        //private void SendThreadHandle()
+        //{
+        //    SerialSendAbort = false;
+        //    string sendText;
+        //    byte[] sendBuff;
+        //    try
+        //    {
 
-                lock (SendTempList)
-                {
-                    SendTempList.Add(sendText);
-                    if (chkSendThenClear.Checked)
-                    {
-                        SendTempIndex = SendTempList.Count;
-                        txtSendUpdate("");
-                    }
-                    else
-                    {
-                        SendTempIndex = SendTempList.Count - 1;
-                    }
-                }
-                int sendLen = sendBuff.Length;
+        //        sendText = txtSend.Text;
 
-            }
-            catch (Exception ex)
-            {
+        //        if (IsSendByKey)
+        //        {
+        //            //if (sendText.EndsWith(Environment.NewLine))
+        //            //{
+        //            //    sendText = sendText.Substring(0, sendText.Length - Environment.NewLine.Length);
+        //            //    txtSendUpdate(sendText);
+        //            //}
+        //            IsSendByKey = false;
+        //        }
 
-                SetSendEnable(false);
-                MessageBox.Show(ex.Message, "发送数据", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //if (mySendThread.ThreadState != System.Threading.ThreadState.Aborted)
-                //{
-                //    mySendThread.Abort();
-                //}
-                SerialSendAbort = true;
-                return;
-            }
-
-            while (SerialSendAbort == false)
-            {
-                try
-                {
-                    if (IsAutoSend)        // 自动发送
-                    {
-                        int reSendCnt = Convert.ToInt32(numSendCount.Value);
-                        int sleepTime = Convert.ToInt32(numSendInterval.Value);
-                        if (reSendCnt == 0)
-                        {
-                            while (SerialSendAbort == false)
-                            {
-                                SendOnce(sendBuff);
-                                Thread.Sleep(sleepTime);
-                            }
-                        }
-                        else
-                        {
-                            while (reSendCnt > 0)
-                            {
-                                SendOnce(sendBuff);
-                                reSendCnt--;
-                                if (reSendCnt > 0)
-                                {
-                                    Thread.Sleep(sleepTime);
-                                }
-                            }
-                            SetSendEnable(false);
-                            //mySendThread.Abort();
-                            SerialSendAbort = true;
-                            return;
-                        }
-                    }
-                    else//手动发送
-                    {
-                        SendOnce(sendBuff);
-                        SetSendEnable(false);
-                        //mySendThread.Abort();
-                        return;
-                    }
+        //        if (chkSendHex.Checked)
+        //        {
+        //            #region V3.1以前
+        //            //string[] strArray = txtSend.Text.TrimEnd().Replace(Environment.NewLine, " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        //            #endregion
 
 
-                }
-                catch (Exception ex)
-                {
-                    SetSendEnable(false);
-                    //MessageBox.Show(ex.Message, "发送数据", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Console.WriteLine("发送线程出错：" + ex.Message);
-                    if (mySendThread.ThreadState != System.Threading.ThreadState.Aborted)
-                    {
-                        mySendThread.Abort();
-                    }
-                    return;
-                }
-            }
-        }
+        //            //string inputText = Regex.Replace(txtSend.Text, @"(?<=[0-9A-F]{2})[0-9A-F]{2}", " $0");
+        //            string inputText = Regex.Replace(sendText, @"[0-9A-Fa-f]{2}", "$0 ");
+        //            string[] strArray = inputText.Split(new string[] { ",", " ", "0x", ",0X", "，", "(", ")" }, StringSplitOptions.RemoveEmptyEntries);
+
+        //            if (chkFormat.Checked)
+        //            {
+        //                StringBuilder sbOut = new StringBuilder();
+        //                foreach (string s in strArray)
+        //                {
+        //                    sbOut.AppendFormat("{0:X2} ", Convert.ToByte(s, 16));
+        //                }
+        //                txtSendUpdate(sbOut.ToString().TrimEnd(' '));
+        //            }
+
+        //            sendBuff = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(HexStringToByte));
+        //        }
+        //        else
+        //        {
+        //            sendBuff = System.Text.ASCIIEncoding.Default.GetBytes(txtSend.Text);
+        //        }
+
+        //        lock (SendTempList)
+        //        {
+        //            SendTempList.Add(sendText);
+        //            if (chkSendThenClear.Checked)
+        //            {
+        //                SendTempIndex = SendTempList.Count;
+        //                txtSendUpdate("");
+        //            }
+        //            else
+        //            {
+        //                SendTempIndex = SendTempList.Count - 1;
+        //            }
+        //        }
+        //        int sendLen = sendBuff.Length;
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        SetSendEnable(false);
+        //        MessageBox.Show(ex.Message, "发送数据", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        //if (mySendThread.ThreadState != System.Threading.ThreadState.Aborted)
+        //        //{
+        //        //    mySendThread.Abort();
+        //        //}
+        //        SerialSendAbort = true;
+        //        return;
+        //    }
+
+        //    while (SerialSendAbort == false)
+        //    {
+        //        try
+        //        {
+        //            if (IsAutoSend)        // 自动发送
+        //            {
+        //                int reSendCnt = Convert.ToInt32(numSendCount.Value);
+        //                int sleepTime = Convert.ToInt32(numSendInterval.Value);
+        //                if (reSendCnt == 0)
+        //                {
+        //                    while (SerialSendAbort == false)
+        //                    {
+        //                        SendOnce(sendBuff);
+        //                        Thread.Sleep(sleepTime);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    while (reSendCnt > 0)
+        //                    {
+        //                        SendOnce(sendBuff);
+        //                        reSendCnt--;
+        //                        if (reSendCnt > 0)
+        //                        {
+        //                            Thread.Sleep(sleepTime);
+        //                        }
+        //                    }
+        //                    SetSendEnable(false);
+        //                    //mySendThread.Abort();
+        //                    SerialSendAbort = true;
+        //                    return;
+        //                }
+        //            }
+        //            else//手动发送
+        //            {
+        //                SendOnce(sendBuff);
+        //                SetSendEnable(false);
+        //                //mySendThread.Abort();
+        //                return;
+        //            }
+
+
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SetSendEnable(false);
+        //            //MessageBox.Show(ex.Message, "发送数据", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            Console.WriteLine("发送线程出错：" + ex.Message);
+        //            if (mySendThread.ThreadState != System.Threading.ThreadState.Aborted)
+        //            {
+        //                mySendThread.Abort();
+        //            }
+        //            return;
+        //        }
+        //    }
+        //}
 
         #endregion
 
@@ -1998,7 +2033,7 @@ namespace SerialDebug
 
                     sendMsg.AppendFormat("{0}", e.SendParam.Data);
 
-                    if (chkTimeStamp.Checked || chkAutoSend.Checked)
+                    if (chkTimeStamp.Checked || chkShowSend.Checked)
                     {
                         sendMsg.Append(Environment.NewLine);
                     }
@@ -2014,7 +2049,48 @@ namespace SerialDebug
         }
 
 
+        private void radSendMode_CheckedChanged(object sender, EventArgs e)
+        {
+            RadioButton radSendMode = sender as RadioButton;
+            if (radSendMode == null)
+            {
+                return;
+            }
 
+            if (radSendMode.Name == radSendModeNormal.Name)
+            {
+                setSendMode(SendModeType.Normal);
+            }
+            else if (radSendMode.Name == radSendModeQueue.Name)
+            {
+                setSendMode(SendModeType.Queue);
+            }
+            else if (radSendMode.Name == radSendModeFile.Name)
+            {
+                setSendMode(SendModeType.File);
+            }
+        }
+
+
+        void setSendMode(SendModeType type)
+        {
+            frmQSend.Hide();
+            frmFileSend.Hide();
+            frmNormalSend.Hide();
+            sendModeType = type;
+            switch (type)
+            {
+                case SendModeType.Normal:
+                    frmNormalSend.Show();
+                    break;
+                case SendModeType.Queue:
+                    frmQSend.Show();
+                    break;
+                case SendModeType.File:
+                    frmFileSend.Show();
+                    break;
+            }
+        }
 
 
 

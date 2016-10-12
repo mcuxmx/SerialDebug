@@ -83,18 +83,10 @@
             this.chkWrap = new System.Windows.Forms.CheckBox();
             this.chkReceiveHex = new System.Windows.Forms.CheckBox();
             this.groupSend = new System.Windows.Forms.GroupBox();
-            this.numSendCount = new System.Windows.Forms.NumericUpDown();
-            this.numSendInterval = new System.Windows.Forms.NumericUpDown();
-            this.label10 = new System.Windows.Forms.Label();
-            this.numSendOnceBytes = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
+            this.radSendModeFile = new System.Windows.Forms.RadioButton();
+            this.radSendModeQueue = new System.Windows.Forms.RadioButton();
+            this.radSendModeNormal = new System.Windows.Forms.RadioButton();
             this.btnSend = new System.Windows.Forms.Button();
-            this.chkAutoSend = new System.Windows.Forms.CheckBox();
-            this.chkFormat = new System.Windows.Forms.CheckBox();
-            this.chkSendHex = new System.Windows.Forms.CheckBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.Label9 = new System.Windows.Forms.Label();
             this.oFileDlg = new System.Windows.Forms.OpenFileDialog();
             this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.picReceiveFont = new System.Windows.Forms.PictureBox();
@@ -130,9 +122,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.picTop)).BeginInit();
             this.groupReceive.SuspendLayout();
             this.groupSend.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numSendCount)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numSendInterval)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numSendOnceBytes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picReceiveFont)).BeginInit();
             this.cmenuSave.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -649,6 +638,8 @@
             // chkTimeStamp
             // 
             this.chkTimeStamp.AutoSize = true;
+            this.chkTimeStamp.Checked = true;
+            this.chkTimeStamp.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkTimeStamp.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.chkTimeStamp.Location = new System.Drawing.Point(10, 64);
             this.chkTimeStamp.Name = "chkTimeStamp";
@@ -682,18 +673,10 @@
             // groupSend
             // 
             this.groupSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.groupSend.Controls.Add(this.numSendCount);
-            this.groupSend.Controls.Add(this.numSendInterval);
-            this.groupSend.Controls.Add(this.label10);
-            this.groupSend.Controls.Add(this.numSendOnceBytes);
-            this.groupSend.Controls.Add(this.label6);
+            this.groupSend.Controls.Add(this.radSendModeFile);
+            this.groupSend.Controls.Add(this.radSendModeQueue);
+            this.groupSend.Controls.Add(this.radSendModeNormal);
             this.groupSend.Controls.Add(this.btnSend);
-            this.groupSend.Controls.Add(this.chkAutoSend);
-            this.groupSend.Controls.Add(this.chkFormat);
-            this.groupSend.Controls.Add(this.chkSendHex);
-            this.groupSend.Controls.Add(this.label11);
-            this.groupSend.Controls.Add(this.label12);
-            this.groupSend.Controls.Add(this.Label9);
             this.groupSend.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.groupSend.Location = new System.Drawing.Point(2, 308);
             this.groupSend.Name = "groupSend";
@@ -702,151 +685,51 @@
             this.groupSend.TabStop = false;
             this.groupSend.Text = "发送设置";
             // 
-            // numSendCount
+            // radSendModeFile
             // 
-            this.numSendCount.Location = new System.Drawing.Point(75, 119);
-            this.numSendCount.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numSendCount.Name = "numSendCount";
-            this.numSendCount.Size = new System.Drawing.Size(48, 21);
-            this.numSendCount.TabIndex = 16;
-            this.ToolTip.SetToolTip(this.numSendCount, "串口自动发送的次数，为0表示循环发送。");
+            this.radSendModeFile.AutoSize = true;
+            this.radSendModeFile.Location = new System.Drawing.Point(10, 66);
+            this.radSendModeFile.Name = "radSendModeFile";
+            this.radSendModeFile.Size = new System.Drawing.Size(95, 16);
+            this.radSendModeFile.TabIndex = 13;
+            this.radSendModeFile.Text = "文件发送模式";
+            this.radSendModeFile.UseVisualStyleBackColor = true;
+            this.radSendModeFile.CheckedChanged += new System.EventHandler(this.radSendMode_CheckedChanged);
             // 
-            // numSendInterval
+            // radSendModeQueue
             // 
-            this.numSendInterval.Location = new System.Drawing.Point(59, 93);
-            this.numSendInterval.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numSendInterval.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numSendInterval.Name = "numSendInterval";
-            this.numSendInterval.Size = new System.Drawing.Size(64, 21);
-            this.numSendInterval.TabIndex = 16;
-            this.ToolTip.SetToolTip(this.numSendInterval, "串口发送的时间间隔。");
-            this.numSendInterval.Value = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
+            this.radSendModeQueue.AutoSize = true;
+            this.radSendModeQueue.Location = new System.Drawing.Point(10, 44);
+            this.radSendModeQueue.Name = "radSendModeQueue";
+            this.radSendModeQueue.Size = new System.Drawing.Size(95, 16);
+            this.radSendModeQueue.TabIndex = 13;
+            this.radSendModeQueue.Text = "队列发送模式";
+            this.radSendModeQueue.UseVisualStyleBackColor = true;
+            this.radSendModeQueue.CheckedChanged += new System.EventHandler(this.radSendMode_CheckedChanged);
             // 
-            // label10
+            // radSendModeNormal
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(8, 97);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(53, 12);
-            this.label10.TabIndex = 15;
-            this.label10.Text = "发送间隔";
-            // 
-            // numSendOnceBytes
-            // 
-            this.numSendOnceBytes.Location = new System.Drawing.Point(59, 67);
-            this.numSendOnceBytes.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numSendOnceBytes.Name = "numSendOnceBytes";
-            this.numSendOnceBytes.Size = new System.Drawing.Size(64, 21);
-            this.numSendOnceBytes.TabIndex = 14;
-            this.ToolTip.SetToolTip(this.numSendOnceBytes, "串口一次发送的字节数，直到发送区域数据发送完成。\r\n为0时表示一次发送所有字节。");
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(8, 71);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(53, 12);
-            this.label6.TabIndex = 13;
-            this.label6.Text = "单次发送";
+            this.radSendModeNormal.AutoSize = true;
+            this.radSendModeNormal.Checked = true;
+            this.radSendModeNormal.Location = new System.Drawing.Point(10, 22);
+            this.radSendModeNormal.Name = "radSendModeNormal";
+            this.radSendModeNormal.Size = new System.Drawing.Size(95, 16);
+            this.radSendModeNormal.TabIndex = 13;
+            this.radSendModeNormal.TabStop = true;
+            this.radSendModeNormal.Text = "普通发送模式";
+            this.radSendModeNormal.UseVisualStyleBackColor = true;
+            this.radSendModeNormal.CheckedChanged += new System.EventHandler(this.radSendMode_CheckedChanged);
             // 
             // btnSend
             // 
             this.btnSend.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnSend.Location = new System.Drawing.Point(84, 21);
+            this.btnSend.Location = new System.Drawing.Point(21, 88);
             this.btnSend.Name = "btnSend";
-            this.btnSend.Size = new System.Drawing.Size(69, 40);
+            this.btnSend.Size = new System.Drawing.Size(98, 40);
             this.btnSend.TabIndex = 12;
             this.btnSend.Text = "开始发送";
             this.btnSend.UseVisualStyleBackColor = true;
             this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
-            // 
-            // chkAutoSend
-            // 
-            this.chkAutoSend.AutoSize = true;
-            this.chkAutoSend.BackColor = System.Drawing.SystemColors.Control;
-            this.chkAutoSend.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkAutoSend.Location = new System.Drawing.Point(10, 121);
-            this.chkAutoSend.Name = "chkAutoSend";
-            this.chkAutoSend.Size = new System.Drawing.Size(78, 17);
-            this.chkAutoSend.TabIndex = 9;
-            this.chkAutoSend.Text = "自动发送";
-            this.chkAutoSend.UseVisualStyleBackColor = false;
-            this.chkAutoSend.CheckedChanged += new System.EventHandler(this.chkAutoSend_CheckedChanged);
-            // 
-            // chkFormat
-            // 
-            this.chkFormat.AutoSize = true;
-            this.chkFormat.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkFormat.Location = new System.Drawing.Point(10, 44);
-            this.chkFormat.Name = "chkFormat";
-            this.chkFormat.Size = new System.Drawing.Size(84, 17);
-            this.chkFormat.TabIndex = 8;
-            this.chkFormat.Text = "HEX格式化";
-            this.chkFormat.UseVisualStyleBackColor = true;
-            // 
-            // chkSendHex
-            // 
-            this.chkSendHex.AutoSize = true;
-            this.chkSendHex.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkSendHex.Location = new System.Drawing.Point(10, 21);
-            this.chkSendHex.Name = "chkSendHex";
-            this.chkSendHex.Size = new System.Drawing.Size(72, 17);
-            this.chkSendHex.TabIndex = 8;
-            this.chkSendHex.Text = "HEX发送";
-            this.chkSendHex.UseVisualStyleBackColor = true;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.BackColor = System.Drawing.Color.Transparent;
-            this.label11.Location = new System.Drawing.Point(121, 123);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(17, 12);
-            this.label11.TabIndex = 10;
-            this.label11.Text = "次";
-            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.BackColor = System.Drawing.Color.Transparent;
-            this.label12.Location = new System.Drawing.Point(121, 71);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(29, 12);
-            this.label12.TabIndex = 10;
-            this.label12.Text = "字节";
-            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // Label9
-            // 
-            this.Label9.AutoSize = true;
-            this.Label9.BackColor = System.Drawing.Color.Transparent;
-            this.Label9.Location = new System.Drawing.Point(121, 97);
-            this.Label9.Name = "Label9";
-            this.Label9.Size = new System.Drawing.Size(29, 12);
-            this.Label9.TabIndex = 10;
-            this.Label9.Text = "毫秒";
-            this.Label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // oFileDlg
             // 
@@ -1190,9 +1073,6 @@
             this.groupReceive.PerformLayout();
             this.groupSend.ResumeLayout(false);
             this.groupSend.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numSendCount)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numSendInterval)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numSendOnceBytes)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picReceiveFont)).EndInit();
             this.cmenuSave.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -1238,9 +1118,6 @@
         internal System.Windows.Forms.CheckBox chkReceiveHex;
         internal System.Windows.Forms.GroupBox groupSend;
         internal System.Windows.Forms.Button btnSend;
-        internal System.Windows.Forms.CheckBox chkAutoSend;
-        internal System.Windows.Forms.CheckBox chkSendHex;
-        internal System.Windows.Forms.Label Label9;
         internal System.Windows.Forms.OpenFileDialog oFileDlg;
         internal System.Windows.Forms.ContextMenuStrip cmenuStrip;
         internal System.Windows.Forms.ToolStripMenuItem menuUndo;
@@ -1262,13 +1139,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
         private System.Windows.Forms.ToolStripMenuItem menuStringToDec;
         private System.Windows.Forms.ToolStripMenuItem menuDecToString;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.NumericUpDown numSendOnceBytes;
-        private System.Windows.Forms.NumericUpDown numSendInterval;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.NumericUpDown numSendCount;
-        internal System.Windows.Forms.Label label11;
-        internal System.Windows.Forms.Label label12;
         private System.Windows.Forms.ContextMenuStrip cmenuSave;
         private System.Windows.Forms.ToolStripMenuItem menuSaveStringToText;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
@@ -1297,12 +1167,14 @@
         private System.Windows.Forms.ComboBox cbHTEOFChars;
         private System.Windows.Forms.FontDialog fontDlg;
         private System.Windows.Forms.PictureBox picReceiveFont;
-        internal System.Windows.Forms.CheckBox chkFormat;
         private System.Windows.Forms.TextBox txtSend;
         internal System.Windows.Forms.CheckBox chkSendThenClear;
         internal System.Windows.Forms.CheckBox chkTimeStamp;
         private System.Windows.Forms.Panel panelNormalSend;
         internal System.Windows.Forms.CheckBox chkShowSend;
+        private System.Windows.Forms.RadioButton radSendModeFile;
+        private System.Windows.Forms.RadioButton radSendModeQueue;
+        private System.Windows.Forms.RadioButton radSendModeNormal;
 
     }
 }

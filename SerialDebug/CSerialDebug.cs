@@ -157,6 +157,10 @@ namespace SerialDebug
         /// </summary>
         private void SendThreadHandler()
         {
+            if (LoopCount == 0)
+            {
+                LoopCount = int.MaxValue;
+            }
             while (LoopCount > 0 && IsSendStart)
             {
                 LoopCount--;
@@ -207,6 +211,10 @@ namespace SerialDebug
                             {
                                 SendCompletedEvent(this, new SendCompletedEventArgs(sendParam));
                             }
+                        }
+                        else
+                        {
+                            IsSendStart = false;
                         }
                     }
 

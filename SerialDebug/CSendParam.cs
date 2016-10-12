@@ -13,6 +13,28 @@ namespace SerialDebug
         private readonly string _Data;
         private readonly byte[] _DataBytes = null;
 
+        public CSendParam(SendParamFormat format, SendParamMode mode, int delayTime, byte[] data, int startIndex, int count)
+        {
+            _Format = format;
+            _Mode = mode;
+            _DelayTime = delayTime;
+            _Data = string.Empty;
+            if (data != null)
+            {
+                _DataBytes = new byte[count];
+                Array.Copy(data, startIndex, _DataBytes, 0, count);
+
+                if (Format== SendParamFormat.Hex)
+                {
+                    _Data = BitConverter.ToString(_DataBytes).Replace('-', ' ').TrimEnd(new char[] { ' ' });
+                }
+                else
+                {
+                    _Data = System.Text.ASCIIEncoding.Default.GetString(_DataBytes);
+                }
+            }
+        }
+
         public CSendParam(SendParamFormat format, SendParamMode mode, int delayTime, string data)
         {
             _Format = format;
