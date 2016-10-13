@@ -222,6 +222,38 @@ namespace SerialDebug
 
         #endregion
 
+        private void lnkAddCheckCode_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                if (txtSend.Text != String.Empty)
+                {
+                    bool IsHex = chkSendHex.Checked;
+
+                    frmDataCheck frm = new frmDataCheck();
+                    frm.CalculateCheckData(txtSend.Text, IsHex);
+                    if (frm.ShowDialog() == DialogResult.OK)
+                    {
+                        if (IsHex)
+                        {
+                            CSendParam p = new CSendParam(SendParamFormat.Hex, SendParamMode.SendAfterLastSend, 0, frm.CrcResult);
+                            txtSend.AppendText(string.Format(" {0}", p.Data));
+                        }
+                        else
+                        {
+                            txtSend.AppendText(string.Format("{0}", frm.CrcResult));
+                        }
+
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
+        }
+
 
     }
 }

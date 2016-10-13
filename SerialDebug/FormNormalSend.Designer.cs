@@ -45,7 +45,7 @@
             this.chkSendThenClear = new System.Windows.Forms.CheckBox();
             this.labClearSend = new System.Windows.Forms.LinkLabel();
             this.Label7 = new System.Windows.Forms.Label();
-            this.lnkOpen = new System.Windows.Forms.LinkLabel();
+            this.lnkAddCheckCode = new System.Windows.Forms.LinkLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panelNormalSend.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSendCount)).BeginInit();
@@ -70,7 +70,7 @@
             this.panelNormalSend.Controls.Add(this.chkSendThenClear);
             this.panelNormalSend.Controls.Add(this.labClearSend);
             this.panelNormalSend.Controls.Add(this.Label7);
-            this.panelNormalSend.Controls.Add(this.lnkOpen);
+            this.panelNormalSend.Controls.Add(this.lnkAddCheckCode);
             this.panelNormalSend.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelNormalSend.Location = new System.Drawing.Point(0, 0);
             this.panelNormalSend.Name = "panelNormalSend";
@@ -266,16 +266,17 @@
             this.Label7.Text = "发送区：";
             this.Label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lnkOpen
+            // lnkAddCheckCode
             // 
-            this.lnkOpen.AutoSize = true;
-            this.lnkOpen.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.lnkOpen.Location = new System.Drawing.Point(161, 4);
-            this.lnkOpen.Name = "lnkOpen";
-            this.lnkOpen.Size = new System.Drawing.Size(53, 12);
-            this.lnkOpen.TabIndex = 34;
-            this.lnkOpen.TabStop = true;
-            this.lnkOpen.Text = "加载文件";
+            this.lnkAddCheckCode.AutoSize = true;
+            this.lnkAddCheckCode.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.lnkAddCheckCode.Location = new System.Drawing.Point(161, 4);
+            this.lnkAddCheckCode.Name = "lnkAddCheckCode";
+            this.lnkAddCheckCode.Size = new System.Drawing.Size(65, 12);
+            this.lnkAddCheckCode.TabIndex = 34;
+            this.lnkAddCheckCode.TabStop = true;
+            this.lnkAddCheckCode.Text = "添加校验码";
+            this.lnkAddCheckCode.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkAddCheckCode_LinkClicked);
             // 
             // FormNormalSend
             // 
@@ -302,7 +303,7 @@
         internal System.Windows.Forms.CheckBox chkSendThenClear;
         internal System.Windows.Forms.LinkLabel labClearSend;
         internal System.Windows.Forms.Label Label7;
-        internal System.Windows.Forms.LinkLabel lnkOpen;
+        internal System.Windows.Forms.LinkLabel lnkAddCheckCode;
         internal System.Windows.Forms.CheckBox chkSendHex;
         internal System.Windows.Forms.CheckBox chkFormat;
         private System.Windows.Forms.NumericUpDown numSendOnceBytes;

@@ -45,11 +45,18 @@
     </Compile>
     <Compile Include="CSendParam.cs" />
     <Compile Include="CSerialDebug.cs" />
+    <Compile Include="DataCheck.cs" />
     <Compile Include="FormNormalSend.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormNormalSend.Designer.cs">
       <DependentUpon>FormNormalSend.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmDataCheck.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmDataCheck.Designer.cs">
+      <DependentUpon>frmDataCheck.cs</DependentUpon>
     </Compile>
     <Compile Include="frmSerialDebug.cs">
       <SubType>Form</SubType>
@@ -67,6 +74,10 @@
     <EmbeddedResource Include="FormNormalSend.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FormNormalSend.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmDataCheck.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frmDataCheck.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmSerialDebug.resx">
       <SubType>Designer</SubType>

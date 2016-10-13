@@ -21,7 +21,7 @@ namespace SerialDebug
 
         private void FormQueueSend_Load(object sender, EventArgs e)
         {
-            cbFormat.SelectedIndex = 0;
+            chkSendHex.Checked = true;
             cbSendMode.SelectedIndex = 0;
             numSendListDelayTime.Value = 10;
 
@@ -33,7 +33,7 @@ namespace SerialDebug
         {
             if (panelSendParam.Visible == false)
             {
- 
+
                 panelSendParam.Visible = true;
 
 
@@ -68,7 +68,7 @@ namespace SerialDebug
         /// <param name="e"></param>
         private void btnCancelSaveParam_Click(object sender, EventArgs e)
         {
-           
+
             panelSendParam.Visible = false;
 
             btnAddSendList.Image = Properties.Resources.round_plus;
@@ -90,7 +90,7 @@ namespace SerialDebug
         private void btnSaveSendParam_Click(object sender, EventArgs e)
         {
 
-            if (txtSendParamData.Text == string.Empty)
+            if (txtSend.Text == string.Empty)
             {
                 MessageBox.Show("发送数据不能为空", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
@@ -98,11 +98,16 @@ namespace SerialDebug
 
             try
             {
+                SendParamFormat format = SendParamFormat.ASCII;
+                if (chkSendHex.Checked)
+                {
+                    format = SendParamFormat.Hex;
+                }
 
-                CSendParam param = new CSendParam((SendParamFormat)cbFormat.SelectedIndex,
+                CSendParam param = new CSendParam(format,
                 (SendParamMode)cbSendMode.SelectedIndex,
                 Convert.ToInt32(numSendListDelayTime.Value),
-                txtSendParamData.Text);
+                txtSend.Text);
 
                 object[] array = new object[3];
                 array[0] = dgvSendList.Rows.Count;
@@ -211,7 +216,7 @@ namespace SerialDebug
 
         private void linkLabelClearData_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            txtSendParamData.Clear();
+            txtSend.Clear();
         }
 
 
@@ -220,7 +225,7 @@ namespace SerialDebug
 
             splitContainer1.Panel1Collapsed = false;
             splitContainer1.SplitterDistance = 59;//Convert.ToInt32(splitPercent * splitContainer1.Height);
-            if (ParamSetOpend!=null)
+            if (ParamSetOpend != null)
             {
                 ParamSetOpend(sender, e);
             }
@@ -229,7 +234,7 @@ namespace SerialDebug
         void CloseParamSet(object sender, EventArgs e)
         {
             splitContainer1.Panel1Collapsed = true;
-            if (ParamSetClosed!=null)
+            if (ParamSetClosed != null)
             {
                 ParamSetClosed(sender, e);
             }
@@ -269,5 +274,37 @@ namespace SerialDebug
         }
 
         #endregion
+
+        private void lnkAddCheckCode_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                if (txtSend.Text != String.Empty)
+                {
+                    bool IsHex = chkSendHex.Checked;
+
+                    frmDataCheck frm = new frmDataCheck();
+                    frm.CalculateCheckData(txtSend.Text, IsHex);
+                    if (frm.ShowDialog() == DialogResult.OK)
+                    {
+                        if (IsHex)
+                        {
+                            CSendParam p = new CSendParam(SendParamFormat.Hex, SendParamMode.SendAfterLastSend, 0, frm.CrcResult);
+                            txtSend.AppendText(string.Format(" {0}", p.Data));
+                        }
+                        else
+                        {
+                            txtSend.AppendText(string.Format("{0}", frm.CrcResult));
+                        }
+
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
     }
 }

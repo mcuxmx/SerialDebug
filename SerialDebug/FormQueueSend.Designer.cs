@@ -37,11 +37,9 @@
             this.label18 = new System.Windows.Forms.Label();
             this.numSendListDelayTime = new System.Windows.Forms.NumericUpDown();
             this.cbSendMode = new System.Windows.Forms.ComboBox();
-            this.cbFormat = new System.Windows.Forms.ComboBox();
-            this.txtSendParamData = new System.Windows.Forms.TextBox();
+            this.txtSend = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
-            this.lbFormat = new System.Windows.Forms.Label();
             this.panelSendList = new System.Windows.Forms.Panel();
             this.btnSetdownSendList = new System.Windows.Forms.Button();
             this.btnSetupSendList = new System.Windows.Forms.Button();
@@ -52,6 +50,8 @@
             this.colNo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colMode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colData = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lnkAddCheckCode = new System.Windows.Forms.LinkLabel();
+            this.chkSendHex = new System.Windows.Forms.CheckBox();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -83,17 +83,17 @@
             // 
             // panelSendParam
             // 
+            this.panelSendParam.Controls.Add(this.chkSendHex);
+            this.panelSendParam.Controls.Add(this.lnkAddCheckCode);
             this.panelSendParam.Controls.Add(this.linkLabelClearData);
             this.panelSendParam.Controls.Add(this.btnCancelSaveParam);
             this.panelSendParam.Controls.Add(this.btnSaveSendParam);
             this.panelSendParam.Controls.Add(this.label18);
             this.panelSendParam.Controls.Add(this.numSendListDelayTime);
             this.panelSendParam.Controls.Add(this.cbSendMode);
-            this.panelSendParam.Controls.Add(this.cbFormat);
-            this.panelSendParam.Controls.Add(this.txtSendParamData);
+            this.panelSendParam.Controls.Add(this.txtSend);
             this.panelSendParam.Controls.Add(this.label17);
             this.panelSendParam.Controls.Add(this.label16);
-            this.panelSendParam.Controls.Add(this.lbFormat);
             this.panelSendParam.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelSendParam.Location = new System.Drawing.Point(0, 0);
             this.panelSendParam.Name = "panelSendParam";
@@ -105,12 +105,12 @@
             // 
             this.linkLabelClearData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabelClearData.AutoSize = true;
-            this.linkLabelClearData.Location = new System.Drawing.Point(419, 36);
+            this.linkLabelClearData.Location = new System.Drawing.Point(62, 36);
             this.linkLabelClearData.Name = "linkLabelClearData";
-            this.linkLabelClearData.Size = new System.Drawing.Size(53, 12);
+            this.linkLabelClearData.Size = new System.Drawing.Size(77, 12);
             this.linkLabelClearData.TabIndex = 6;
             this.linkLabelClearData.TabStop = true;
-            this.linkLabelClearData.Text = "清空数据";
+            this.linkLabelClearData.Text = " 清空发送区 ";
             // 
             // btnCancelSaveParam
             // 
@@ -137,7 +137,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(4, 34);
+            this.label18.Location = new System.Drawing.Point(4, 36);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(65, 12);
             this.label18.TabIndex = 4;
@@ -162,34 +162,22 @@
             this.cbSendMode.Items.AddRange(new object[] {
             "上帧发送完成后",
             "接收到数据帧后"});
-            this.cbSendMode.Location = new System.Drawing.Point(220, 5);
+            this.cbSendMode.Location = new System.Drawing.Point(170, 5);
             this.cbSendMode.Name = "cbSendMode";
             this.cbSendMode.Size = new System.Drawing.Size(139, 20);
             this.cbSendMode.TabIndex = 1;
             // 
-            // cbFormat
+            // txtSend
             // 
-            this.cbFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbFormat.FormattingEnabled = true;
-            this.cbFormat.Items.AddRange(new object[] {
-            "ASCII",
-            "HEX"});
-            this.cbFormat.Location = new System.Drawing.Point(59, 5);
-            this.cbFormat.Name = "cbFormat";
-            this.cbFormat.Size = new System.Drawing.Size(84, 20);
-            this.cbFormat.TabIndex = 1;
-            // 
-            // txtSendParamData
-            // 
-            this.txtSendParamData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.txtSend.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSendParamData.Location = new System.Drawing.Point(3, 49);
-            this.txtSendParamData.Multiline = true;
-            this.txtSendParamData.Name = "txtSendParamData";
-            this.txtSendParamData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtSendParamData.Size = new System.Drawing.Size(469, 48);
-            this.txtSendParamData.TabIndex = 0;
+            this.txtSend.Location = new System.Drawing.Point(3, 49);
+            this.txtSend.Multiline = true;
+            this.txtSend.Name = "txtSend";
+            this.txtSend.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtSend.Size = new System.Drawing.Size(469, 48);
+            this.txtSend.TabIndex = 0;
             // 
             // label17
             // 
@@ -203,20 +191,11 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(160, 9);
+            this.label16.Location = new System.Drawing.Point(104, 9);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(65, 12);
             this.label16.TabIndex = 3;
             this.label16.Text = "发送模式：";
-            // 
-            // lbFormat
-            // 
-            this.lbFormat.AutoSize = true;
-            this.lbFormat.Location = new System.Drawing.Point(3, 9);
-            this.lbFormat.Name = "lbFormat";
-            this.lbFormat.Size = new System.Drawing.Size(65, 12);
-            this.lbFormat.TabIndex = 3;
-            this.lbFormat.Text = "数据格式：";
             // 
             // panelSendList
             // 
@@ -339,6 +318,29 @@
             this.colData.ReadOnly = true;
             this.colData.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
+            // lnkAddCheckCode
+            // 
+            this.lnkAddCheckCode.AutoSize = true;
+            this.lnkAddCheckCode.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.lnkAddCheckCode.Location = new System.Drawing.Point(160, 36);
+            this.lnkAddCheckCode.Name = "lnkAddCheckCode";
+            this.lnkAddCheckCode.Size = new System.Drawing.Size(65, 12);
+            this.lnkAddCheckCode.TabIndex = 35;
+            this.lnkAddCheckCode.TabStop = true;
+            this.lnkAddCheckCode.Text = "添加校验码";
+            this.lnkAddCheckCode.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkAddCheckCode_LinkClicked);
+            // 
+            // chkSendHex
+            // 
+            this.chkSendHex.AutoSize = true;
+            this.chkSendHex.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkSendHex.Location = new System.Drawing.Point(6, 7);
+            this.chkSendHex.Name = "chkSendHex";
+            this.chkSendHex.Size = new System.Drawing.Size(72, 17);
+            this.chkSendHex.TabIndex = 37;
+            this.chkSendHex.Text = "HEX发送";
+            this.chkSendHex.UseVisualStyleBackColor = true;
+            // 
             // FormQueueSend
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -382,10 +384,10 @@
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.NumericUpDown numSendListDelayTime;
         private System.Windows.Forms.ComboBox cbSendMode;
-        private System.Windows.Forms.ComboBox cbFormat;
-        private System.Windows.Forms.TextBox txtSendParamData;
+        private System.Windows.Forms.TextBox txtSend;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label lbFormat;
+        internal System.Windows.Forms.LinkLabel lnkAddCheckCode;
+        internal System.Windows.Forms.CheckBox chkSendHex;
     }
 }
