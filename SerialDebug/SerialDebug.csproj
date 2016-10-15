@@ -46,6 +46,10 @@
     <Compile Include="CSendParam.cs" />
     <Compile Include="CSerialDebug.cs" />
     <Compile Include="DataCheck.cs" />
+    <Compile Include="FileTransmit\BinarySend.cs" />
+    <Compile Include="FileTransmit\IFileTramsmit.cs" />
+    <Compile Include="FileTransmit\ITransmitUart.cs" />
+    <Compile Include="FileTransmit\XModem.cs" />
     <Compile Include="FormNormalSend.cs">
       <SubType>Form</SubType>
     </Compile>

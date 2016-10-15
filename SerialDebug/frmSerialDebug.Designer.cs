@@ -107,7 +107,7 @@
             this.chkHTShowback = new System.Windows.Forms.CheckBox();
             this.labClearReceive = new System.Windows.Forms.LinkLabel();
             this.Label8 = new System.Windows.Forms.Label();
-            this.txtReceive = new System.Windows.Forms.TextBox();
+            this.txtReceive = new System.Windows.Forms.RichTextBox();
             this.lnkSaveData = new System.Windows.Forms.LinkLabel();
             this.panelNormalSend = new System.Windows.Forms.Panel();
             this.txtSend = new System.Windows.Forms.TextBox();
@@ -944,13 +944,13 @@
             this.txtReceive.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtReceive.Location = new System.Drawing.Point(5, 20);
             this.txtReceive.MaxLength = 0;
-            this.txtReceive.Multiline = true;
             this.txtReceive.Name = "txtReceive";
-            this.txtReceive.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtReceive.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
             this.txtReceive.Size = new System.Drawing.Size(528, 275);
             this.txtReceive.TabIndex = 35;
-            this.txtReceive.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtReceive_MouseDown);
+            this.txtReceive.Text = "";
             this.txtReceive.MouseEnter += new System.EventHandler(this.txtReceive_MouseEnter);
+            this.txtReceive.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtReceive_MouseDown);
             // 
             // lnkSaveData
             // 
@@ -1150,7 +1150,7 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         internal System.Windows.Forms.LinkLabel labClearReceive;
         internal System.Windows.Forms.Label Label8;
-        internal System.Windows.Forms.TextBox txtReceive;
+        internal System.Windows.Forms.RichTextBox txtReceive;
         internal System.Windows.Forms.LinkLabel lnkSaveData;
         internal System.Windows.Forms.LinkLabel labClearSend;
         internal System.Windows.Forms.Label Label7;

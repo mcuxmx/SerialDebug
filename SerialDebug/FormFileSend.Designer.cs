@@ -29,15 +29,19 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.txtFile = new System.Windows.Forms.TextBox();
+            this.btnSelectFile = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label2 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            this.cbFileProtocol = new System.Windows.Forms.ComboBox();
+            this.chkSlipPacket = new System.Windows.Forms.CheckBox();
+            this.numPacketLen = new System.Windows.Forms.NumericUpDown();
+            this.chkSendByLine = new System.Windows.Forms.CheckBox();
+            this.labDelayTime = new System.Windows.Forms.Label();
+            this.numDelayTime = new System.Windows.Forms.NumericUpDown();
+            this.chkSendCRRF = new System.Windows.Forms.CheckBox();
+            ((System.ComponentModel.ISupportInitialize)(this.numPacketLen)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDelayTime)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -49,28 +53,36 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "选择文件：";
             // 
-            // textBox1
+            // txtFile
             // 
-            this.textBox1.Location = new System.Drawing.Point(84, 36);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(359, 21);
-            this.textBox1.TabIndex = 1;
+            this.txtFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFile.Enabled = false;
+            this.txtFile.Location = new System.Drawing.Point(84, 36);
+            this.txtFile.Name = "txtFile";
+            this.txtFile.Size = new System.Drawing.Size(359, 21);
+            this.txtFile.TabIndex = 1;
             // 
-            // button1
+            // btnSelectFile
             // 
-            this.button1.Location = new System.Drawing.Point(446, 35);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "浏览...";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnSelectFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSelectFile.Location = new System.Drawing.Point(446, 35);
+            this.btnSelectFile.Name = "btnSelectFile";
+            this.btnSelectFile.Size = new System.Drawing.Size(75, 23);
+            this.btnSelectFile.TabIndex = 2;
+            this.btnSelectFile.Text = "浏览...";
+            this.btnSelectFile.UseVisualStyleBackColor = true;
+            this.btnSelectFile.Click += new System.EventHandler(this.btnSelectFile_Click);
             // 
             // progressBar1
             // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar1.Location = new System.Drawing.Point(20, 107);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(499, 23);
             this.progressBar1.TabIndex = 3;
+            this.progressBar1.Visible = false;
             // 
             // label2
             // 
@@ -81,59 +93,112 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "传输协议：";
             // 
-            // comboBox1
+            // cbFileProtocol
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(84, 6);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(187, 20);
-            this.comboBox1.TabIndex = 5;
+            this.cbFileProtocol.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbFileProtocol.FormattingEnabled = true;
+            this.cbFileProtocol.Location = new System.Drawing.Point(84, 6);
+            this.cbFileProtocol.Name = "cbFileProtocol";
+            this.cbFileProtocol.Size = new System.Drawing.Size(187, 20);
+            this.cbFileProtocol.TabIndex = 5;
+            this.cbFileProtocol.SelectedIndexChanged += new System.EventHandler(this.cbFileProtocol_SelectedIndexChanged);
             // 
-            // checkBox1
+            // chkSlipPacket
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(20, 72);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(84, 16);
-            this.checkBox1.TabIndex = 6;
-            this.checkBox1.Text = "分包发送：";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.chkSlipPacket.AutoSize = true;
+            this.chkSlipPacket.Location = new System.Drawing.Point(20, 75);
+            this.chkSlipPacket.Name = "chkSlipPacket";
+            this.chkSlipPacket.Size = new System.Drawing.Size(144, 16);
+            this.chkSlipPacket.TabIndex = 6;
+            this.chkSlipPacket.Text = "分包发送，每包字节：";
+            this.chkSlipPacket.UseVisualStyleBackColor = true;
             // 
-            // numericUpDown1
+            // numPacketLen
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(110, 67);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(55, 21);
-            this.numericUpDown1.TabIndex = 7;
+            this.numPacketLen.Location = new System.Drawing.Point(156, 73);
+            this.numPacketLen.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.numPacketLen.Name = "numPacketLen";
+            this.numPacketLen.Size = new System.Drawing.Size(55, 21);
+            this.numPacketLen.TabIndex = 7;
+            this.numPacketLen.Value = new decimal(new int[] {
+            64,
+            0,
+            0,
+            0});
             // 
-            // checkBox2
+            // chkSendByLine
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(202, 72);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(84, 16);
-            this.checkBox2.TabIndex = 6;
-            this.checkBox2.Text = "按行发送：";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.chkSendByLine.AutoSize = true;
+            this.chkSendByLine.Location = new System.Drawing.Point(20, 75);
+            this.chkSendByLine.Name = "chkSendByLine";
+            this.chkSendByLine.Size = new System.Drawing.Size(72, 16);
+            this.chkSendByLine.TabIndex = 6;
+            this.chkSendByLine.Text = "按行发送";
+            this.chkSendByLine.UseVisualStyleBackColor = true;
+            // 
+            // labDelayTime
+            // 
+            this.labDelayTime.AutoSize = true;
+            this.labDelayTime.Location = new System.Drawing.Point(238, 77);
+            this.labDelayTime.Name = "labDelayTime";
+            this.labDelayTime.Size = new System.Drawing.Size(89, 12);
+            this.labDelayTime.TabIndex = 8;
+            this.labDelayTime.Text = "延时时间(ms)：";
+            // 
+            // numDelayTime
+            // 
+            this.numDelayTime.Location = new System.Drawing.Point(324, 73);
+            this.numDelayTime.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.numDelayTime.Name = "numDelayTime";
+            this.numDelayTime.Size = new System.Drawing.Size(55, 21);
+            this.numDelayTime.TabIndex = 7;
+            this.numDelayTime.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            // 
+            // chkSendCRRF
+            // 
+            this.chkSendCRRF.AutoSize = true;
+            this.chkSendCRRF.Location = new System.Drawing.Point(129, 75);
+            this.chkSendCRRF.Name = "chkSendCRRF";
+            this.chkSendCRRF.Size = new System.Drawing.Size(84, 16);
+            this.chkSendCRRF.TabIndex = 6;
+            this.chkSendCRRF.Text = "发送换行符";
+            this.chkSendCRRF.UseVisualStyleBackColor = true;
             // 
             // FormFileSend
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(536, 142);
-            this.Controls.Add(this.numericUpDown1);
-            this.Controls.Add(this.checkBox2);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.numDelayTime);
+            this.Controls.Add(this.labDelayTime);
+            this.Controls.Add(this.numPacketLen);
+            this.Controls.Add(this.chkSendCRRF);
+            this.Controls.Add(this.chkSendByLine);
+            this.Controls.Add(this.chkSlipPacket);
+            this.Controls.Add(this.cbFileProtocol);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.btnSelectFile);
+            this.Controls.Add(this.txtFile);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FormFileSend";
             this.Text = "FormNormalSend";
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            this.Load += new System.EventHandler(this.FormFileSend_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.numPacketLen)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDelayTime)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -142,13 +207,16 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox txtFile;
+        private System.Windows.Forms.Button btnSelectFile;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.ComboBox cbFileProtocol;
+        private System.Windows.Forms.CheckBox chkSlipPacket;
+        private System.Windows.Forms.NumericUpDown numPacketLen;
+        private System.Windows.Forms.CheckBox chkSendByLine;
+        private System.Windows.Forms.Label labDelayTime;
+        private System.Windows.Forms.NumericUpDown numDelayTime;
+        private System.Windows.Forms.CheckBox chkSendCRRF;
     }
 }

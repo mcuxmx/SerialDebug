@@ -10,9 +10,12 @@ namespace SerialDebug
 {
     public partial class FormNormalSend : Form, ISendForm
     {
+
+        public delegate void SendByCtrlEnterHandler(object sender, EventArgs e);
+        public event SendByCtrlEnterHandler OnSendByCtrlEnter;
+
         private List<string> SendTempList = new List<string>();
         private int SendTempIndex = 0;
-        private bool IsSendByKey = false;
 
         public FormNormalSend()
         {
@@ -60,8 +63,10 @@ namespace SerialDebug
 
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Enter)
             {
-                IsSendByKey = true;
-                //btnSend.PerformClick();
+                if (OnSendByCtrlEnter != null)
+                {
+                    OnSendByCtrlEnter(this, e);
+                }
                 e.Handled = true;
                 return;
             }

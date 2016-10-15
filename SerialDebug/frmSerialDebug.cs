@@ -10,15 +10,17 @@ using System.IO.Ports;
 using System.Threading;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using XMX.FileTransmit;
 
 
 namespace SerialDebug
 {
     public partial class frmMain : Form
     {
+        private readonly Color ReceiveColor = Color.DarkRed;
+        private readonly Color SendColor = Color.Blue;
 
         CSerialDebug sp = new CSerialDebug();
-
 
         enum SendModeType
         {
@@ -39,7 +41,6 @@ namespace SerialDebug
 
         private List<string> SendTempList = new List<string>();
         private int SendTempIndex = 0;
-        private bool IsSendByKey = false;
 
 
         private delegate void TextBoxAppendDel(string str);             // 文本框添加字符
@@ -50,7 +51,7 @@ namespace SerialDebug
 
         private double splitPercent = 0.0f;
 
-        private bool IsAutoSend = false;    // 自动发送
+
         bool HyperTerminalMode = false;      // 超级终端模式
 
         private void SetMode(bool IsHyperTerminalMode)
@@ -159,6 +160,7 @@ namespace SerialDebug
 
 
             frmNormalSend = new FormNormalSend();
+            frmNormalSend.OnSendByCtrlEnter += new FormNormalSend.SendByCtrlEnterHandler(frmNormalSend_OnSendByCtrlEnter);
             frmNormalSend.Dock = DockStyle.Fill;
             frmNormalSend.FormBorderStyle = FormBorderStyle.None;
             frmNormalSend.TopLevel = false;
@@ -177,6 +179,9 @@ namespace SerialDebug
 
 
             frmFileSend = new FormFileSend();
+            frmFileSend.SendToUartEvent += new SendToUartEventHandler(frmFileSend_SendToUartEvent);
+            frmFileSend.StartTransmitFile += new EventHandler(frmFileSend_StartTransmitFile);
+            frmFileSend.EndTransmitFile += new EventHandler(frmFileSend_EndTransmitFile);
             frmFileSend.Dock = DockStyle.Fill;
             frmFileSend.FormBorderStyle = FormBorderStyle.None;
             frmFileSend.TopLevel = false;
@@ -188,6 +193,28 @@ namespace SerialDebug
 
             splitPercent = (double)splitContainer1.SplitterDistance / splitContainer1.Height;
 
+        }
+
+        void frmFileSend_EndTransmitFile(object sender, EventArgs e)
+        {
+            SetSendEnable(false);
+        }
+
+        void frmFileSend_StartTransmitFile(object sender, EventArgs e)
+        {
+            SetSendEnable(true);
+        }
+
+        void frmFileSend_SendToUartEvent(object sender, SendToUartEventArgs e)
+        {
+            List<CSendParam> list = new List<CSendParam>();
+            list.Add(new CSendParam(SendParamFormat.Hex, SendParamMode.SendAfterLastSend, 0, e.Data, 0, e.Data.Length));
+            sp.Send(list);
+        }
+
+        void frmNormalSend_OnSendByCtrlEnter(object sender, EventArgs e)
+        {
+            btnSend.PerformClick();
         }
 
         void frmQSend_ParamSetClosed(object sender, EventArgs e)
@@ -248,9 +275,9 @@ namespace SerialDebug
                 if (btnPortOpt.Text == "打开串口")
                 {
 
-                    recThread = new Thread(new ThreadStart(ReceiveThreadHandle));
-                    recThread.IsBackground = true;
-                    recThread.Start();
+                    //recThread = new Thread(new ThreadStart(ReceiveThreadHandle));
+                    //recThread.IsBackground = true;
+                    //recThread.Start();
 
 
                     serialPort.PortName = cbComName.SelectedItem.ToString();
@@ -263,6 +290,7 @@ namespace SerialDebug
                     serialPort.Open();
 
                     sp.serialPort = serialPort;
+                    sp.ReceivedEvent += new CSerialDebug.ReceivedEventHandler(sp_ReceivedEvent);
                     sp.SendCompletedEvent += new CSerialDebug.SendCompletedEventHandler(sp_SendCompletedEvent);
                     sp.Start();
                 }
@@ -271,6 +299,7 @@ namespace SerialDebug
 
 
                     sp.Stop();
+                    sp.ReceivedEvent -= new CSerialDebug.ReceivedEventHandler(sp_ReceivedEvent);
                     sp.SendCompletedEvent -= new CSerialDebug.SendCompletedEventHandler(sp_SendCompletedEvent);
 
 
@@ -304,6 +333,8 @@ namespace SerialDebug
                 }
             }
         }
+
+
 
         /// <summary>
         /// 选择通信口。
@@ -522,7 +553,7 @@ namespace SerialDebug
 
         #region 右键菜单功能
 
-        private TextBox txtBoxMenu = new TextBox();
+        private RichTextBox txtBoxMenu = new RichTextBox();
 
         /// <summary>
         /// 撤销。
@@ -594,8 +625,9 @@ namespace SerialDebug
             try
             {
                 byte[] bytes = System.Text.ASCIIEncoding.Default.GetBytes(txtBoxMenu.SelectedText);
-                txtBoxMenu.Paste(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
-
+                // txtBoxMenu.Paste(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
+                Clipboard.SetText(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
+                txtBoxMenu.Paste();
             }
             catch (Exception ex)
             {
@@ -616,8 +648,9 @@ namespace SerialDebug
                 string[] strArray = txtBoxMenu.SelectedText.TrimEnd().Replace(Environment.NewLine, " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                 byte[] bytes = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(HexStringToByte));
-                txtBoxMenu.Paste(System.Text.ASCIIEncoding.Default.GetString(bytes));
-
+                // txtBoxMenu.Paste(System.Text.ASCIIEncoding.Default.GetString(bytes));
+                Clipboard.SetText(System.Text.ASCIIEncoding.Default.GetString(bytes));
+                txtBoxMenu.Paste();
             }
             catch (Exception ex)
             {
@@ -640,7 +673,10 @@ namespace SerialDebug
                 {
                     sb.Append(Convert.ToByte(str, 16).ToString() + " ");
                 }
-                txtBoxMenu.Paste(sb.ToString().TrimEnd());
+                //txtBoxMenu.Paste(sb.ToString().TrimEnd());
+
+                Clipboard.SetText(sb.ToString().TrimEnd());
+                txtBoxMenu.Paste();
 
             }
             catch (Exception ex)
@@ -660,7 +696,9 @@ namespace SerialDebug
             {
                 string[] strArray = txtBoxMenu.SelectedText.TrimEnd().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 byte[] bytes = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(DecStringToByte));
-                txtBoxMenu.Paste(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
+                //txtBoxMenu.Paste(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
+                Clipboard.SetText(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
+                txtBoxMenu.Paste();
             }
             catch (Exception ex)
             {
@@ -683,8 +721,9 @@ namespace SerialDebug
                 {
                     sb.Append(mbyte.ToString() + " ");
                 }
-                txtBoxMenu.Paste(sb.ToString().TrimEnd());
-
+                //txtBoxMenu.Paste(sb.ToString().TrimEnd());
+                Clipboard.SetText(sb.ToString().TrimEnd());
+                txtBoxMenu.Paste();
             }
             catch (Exception ex)
             {
@@ -703,7 +742,10 @@ namespace SerialDebug
             {
                 string[] strArray = txtBoxMenu.SelectedText.TrimEnd().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 byte[] bytes = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(DecStringToByte));
-                txtBoxMenu.Paste(System.Text.ASCIIEncoding.Default.GetString(bytes));
+                //txtBoxMenu.Paste(System.Text.ASCIIEncoding.Default.GetString(bytes));
+
+                Clipboard.SetText(System.Text.ASCIIEncoding.Default.GetString(bytes));
+                txtBoxMenu.Paste();
             }
             catch (Exception ex)
             {
@@ -774,7 +816,7 @@ namespace SerialDebug
         /// <param name="e"></param>
         private void txtSend_MouseEnter(object sender, EventArgs e)
         {
-            txtBoxMenu = txtSend;
+            //txtBoxMenu = txtSend;
         }
 
 
@@ -965,118 +1007,118 @@ namespace SerialDebug
         #region 串口接收显示
 
 
-        /// <summary>
-        /// 串口接收中断。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            try
-            {
-                int bytesLen = 0;
-                byte[] bytes;
-                do
-                {
-                    bytesLen = serialPort.BytesToRead;
-                    if (bytesLen >= 4096)
-                    {
+        ///// <summary>
+        ///// 串口接收中断。
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //private void serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        int bytesLen = 0;
+        //        byte[] bytes;
+        //        do
+        //        {
+        //            bytesLen = serialPort.BytesToRead;
+        //            if (bytesLen >= 4096)
+        //            {
 
-                        bytes = new byte[bytesLen];
-                        if (bytesLen <= 0)
-                        {
-                            return;
-                        }
-                        serialPort.Read(bytes, 0, bytesLen);
-                        lock (reBytesList)
-                        {
-                            reBytesList.Add(bytes);
-                        }
-                    }
-                    else
-                    {
-                        Thread.Sleep(30);
-                    }
-                } while (bytesLen != serialPort.BytesToRead);
+        //                bytes = new byte[bytesLen];
+        //                if (bytesLen <= 0)
+        //                {
+        //                    return;
+        //                }
+        //                serialPort.Read(bytes, 0, bytesLen);
+        //                lock (reBytesList)
+        //                {
+        //                    reBytesList.Add(bytes);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                Thread.Sleep(30);
+        //            }
+        //        } while (bytesLen != serialPort.BytesToRead);
 
-                if (bytesLen <= 0)
-                {
-                    return;
-                }
-                bytes = new byte[bytesLen];
-                serialPort.Read(bytes, 0, bytesLen);
-                lock (reBytesList)
-                {
-                    reBytesList.Add(bytes);
-                }
+        //        if (bytesLen <= 0)
+        //        {
+        //            return;
+        //        }
+        //        bytes = new byte[bytesLen];
+        //        serialPort.Read(bytes, 0, bytesLen);
+        //        lock (reBytesList)
+        //        {
+        //            reBytesList.Add(bytes);
+        //        }
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("串口接收" + ex.Message);
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("串口接收" + ex.Message);
+        //    }
+        //}
 
-        /// <summary>
-        /// 接收处理线程。
-        /// </summary>
-        private void ReceiveThreadHandle()
-        {
-            while (true)
-            {
-                try
-                {
-                    SerialDebugReceiveData data = null;
-                    lock (sp.ReceiveQueue)
-                    {
-                        if (sp.ReceiveQueue.Count > 0)
-                        {
-                            data = sp.ReceiveQueue.Dequeue();
-                        }
-                    }
+        ///// <summary>
+        ///// 接收处理线程。
+        ///// </summary>
+        //private void ReceiveThreadHandle()
+        //{
+        //    while (true)
+        //    {
+        //        try
+        //        {
+        //            SerialDebugReceiveData data = null;
+        //            lock (sp.ReceiveQueue)
+        //            {
+        //                if (sp.ReceiveQueue.Count > 0)
+        //                {
+        //                    data = sp.ReceiveQueue.Dequeue();
+        //                }
+        //            }
 
-                    if (data != null)
-                    {
-                        StringBuilder sbMsg = new StringBuilder();
+        //            if (data != null)
+        //            {
+        //                StringBuilder sbMsg = new StringBuilder();
 
-                        if (chkDisplay.Checked)  // 是否显示
-                        {
-                            if (chkTimeStamp.Checked)
-                            {
-                                sbMsg.AppendFormat("<<<{0}", data.TimeString);
-                            }
+        //                if (chkDisplay.Checked)  // 是否显示
+        //                {
+        //                    if (chkTimeStamp.Checked)
+        //                    {
+        //                        sbMsg.AppendFormat("<<<{0}", data.TimeString);
+        //                    }
 
-                            if (chkReceiveHex.Checked) // 十六进制显示
-                            {
-                                sbMsg.AppendFormat("{0}", data.HexString);
+        //                    if (chkReceiveHex.Checked) // 十六进制显示
+        //                    {
+        //                        sbMsg.AppendFormat("{0}", data.HexString);
 
-                            }
-                            else
-                            {
-                                sbMsg.AppendFormat("{0}", data.ASCIIString);
-                            }
+        //                    }
+        //                    else
+        //                    {
+        //                        sbMsg.AppendFormat("{0}", data.ASCIIString);
+        //                    }
 
-                            if (chkWrap.Checked || chkTimeStamp.Checked)                    // 自动换行
-                            {
-                                sbMsg.Append(Environment.NewLine);
-                            }
-                        }
-                        TextBoxReceiveAppend(sbMsg.ToString());
-                        RxCounter = RxCounter + (UInt64)data.DataLen;
-                        setLableText(labRx, string.Format("RX:{0}", RxCounter));
-                    }
-                    else
-                    {
-                        Thread.Sleep(100);
-                    }
+        //                    if (chkWrap.Checked || chkTimeStamp.Checked)                    // 自动换行
+        //                    {
+        //                        sbMsg.Append(Environment.NewLine);
+        //                    }
+        //                }
+        //                TextBoxReceiveAppend(sbMsg.ToString());
+        //                RxCounter = RxCounter + (UInt64)data.DataLen;
+        //                setLableText(labRx, string.Format("RX:{0}", RxCounter));
+        //            }
+        //            else
+        //            {
+        //                Thread.Sleep(100);
+        //            }
 
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("数据处理线程：" + ex.Message);
-                }
-            }
-        }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine("数据处理线程：" + ex.Message);
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// 更新接收长度。
@@ -1108,18 +1150,21 @@ namespace SerialDebug
             }
         }
 
-
+        private void TextBoxReceiveAppend(string appendText)
+        {
+            TextBoxReceiveAppend(Color.Black, appendText);
+        }
         /// <summary>
         /// 更新接收文本框。
         /// </summary>
         /// <param name="appendText"></param>
-        private void TextBoxReceiveAppend(string appendText)
+        private void TextBoxReceiveAppend(Color color, string appendText)
         {
             if (txtReceive.InvokeRequired)
             {
                 txtReceive.BeginInvoke(new MethodInvoker(delegate
                 {
-                    TextBoxReceiveAppend(appendText);
+                    TextBoxReceiveAppend(color, appendText);
                 }));
                 return;
             }
@@ -1132,6 +1177,7 @@ namespace SerialDebug
                 }
                 else
                 {
+                    txtReceive.SelectionColor = color;
                     txtReceive.AppendText(appendText);
                 }
             }
@@ -1146,7 +1192,6 @@ namespace SerialDebug
 
         #region 串口发送
 
-        private Thread mySendThread;
 
         /// <summary>
         /// 更新状态栏接收。
@@ -1196,7 +1241,6 @@ namespace SerialDebug
 
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Enter)
             {
-                IsSendByKey = true;
                 btnSend.PerformClick();
                 e.Handled = true;
                 return;
@@ -1256,7 +1300,6 @@ namespace SerialDebug
         }
 
 
-        private bool SerialSendAbort = false;
         /// <summary>
         /// 点击开始发送或者停止发送。
         /// </summary>
@@ -1264,71 +1307,63 @@ namespace SerialDebug
         /// <param name="e"></param>
         private void btnSend_Click(object sender, EventArgs e)
         {
-            if (btnSend.Text == "开始发送")
+            try
             {
-
-                if (serialPort.IsOpen == false)
+                if (btnSend.Text == "开始发送")
                 {
-                    MessageBox.Show("串口未打开，请先打开串口", "发送数据", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return;
+
+                    if (serialPort.IsOpen == false)
+                    {
+                        MessageBox.Show("串口未打开，请先打开串口", "发送数据", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        return;
+                    }
+
+
+                    ISendForm sendForm = (ISendForm)frmNormalSend;
+                    switch (sendModeType)
+                    {
+                        case SendModeType.Normal:
+                            sendForm = (ISendForm)frmNormalSend;
+                            break;
+                        case SendModeType.Queue:
+                            sendForm = (ISendForm)frmQSend;
+                            break;
+                        case SendModeType.File:
+                            frmFileSend.Start();
+                            break;
+                    }
+
+                    if (sendModeType != SendModeType.File)
+                    {
+                        List<CSendParam> list = sendForm.getSendList();
+                        sp.Send(list, sendForm.LoopCount);
+                    }
+
+
+                    SetSendEnable(true);
+                    setLableText(labTx, string.Format("TX:{0}", TxCounter));
                 }
-
-
-                ISendForm sendForm = (ISendForm)frmNormalSend;
-                switch (sendModeType)
+                else
                 {
-                    case SendModeType.Normal:
-                        sendForm = (ISendForm)frmNormalSend;
-                        break;
-                    case SendModeType.Queue:
-                        sendForm = (ISendForm)frmQSend;
-                        break;
-                    case SendModeType.File:
+                    if (sendModeType != SendModeType.File)
+                    {
+                        sp.StopSend();
+                    }
+                    else
+                    {
+                        frmFileSend.Stop();
+                    }
 
-                        break;
+                    //SerialSendAbort = true;
+                    SetSendEnable(false);
+                    setLableText(labTx, string.Format("TX:{0}", TxCounter));
                 }
-                List<CSendParam> list = sendForm.getSendList();
-                sp.Send(list, sendForm.LoopCount);
-
-
-                //List<CSendParam> list = new List<CSendParam>();
-                //foreach (DataGridViewRow row in dgvSendList.Rows)
-                //{
-                //    string[] paramsArray = row.Cells[1].Value.ToString().Split(new char[] { ':' });
-                //    CSendParam sendParam = new CSendParam(
-                //        (SendParamFormat)Convert.ToInt32(paramsArray[0]),
-                //        (SendParamMode)Convert.ToInt32(paramsArray[1]),
-                //        Convert.ToInt32(paramsArray[2]),
-                //        row.Cells[2].Value.ToString());
-                //    list.Add(sendParam);
-                //}
-                //sp.Send(list);
-
-                //if (txtSend.Text == "")
-                //{
-                //    MessageBox.Show("没有可发送的数据", "发送数据", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                //    return;
-                //}
-
-
-
-                //SerialSendAbort = false;
-                //mySendThread = new Thread(new ThreadStart(SendThreadHandle));
-                //mySendThread.IsBackground = true;
-                //mySendThread.Start();
-
-                SetSendEnable(true);
-                setLableText(labTx, string.Format("TX:{0}", TxCounter));
             }
-            else
+            catch (System.Exception ex)
             {
-                sp.StopSend();
-
-                //mySendThread.Abort();
-                SerialSendAbort = true;
-                SetSendEnable(false);
-                setLableText(labTx, string.Format("TX:{0}", TxCounter));
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
         }
 
 
@@ -2008,6 +2043,49 @@ namespace SerialDebug
         #endregion
 
 
+        /// <summary>
+        /// 接收事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void sp_ReceivedEvent(object sender, SerialDebugReceiveData e)
+        {
+            if (e != null)
+            {
+                StringBuilder sbMsg = new StringBuilder();
+
+                if (chkDisplay.Checked)  // 是否显示
+                {
+                    if (chkTimeStamp.Checked)
+                    {
+                        sbMsg.AppendFormat("{0}[<--]", e.TimeString);
+                    }
+
+                    if (chkReceiveHex.Checked) // 十六进制显示
+                    {
+                        sbMsg.AppendFormat("{0}", e.HexString);
+
+                    }
+                    else
+                    {
+                        sbMsg.AppendFormat("{0}", e.ASCIIString);
+                    }
+
+                    if (chkWrap.Checked || chkTimeStamp.Checked)                    // 自动换行
+                    {
+                        sbMsg.Append(Environment.NewLine);
+                    }
+                }
+                TextBoxReceiveAppend(ReceiveColor, sbMsg.ToString());
+                RxCounter = RxCounter + (UInt64)e.DataLen;
+                setLableText(labRx, string.Format("RX:{0}", RxCounter));
+            }
+
+            if (sendModeType == SendModeType.File)
+            {
+                frmFileSend.ReceivedFromUart(e.ReceiveData);
+            }
+        }
 
         /// <summary>
         /// 发送显示事件
@@ -2018,7 +2096,10 @@ namespace SerialDebug
         {
             if (e.SendParam == null)
             {
-                SetSendEnable(false);
+                if (sendModeType != SendModeType.File)
+                {
+                    SetSendEnable(false);
+                }
             }
             else
             {
@@ -2028,7 +2109,7 @@ namespace SerialDebug
                 {
                     if (chkTimeStamp.Checked)
                     {
-                        sendMsg.AppendFormat(">>>{0}", e.TimeString);
+                        sendMsg.AppendFormat("{0}[-->]", e.TimeString);
                     }
 
                     sendMsg.AppendFormat("{0}", e.SendParam.Data);
@@ -2039,7 +2120,7 @@ namespace SerialDebug
                     }
 
 
-                    TextBoxReceiveAppend(sendMsg.ToString());
+                    TextBoxReceiveAppend(SendColor, sendMsg.ToString());
 
                 }
 
