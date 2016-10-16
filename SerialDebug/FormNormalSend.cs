@@ -151,6 +151,11 @@ namespace SerialDebug
             {
                 List<CSendParam> list = new List<CSendParam>();
 
+                if (txtSend.Text.Trim()==string.Empty)
+                {
+                    return list;
+                }
+
                 SendParamFormat format = SendParamFormat.ASCII;
                 if (chkSendHex.Checked)
                 {

@@ -1337,7 +1337,16 @@ namespace SerialDebug
                     if (sendModeType != SendModeType.File)
                     {
                         List<CSendParam> list = sendForm.getSendList();
-                        sp.Send(list, sendForm.LoopCount);
+                        if (list.Count<=0)
+                        {
+                            MessageBox.Show("没有任何可发送的数据", "发送数据", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            return;
+                        }
+                        else
+                        {
+                            sp.Send(list, sendForm.LoopCount);
+                        }
+                        
                     }
 
 
