@@ -50,6 +50,7 @@
     <Compile Include="FileTransmit\IFileTramsmit.cs" />
     <Compile Include="FileTransmit\ITransmitUart.cs" />
     <Compile Include="FileTransmit\XModem.cs" />
+    <Compile Include="FileTransmit\YModem.cs" />
     <Compile Include="FormNormalSend.cs">
       <SubType>Form</SubType>
     </Compile>

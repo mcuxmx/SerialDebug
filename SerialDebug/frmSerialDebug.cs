@@ -1179,6 +1179,7 @@ namespace SerialDebug
                 {
                     txtReceive.SelectionColor = color;
                     txtReceive.AppendText(appendText);
+                    txtReceive.ScrollToCaret();
                 }
             }
         }

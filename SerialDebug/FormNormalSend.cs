@@ -259,6 +259,11 @@ namespace SerialDebug
             
         }
 
+        private void labClearSend_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            txtSend.Clear();
+        }
+
 
     }
 }

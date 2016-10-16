@@ -254,6 +254,7 @@
             this.labClearSend.TabIndex = 35;
             this.labClearSend.TabStop = true;
             this.labClearSend.Text = " 清空发送区 ";
+            this.labClearSend.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labClearSend_LinkClicked);
             // 
             // Label7
             // 

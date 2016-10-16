@@ -16,8 +16,13 @@ namespace SerialDebug
         ASCII = 0,
         Binary,
         Xmodem,
-        Xmodem_1K
+        Xmodem_1K,
+        Ymodem,
+        Ymodem_G
     }
+
+
+
 
     public partial class FormFileSend : Form
     {
@@ -46,7 +51,8 @@ namespace SerialDebug
             cbFileProtocol.Items.Add("Binary");
             cbFileProtocol.Items.Add("Xmodem");
             cbFileProtocol.Items.Add("Xmodem-1K");
-
+            cbFileProtocol.Items.Add("Ymodem");
+            cbFileProtocol.Items.Add("Ymodem-G");
 
 
             cbFileProtocol.SelectedIndex = 0;
@@ -67,22 +73,30 @@ namespace SerialDebug
                 throw new Exception("未选择任何文件，请选择文件！");
             }
 
-            switch (cbFileProtocol.SelectedIndex)
+            switch (_FileTransMode)
             {
-                case 0:
+                case FileTransmitMode.ASCII:
 
                     FileTransProtocol = new BinarySend(Convert.ToInt32(numDelayTime.Value));
                     break;
-                case 1:
+                case FileTransmitMode.Binary:
                     PacketLen = Convert.ToInt32(numPacketLen.Value);
                     FileTransProtocol = new BinarySend(Convert.ToInt32(numDelayTime.Value));
                     break;
-                case 2: // Xmodem
+                case FileTransmitMode.Xmodem: // Xmodem
                     FileTransProtocol = new XModem(TransmitMode.Send, XModemType.XModem, 6);
                     PacketLen = 128;
                     break;
-                case 3: // Xmodem-1k
+                case FileTransmitMode.Xmodem_1K: // Xmodem-1k
                     FileTransProtocol = new XModem(TransmitMode.Send, XModemType.XModem_1K, 6);
+                    PacketLen = 1024;
+                    break;
+                case FileTransmitMode.Ymodem:
+                    FileTransProtocol = new YModem(TransmitMode.Send, YModemType.YModem, 6);
+                    PacketLen = 128;
+                    break;
+                case FileTransmitMode.Ymodem_G:
+                    FileTransProtocol = new YModem(TransmitMode.Send, YModemType.YModem_G, 6);
                     PacketLen = 1024;
                     break;
                 default:
@@ -219,6 +233,8 @@ namespace SerialDebug
             }
         }
 
+
+
         private string ReadLineFromFile()
         {
             FileStream fs = new FileStream(txtFile.Text, FileMode.Open);
@@ -290,15 +306,42 @@ namespace SerialDebug
         void xmodem_StartSend(object sender, EventArgs e)
         {
             PacketBuff = new byte[PacketLen];
-            packetNo = 1;
 
-            if (ReadPacketFromFile(fileIndex, PacketBuff, PacketLen) <= 0)
+            if (_FileTransMode == FileTransmitMode.Xmodem || _FileTransMode == FileTransmitMode.Xmodem_1K)
             {
-                FileTransProtocol.Stop();
+                packetNo = 1;
+
+                if (ReadPacketFromFile(fileIndex, PacketBuff, PacketLen) <= 0)
+                {
+                    FileTransProtocol.Stop();
+                }
+                else
+                {
+                    FileTransProtocol.SendPacket(new PacketEventArgs(packetNo, PacketBuff));
+                }
             }
-            else
+            else if (_FileTransMode == FileTransmitMode.Ymodem || _FileTransMode == FileTransmitMode.Ymodem_G)
             {
-                FileTransProtocol.SendPacket(new PacketEventArgs(packetNo, PacketBuff));
+                packetNo = 0;
+
+                FileInfo fileInfo = new FileInfo(txtFile.Text);
+
+                byte[] fileNameBytes = System.Text.ASCIIEncoding.Default.GetBytes(fileInfo.Name);
+
+                int index = 0;
+                Array.Copy(fileNameBytes, 0, PacketBuff, 0, fileNameBytes.Length);
+                index += fileNameBytes.Length;
+                PacketBuff[index] = 0;
+                index++;
+                byte[] fileSizeBytes = System.Text.ASCIIEncoding.Default.GetBytes(fileInfo.Length.ToString());
+                Array.Copy(fileSizeBytes, 0, PacketBuff, index, fileSizeBytes.Length);
+
+                FileTransProtocol.SendPacket(new PacketEventArgs(0, PacketBuff));
+
+                fileIndex = 0;
+                packetNo = 0;
+
+                //fileInfo.Name;
             }
         }
 
@@ -375,13 +418,28 @@ namespace SerialDebug
                 packetNo++;
                 fileIndex += PacketLen;
 
+                if (packetNo == 1)
+                {
+                    fileIndex = 0;
+                }
 
-                if (ReadPacketFromFile(fileIndex, PacketBuff, PacketLen) <= 0)
+                int readBytes = ReadPacketFromFile(fileIndex, PacketBuff, PacketLen);
+                if (readBytes <= 0)
                 {
                     FileTransProtocol.Stop();
                 }
                 else
                 {
+                    if (_FileTransMode == FileTransmitMode.Ymodem || _FileTransMode== FileTransmitMode.Ymodem_G)
+                    {
+                        if (readBytes<PacketLen)
+                        {
+                            for (int i = readBytes; i < PacketLen;i++ )
+                            {
+                                PacketBuff[i] = 0x1A;
+                            }
+                        }
+                    }
                     FileTransProtocol.SendPacket(new PacketEventArgs(packetNo, PacketBuff));
 
                 }
