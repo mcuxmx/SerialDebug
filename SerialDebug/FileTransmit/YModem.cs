@@ -65,6 +65,27 @@ namespace XMX.FileTransmit
         }
     }
 
+    /// <summary>
+    /// Xmodem发送步骤
+    /// </summary>
+    internal enum YmodemSendStage : int
+    {
+        WaitReceiveRequestFileInfo,   //等待接收端请求文件头
+        WaitReceiveRequestFirstPacket,
+        PacketSending,
+        WaitReceiveAnswerEndTransmit,   // 等待接收方应答EOT
+        WaitReceiveNextFileReq,            // 等等接收方请求下一个文件
+    }
+
+    /// <summary>
+    /// Xmodem接收步骤
+    /// </summary>
+    internal enum YmodemReceiveStage : int
+    {
+        WaitForFileInfo,
+        WaitForFirstPacket,
+        PacketReceiving,
+    }
 
     public class YModemInfo
     {
@@ -114,10 +135,6 @@ namespace XMX.FileTransmit
         private readonly byte CAN = 0x18;
         private readonly byte KEY_C = 0x43; //'C';
 
-
-        //private TransmitType TransType = TransmitType.Send;
-        //private bool YMODEM_CRC = false;
-        //private bool YMODEM_1K = false;
         private int RetryMax = 6;
 
         YModemInfo ymodemInfo = new YModemInfo();
@@ -125,18 +142,12 @@ namespace XMX.FileTransmit
 
         private Thread TransThread;
         private bool IsStart = false;
-        private bool receiveWaitForFileInfo = true;        //接收方等待文件信息
-        private bool receiveWaitForFirstPacket = true;     //接收方等待第一包数据
-
-
-        private bool sendWaitFileHeaderInfoACK = false; //发送方等待头信息的确认
-        private bool sendWaitReqFirstPacket = false;    //发送方等待发送第一包数据
-        private bool sendWaitForEnd = false;
-
+   
         private int reTryCount;
         private ManualResetEvent waitReceiveEvent = new ManualResetEvent(false);
-        private YmodemMessage ReceivedMessage = null;
-
+        private YmodemReceiveStage ReceiveStage;
+        private YmodemSendStage SendStage;
+        private Queue<YmodemMessage> msgQueue = new Queue<YmodemMessage>();
 
         public YModem(TransmitMode transType, YModemType ymodemType, int reTryCount)
         {
@@ -150,13 +161,10 @@ namespace XMX.FileTransmit
         {
             IsStart = true;
             reTryCount = 0;
-            ReceivedMessage = null;
-            receiveWaitForFileInfo = true;
-            receiveWaitForFirstPacket = false;
 
-            sendWaitFileHeaderInfoACK = true;
-            sendWaitReqFirstPacket = false;
-            sendWaitForEnd = false;
+            ReceiveStage = YmodemReceiveStage.WaitForFileInfo;
+            SendStage = YmodemSendStage.WaitReceiveRequestFileInfo;
+
 
             TransThread = new Thread(new ThreadStart(TransThreadHandler));
             TransThread.IsBackground = true;
@@ -173,30 +181,28 @@ namespace XMX.FileTransmit
 
         public void Stop()
         {
-            sendWaitForEnd = true;
-
-           // IsStart = false;
             if (ymodemInfo.TransMode == TransmitMode.Receive)
             {
-                SendCAN();
-
+                Abort();
             }
             else
             {
                 SendEOT();
 
-                //int packetLen = ymodemInfo.Type == YModemType.YModem ? 128 : 1024;
-                //byte[] endPacket = new byte[3+packetLen+2];
-                //SendFrameToUart(endPacket);
-                ////SendPacket(new PacketEventArgs(0, endPacket));
             }
-
-            //if (EndOfTransmit != null)
-            //{
-            //    EndOfTransmit(ymodemInfo, null);
-            //}
+            
         }
 
+        public void Abort()
+        {
+            IsStart = false;
+            SendCAN();
+
+            if (EndOfTransmit != null)
+            {
+                EndOfTransmit(ymodemInfo, null);
+            }
+        }
 
 
         /// <summary>
@@ -205,7 +211,8 @@ namespace XMX.FileTransmit
         /// <param name="data"></param>
         private void ParseReceivedMessage(byte[] data)
         {
-            ReceivedMessage = null;
+
+            YmodemMessage ReceivedMessage = null;
 
             if (data == null)
             {
@@ -213,28 +220,7 @@ namespace XMX.FileTransmit
             }
             else
             {
-
-                if (data[0] == EOT)
-                {
-                    ReceivedMessage = new YmodemMessage(YmodemMessageType.EOT);
-                }
-                else if (data[0] == CAN)
-                {
-                    ReceivedMessage = new YmodemMessage(YmodemMessageType.CAN);
-                }
-                else if (data[0] == NAK)
-                {
-                    ReceivedMessage = new YmodemMessage(YmodemMessageType.NAK);
-                }
-                else if (data[0] == ACK)
-                {
-                    ReceivedMessage = new YmodemMessage(YmodemMessageType.ACK);
-                }
-                else if (data[0] == KEY_C)
-                {
-                    ReceivedMessage = new YmodemMessage(YmodemMessageType.KEY_C);
-                }
-                else if (data[0] == STX || data[0] == SOH)
+                if (data[0] == STX || data[0] == SOH)
                 {
                     ReceivedMessage = new YmodemMessage(YmodemMessageType.PACKET_ERROR);
                     int packetLen = 0;
@@ -247,7 +233,6 @@ namespace XMX.FileTransmit
                         packetLen = 128;
                     }
 
-                    // int checkDataLen = ymodemInfo.CheckMode == YModemCheckMode.CheckSum ? 1 : 2;
                     int checkDataLen = 2;
                     if (packetLen + 3 + checkDataLen == data.Length)
                     {
@@ -262,22 +247,52 @@ namespace XMX.FileTransmit
                         byte[] packet = new byte[packetLen];
 
                         Array.Copy(data, 3, packet, 0, packetLen);
-                        //if (ymodemInfo.CheckMode == YModemCheckMode.CheckSum)
-                        //{
-                        //    frameCheckCode = data[3 + packetLen];
-                        //    calCheckCode = Convert.ToByte(DataCheck.GetCheckSum(packet) & 0xFF);
-                        //}
-                        //else
-                        //{
+
                         frameCheckCode = (data[3 + packetLen] << 8) + data[3 + packetLen + 1];
                         calCheckCode = Convert.ToUInt16(DataCheck.GetCRC(CRCType.CRC16_XMODEM, packet) & 0xFFFF);
-                        //}
+                        
 
                         if (frameCheckCode == calCheckCode)
                         {
                             ReceivedMessage = new YmodemMessage(YmodemMessageType.PACKET, new PacketEventArgs(packetNo, packet));
                         }
 
+                    }
+                }
+                else
+                {
+                    foreach (byte b in data)
+                    {
+                        ReceivedMessage = null;
+
+                        if (b == EOT)
+                        {
+                            ReceivedMessage = new YmodemMessage(YmodemMessageType.EOT);
+                        }
+                        else if (b == CAN)
+                        {
+                            ReceivedMessage = new YmodemMessage(YmodemMessageType.CAN);
+                        }
+                        else if (b == NAK)
+                        {
+                            ReceivedMessage = new YmodemMessage(YmodemMessageType.NAK);
+                        }
+                        else if (b == ACK)
+                        {
+                            ReceivedMessage = new YmodemMessage(YmodemMessageType.ACK);
+                        }
+                        else if (b == KEY_C)
+                        {
+                            ReceivedMessage = new YmodemMessage(YmodemMessageType.KEY_C);
+                        }
+                        else
+                        {
+                        }
+
+                        if (ReceivedMessage!=null)
+                        {
+                            msgQueue.Enqueue(ReceivedMessage);
+                        }
                     }
                 }
 
@@ -323,22 +338,19 @@ namespace XMX.FileTransmit
 
         private void SendCAN()
         {
+            byte[] bytes = new byte[5];
             for (int i = 0; i < 5; i++)
             {
-                SendFrameToUart(CAN);
-                Thread.Sleep(1000);
+                bytes[i] = CAN;
             }
+            SendFrameToUart(bytes);
 
         }
 
         private void SendEOT()
         {
-            //for (int i = 0; i < 5; i++)
-            //{
-            //    SendFrameToUart(EOT);
-            //    Thread.Sleep(1000);
-            //}
             SendFrameToUart(EOT);
+            SendStage = YmodemSendStage.WaitReceiveAnswerEndTransmit;
         }
 
 
@@ -350,19 +362,6 @@ namespace XMX.FileTransmit
             endPacket[1] = 0x00;
             endPacket[2] = 0xFF;
             SendFrameToUart(endPacket);
-
-
-            //byte[] endPacket = new byte[packetLen];
-            //endPacket[0] = 0;
-            //endPacket[1] = 0x30;
-            //endPacket[2] = 0x20;
-            //endPacket[3] = 0x30;
-            //endPacket[4] = 0x20;
-            //endPacket[5] = 0x30;
-
-
-            //PacketEventArgs e = new PacketEventArgs(0, endPacket);
-            //SendPacket(e);
 
             if (EndOfTransmit != null)
             {
@@ -388,17 +387,18 @@ namespace XMX.FileTransmit
 
         void SendHandler()
         {
-            if (waitReceiveEvent.WaitOne(3000))
+
+            YmodemMessage msg;
+            if (msgQueue.Count > 0)
             {
-                waitReceiveEvent.Reset();
-                if (ReceivedMessage != null)
+                msg = msgQueue.Dequeue();
+                if (msg != null)
                 {
                     reTryCount = 0;
-
-                    switch (ReceivedMessage.MessageType)
+                    switch (msg.MessageType)
                     {
                         case YmodemMessageType.NAK:
-                            if (sendWaitForEnd)
+                            if (SendStage == YmodemSendStage.WaitReceiveAnswerEndTransmit)
                             {
                                 SendEOT();
                             }
@@ -411,10 +411,10 @@ namespace XMX.FileTransmit
                                 }
 
                             }
-                            
+
                             break;
                         case YmodemMessageType.KEY_C:
-                            if (sendWaitFileHeaderInfoACK)
+                            if (SendStage == YmodemSendStage.WaitReceiveRequestFileInfo)
                             {
                                 // 通知发头一包CRC
                                 if (StartSend != null)
@@ -422,53 +422,40 @@ namespace XMX.FileTransmit
                                     StartSend(ymodemInfo, null);
                                 }
                             }
-
-                            else if (sendWaitReqFirstPacket)    //等待第一包
+                            else if (SendStage == YmodemSendStage.WaitReceiveRequestFirstPacket)    //等待第一包
                             {
+                                SendStage = YmodemSendStage.PacketSending;
                                 // 通知发下一包
                                 if (SendNextPacket != null)
                                 {
                                     SendNextPacket(ymodemInfo, null);
                                 }
                             }
-
-                            if (sendWaitForEnd)
+                            else if (SendStage == YmodemSendStage.WaitReceiveNextFileReq)   //接收方请求下一个文件
                             {
-                                sendWaitForEnd = false;
                                 SendNoFilesToSend();
                             }
-                           
+
+
                             break;
                         case YmodemMessageType.ACK:
-                            if (sendWaitFileHeaderInfoACK)  //如果在等待头文件的确认
+                            if (SendStage == YmodemSendStage.WaitReceiveRequestFileInfo)
                             {
-                                sendWaitFileHeaderInfoACK = false;
-                                sendWaitReqFirstPacket = true;  // 开始等待接收方请求第一包数据
-
-
-                                /* 不等待C直接发 */
-                                sendWaitReqFirstPacket = false;
+                                SendStage = YmodemSendStage.WaitReceiveRequestFirstPacket;  //等待接收方请求第一包数据
+                            }
+                            else if (SendStage == YmodemSendStage.PacketSending)
+                            {
                                 // 通知发下一包
                                 if (SendNextPacket != null)
                                 {
                                     SendNextPacket(ymodemInfo, null);
                                 }
                             }
-                            else if (sendWaitForEnd)
+                            else if (SendStage == YmodemSendStage.WaitReceiveAnswerEndTransmit)
                             {
-                                sendWaitForEnd = false;
-                                SendNoFilesToSend();
+                                SendStage = YmodemSendStage.WaitReceiveNextFileReq; //等待接收方请求下一个文件
                             }
-                            else
-                            {
-                                sendWaitReqFirstPacket = false;
-                                // 通知发下一包
-                                if (SendNextPacket != null)
-                                {
-                                    SendNextPacket(ymodemInfo, null);
-                                }
-                            }
-                            
+
                             break;
                         case YmodemMessageType.CAN:
                             // 通知中止
@@ -478,64 +465,60 @@ namespace XMX.FileTransmit
                             }
                             break;
                         default:
-                            reTryCount++;
+
                             break;
                     }
+
+                }
+            }
+            else
+            {
+                if (waitReceiveEvent.WaitOne(3000))
+                {
+                    waitReceiveEvent.Reset();
                 }
                 else
                 {
                     reTryCount++;
-                }
-
-                if (reTryCount > RetryMax)
-                {
-                    //通知发送超时
-                    if (TransmitTimeOut != null)
+                    if (reTryCount > RetryMax)
                     {
-                        TransmitTimeOut(ymodemInfo, null);
+                        IsStart = false;
+                        //通知接收超时
+                        if (TransmitTimeOut != null)
+                        {
+                            TransmitTimeOut(ymodemInfo, null);
+                        }
                     }
                 }
             }
+
+
         }
 
         void ReceiveHandler()
         {
-            if (receiveWaitForFileInfo || receiveWaitForFirstPacket)
+            if (ReceiveStage == YmodemReceiveStage.WaitForFileInfo || ReceiveStage == YmodemReceiveStage.WaitForFirstPacket)
             {
-                //if (reTryCount % 2 == 0)
-                //{
-                //   // ymodemInfo.CheckMode = YModemCheckMode.CheckSum;
-                //    SendKEYC();
-                //}
-                //else
-                //{
-                //   // ymodemInfo.CheckMode = YModemCheckMode.CRC16;
-                //    SendNAK();
-                //}
-
                 SendKEYC();
             }
 
-
-            if (waitReceiveEvent.WaitOne(3000))
+            if (msgQueue.Count > 0)
             {
-                waitReceiveEvent.Reset();
-                if (ReceivedMessage != null)
+                YmodemMessage msg = msgQueue.Dequeue();
+                if (msg != null)
                 {
                     reTryCount = 0;
 
-                    switch (ReceivedMessage.MessageType)
+                    switch (msg.MessageType)
                     {
                         case YmodemMessageType.PACKET:
 
-                            PacketEventArgs e = ReceivedMessage.Value as PacketEventArgs;
-
-                            if (receiveWaitForFileInfo)
+                            PacketEventArgs e = msg.Value as PacketEventArgs;
+                            if (ReceiveStage == YmodemReceiveStage.WaitForFileInfo)
                             {
                                 if (e.PacketNo == 0)
                                 {
-                                    receiveWaitForFileInfo = false;    //收到文件头信息
-                                    receiveWaitForFirstPacket = true;  //等待接收第一包数据
+                                    ReceiveStage = YmodemReceiveStage.WaitForFirstPacket;
                                     SendACK();
 
                                     if (ReceivedPacket != null)
@@ -543,14 +526,20 @@ namespace XMX.FileTransmit
                                         ReceivedPacket(ymodemInfo, new PacketEventArgs(e.PacketNo, e.Packet));
                                     }
                                 }
-                                else
-                                {
-                                    SendNAK();
-                                }
-                                
+                                //else
+                                //{
+                                //    SendNAK();
+                                //}
                             }
-                            else
+
+                            else if (ReceiveStage == YmodemReceiveStage.WaitForFirstPacket ||
+                                ReceiveStage == YmodemReceiveStage.PacketReceiving)
                             {
+                                if (ReceiveStage == YmodemReceiveStage.WaitForFirstPacket)
+                                {
+                                    ReceiveStage = YmodemReceiveStage.PacketReceiving;
+                                }
+
                                 SendACK();
 
                                 if (ReceivedPacket != null)
@@ -564,7 +553,8 @@ namespace XMX.FileTransmit
                                     SendNextPacket(ymodemInfo, null);
                                 }
                             }
-                            
+
+
                             break;
                         case YmodemMessageType.PACKET_ERROR:
                             SendNAK();
@@ -591,25 +581,33 @@ namespace XMX.FileTransmit
                             }
                             break;
                         default:
-                            SendNAK();
-                            reTryCount++;
                             break;
                     }
+                }
+
+            }
+            else
+            {
+                if (waitReceiveEvent.WaitOne(3000))
+                {
+                    waitReceiveEvent.Reset();
                 }
                 else
                 {
                     reTryCount++;
-                }
-
-                if (reTryCount > RetryMax)
-                {
-                    //通知接收超时
-                    if (TransmitTimeOut != null)
+                    if (reTryCount > RetryMax)
                     {
-                        TransmitTimeOut(ymodemInfo, null);
+                        IsStart = false;
+                        //通知接收超时
+                        if (TransmitTimeOut != null)
+                        {
+                            TransmitTimeOut(ymodemInfo, null);
+                        }
                     }
+
                 }
             }
+
         }
 
 
@@ -637,14 +635,6 @@ namespace XMX.FileTransmit
             int checkLen = 0;
             byte[] data;
 
-            //if (ymodemInfo.CheckMode == YModemCheckMode.CheckSum)
-            //{
-            //    checkLen = 1;
-            //}
-            //else
-            //{
-            //    checkLen = 2;
-            //}
             checkLen = 2;
 
             if (ymodemInfo.Type == YModemType.YModem_G)
@@ -668,16 +658,10 @@ namespace XMX.FileTransmit
             data[2] = Convert.ToByte((~data[1]) & 0xFF);
             Array.Copy(packet.Packet, 0, data, 3, packetLen);
 
-            //if (ymodemInfo.CheckMode == YModemCheckMode.CheckSum)
-            //{
-            //    data[3 + packetLen] = Convert.ToByte(DataCheck.GetCheckSum(packet.Packet) & 0xFF);
-            //}
-            //else
-            //{
             UInt16 crc = Convert.ToUInt16(DataCheck.GetCRC(CRCType.CRC16_XMODEM, packet.Packet) & 0xFFFF);
             data[3 + packetLen] = Convert.ToByte(crc >> 8);
             data[3 + packetLen + 1] = Convert.ToByte(crc & 0xFF);
-            //}
+
 
             SendFrameToUart(data);
         }

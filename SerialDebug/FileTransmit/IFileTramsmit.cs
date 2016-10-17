@@ -30,6 +30,7 @@ namespace XMX.FileTransmit
         void SendPacket(PacketEventArgs packet);
         void Start();
         void Stop();
+        void Abort();
 
     }
 

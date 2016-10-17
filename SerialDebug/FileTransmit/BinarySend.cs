@@ -74,6 +74,11 @@ namespace XMX.FileTransmit
             }
         }
 
+        public void Abort()
+        {
+            Stop();
+        }
+
         #endregion
 
         #region ITransmitUart ≥…‘±

@@ -137,7 +137,7 @@ namespace SerialDebug
             cbComName.DataSource = SerialPort.GetPortNames();
             cbStreamControl.SelectedIndex = 0;
             serialPort.RtsEnable = chkRTS.Checked;
-            this.Text = Application.ProductName + " V" + Application.ProductVersion.Substring(0, 3);
+            this.Text = string.Format("{0} V{1} Beta1      作者：启岩   QQ：516409354", Application.ProductName, Application.ProductVersion.Substring(0, 3));
 
             CheckForIllegalCrossThreadCalls = false;
 
@@ -146,15 +146,7 @@ namespace SerialDebug
             SetLableText = new SetLableTextDel(setLableText);
             cbHTEOFChars.SelectedIndex = 0;
 
-            //panelSendList.Parent = splitContainer1.Panel2;
-            //panelSendList.Top = panelNormalSend.Top;
-            //panelSendList.Left = panelNormalSend.Left;
-            //panelSendList.Width = panelNormalSend.Width;
-            //panelSendList.Height = panelNormalSend.Height;
-            //panelNormalSend.Visible = false;
 
-            ////panelSendList.Visible = false;
-            ////panelNormalSend.Visible = true;
 
             panelNormalSend.Visible = false;
 
@@ -1337,7 +1329,7 @@ namespace SerialDebug
                     if (sendModeType != SendModeType.File)
                     {
                         List<CSendParam> list = sendForm.getSendList();
-                        if (list.Count<=0)
+                        if (list.Count <= 0)
                         {
                             MessageBox.Show("没有任何可发送的数据", "发送数据", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                             return;
@@ -1346,7 +1338,7 @@ namespace SerialDebug
                         {
                             sp.Send(list, sendForm.LoopCount);
                         }
-                        
+
                     }
 
 
@@ -1385,30 +1377,38 @@ namespace SerialDebug
         {
             if (this.InvokeRequired)
             {
-                this.BeginInvoke(new MethodInvoker(delegate()
+                this.Invoke(new MethodInvoker(delegate()
                 {
                     SetSendEnable(IsEnable);
                 }));
-                return;
+                //return;
             }
 
             if (IsEnable == true)
             {
-                //chkSendHex.Enabled = false;
-                //chkAutoSend.Enabled = false;
-                //numSendCount.Enabled = false;
-                //numSendInterval.Enabled = false;
-                //numSendOnceBytes.Enabled = false;
-                btnSend.Text = "停止发送";
+
+                if (btnSend.Text != "停止发送")
+                {
+                    btnSend.Text = "停止发送";
+
+                    radSendModeNormal.Enabled = false;
+                    radSendModeQueue.Enabled = false;
+                    radSendModeFile.Enabled = false;
+                }
+
             }
             else
             {
-                //chkSendHex.Enabled = true;
-                //chkAutoSend.Enabled = true;
-                //numSendCount.Enabled = true;
-                //numSendInterval.Enabled = true;
-                //numSendOnceBytes.Enabled = true;
-                btnSend.Text = "开始发送";
+
+                if (btnSend.Text != "开始发送")
+                {
+                    btnSend.Text = "开始发送";
+
+                    radSendModeNormal.Enabled = true;
+                    radSendModeQueue.Enabled = true;
+                    radSendModeFile.Enabled = true;
+                }
+
             }
 
         }

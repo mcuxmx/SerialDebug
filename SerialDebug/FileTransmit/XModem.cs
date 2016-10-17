@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using System.Collections;
 
 namespace XMX.FileTransmit
 {
@@ -65,33 +66,24 @@ namespace XMX.FileTransmit
         }
     }
 
-    //public class PacktSendEventArgs : EventArgs
-    //{
-    //    private readonly int _PacketLen;
-    //    private byte[] _Packet;
+    /// <summary>
+    /// Xmodem发送步骤
+    /// </summary>
+    internal enum XmodemSendStage : int
+    {
+        WaitReceiveRequest,   //等待接收端请求
+        PacketSending,
+        WaitReceiveAnswerEndTransmit
+    }
 
-    //    public PacktSendEventArgs(byte[] packet)
-    //        : this(packet, packet.Length)
-    //    {
-
-    //    }
-
-    //    public PacktSendEventArgs(byte[] packet, int packetLen)
-    //    {
-    //        _PacketLen = packetLen;
-    //        _Packet = packet;
-    //    }
-
-    //    public int PacketLen
-    //    {
-    //        get { return _PacketLen; }
-    //    }
-
-    //    public byte[] Packet
-    //    {
-    //        get { return _Packet; }
-    //    }
-    //}
+    /// <summary>
+    /// Xmodem接收步骤
+    /// </summary>
+    internal enum XmodemReceiveStage : int
+    {
+        WaitForFirstPacket,
+        PacketReceiving,
+    }
 
     public class XModemInfo
     {
@@ -144,24 +136,19 @@ namespace XMX.FileTransmit
         private readonly byte STX = 0x02;
         private readonly byte KEY_C = 0x43; //'C';
 
-
-        //private TransmitType TransType = TransmitType.Send;
-        //private bool XMODEM_CRC = false;
-        //private bool XMODEM_1K = false;
         private int RetryMax = 6;
-
         XModemInfo xmodemInfo = new XModemInfo();
 
 
         private Thread TransThread;
         private bool IsStart = false;
-        private bool WaitForFirstPacket = true;
         private int reTryCount;
         private ManualResetEvent waitReceiveEvent = new ManualResetEvent(false);
-        private XmodemMessage ReceivedMessage = null;
 
-        //public delegate void PacktSendEventHandler(object sender, PacktSendEventArgs e);
-        //public event PacktSendEventHandler PacketSendEvent;
+
+        private XmodemReceiveStage ReceiveStage;
+        private XmodemSendStage SendStage;
+        private Queue<XmodemMessage> msgQueue = new Queue<XmodemMessage>();
 
         public XModem(TransmitMode transType, XModemType xmodemType, int reTryCount)
         {
@@ -176,8 +163,11 @@ namespace XMX.FileTransmit
         {
             IsStart = true;
             reTryCount = 0;
-            ReceivedMessage = null;
-            WaitForFirstPacket = true;
+
+
+            ReceiveStage = XmodemReceiveStage.WaitForFirstPacket;
+            SendStage = XmodemSendStage.WaitReceiveRequest;
+            msgQueue.Clear();
 
             TransThread = new Thread(new ThreadStart(TransThreadHandler));
             TransThread.IsBackground = true;
@@ -194,16 +184,13 @@ namespace XMX.FileTransmit
 
         public void Stop()
         {
-            IsStart = false;
             if (xmodemInfo.TransMode == TransmitMode.Receive)
             {
-                SendCAN();
-
+                Abort();
             }
             else
             {
                 SendEOT();
-
             }
 
             if (EndOfTransmit != null)
@@ -212,6 +199,16 @@ namespace XMX.FileTransmit
             }
         }
 
+        public void Abort()
+        {
+            IsStart = false;
+            SendCAN();
+
+            if (EndOfTransmit != null)
+            {
+                EndOfTransmit(xmodemInfo, null);
+            }
+        }
 
 
         /// <summary>
@@ -220,7 +217,7 @@ namespace XMX.FileTransmit
         /// <param name="data"></param>
         private void ParseReceivedMessage(byte[] data)
         {
-            ReceivedMessage = null;
+            XmodemMessage ReceivedMessage = null;
 
             if (data == null)
             {
@@ -228,28 +225,7 @@ namespace XMX.FileTransmit
             }
             else
             {
-
-                if (data[0] == EOT)
-                {
-                    ReceivedMessage = new XmodemMessage(XmodemMessageType.EOT);
-                }
-                else if (data[0] == CAN)
-                {
-                    ReceivedMessage = new XmodemMessage(XmodemMessageType.CAN);
-                }
-                else if (data[0] == NAK)
-                {
-                    ReceivedMessage = new XmodemMessage(XmodemMessageType.NAK);
-                }
-                else if (data[0] == ACK)
-                {
-                    ReceivedMessage = new XmodemMessage(XmodemMessageType.ACK);
-                }
-                else if (data[0] == KEY_C)
-                {
-                    ReceivedMessage = new XmodemMessage(XmodemMessageType.KEY_C);
-                }
-                else if (data[0] == STX || data[0] == SOH)
+                if (data[0] == STX || data[0] == SOH)
                 {
                     ReceivedMessage = new XmodemMessage(XmodemMessageType.PACKET_ERROR);
                     int packetLen = 0;
@@ -293,12 +269,44 @@ namespace XMX.FileTransmit
                         }
 
                     }
+                    msgQueue.Enqueue(ReceivedMessage);
+                }
+                else
+                {
+                    foreach (byte b in data)
+                    {
+                        ReceivedMessage = null;
+                        if (b == EOT)
+                        {
+                            ReceivedMessage = new XmodemMessage(XmodemMessageType.EOT);
+                        }
+                        else if (b == CAN)
+                        {
+                            ReceivedMessage = new XmodemMessage(XmodemMessageType.CAN);
+                        }
+                        else if (b == NAK)
+                        {
+                            ReceivedMessage = new XmodemMessage(XmodemMessageType.NAK);
+                        }
+                        else if (b == ACK)
+                        {
+                            ReceivedMessage = new XmodemMessage(XmodemMessageType.ACK);
+                        }
+                        else if (b == KEY_C)
+                        {
+                            ReceivedMessage = new XmodemMessage(XmodemMessageType.KEY_C);
+                        }
+
+                        if (ReceivedMessage != null)
+                        {
+                            msgQueue.Enqueue(ReceivedMessage);
+                        }
+                    }
                 }
 
             }
 
             waitReceiveEvent.Set();
-
 
         }
 
@@ -316,12 +324,6 @@ namespace XMX.FileTransmit
                 SendToUartEvent(xmodemInfo, new SendToUartEventArgs(data));
             }
         }
-
-        //public void SendCompletedToUart()
-        //{
-        //    SendCAN();
-        //}
-
 
         private void SendACK()
         {
@@ -341,22 +343,21 @@ namespace XMX.FileTransmit
 
         private void SendCAN()
         {
+            byte[] bytes = new byte[5];
             for (int i = 0; i < 5; i++)
             {
-                SendFrameToUart(CAN);
-                Thread.Sleep(1000);
+                bytes[i] = CAN;
             }
-
+            SendFrameToUart(bytes);
         }
 
         private void SendEOT()
         {
-            for (int i = 0; i < 5; i++)
-            {
-                SendFrameToUart(EOT);
-                Thread.Sleep(1000);
-            }
+            SendFrameToUart(EOT);
+            SendStage = XmodemSendStage.WaitReceiveAnswerEndTransmit;
         }
+
+
 
 
         void TransThreadHandler()
@@ -376,26 +377,30 @@ namespace XMX.FileTransmit
 
         void SendHandler()
         {
-            if (waitReceiveEvent.WaitOne(3000))
+            XmodemMessage msg;
+            if (msgQueue.Count > 0)
             {
-                waitReceiveEvent.Reset();
-                if (ReceivedMessage != null)
+                msg = msgQueue.Dequeue();
+                if (msg != null)
                 {
                     reTryCount = 0;
 
-                    switch (ReceivedMessage.MessageType)
+                    switch (msg.MessageType)
                     {
                         case XmodemMessageType.NAK:
-
-                            if (WaitForFirstPacket)
+                            if (SendStage == XmodemSendStage.WaitReceiveRequest)
                             {
-                                WaitForFirstPacket = false;
+                                SendStage = XmodemSendStage.PacketSending;
 
                                 xmodemInfo.CheckMode = XModemCheckMode.CheckSum;
                                 if (StartSend != null)
                                 {
                                     StartSend(xmodemInfo, null);
                                 }
+                            }
+                            else if (SendStage == XmodemSendStage.WaitReceiveAnswerEndTransmit)
+                            {
+                                SendEOT();
                             }
                             else
                             {
@@ -405,23 +410,40 @@ namespace XMX.FileTransmit
                                     ReSendPacket(xmodemInfo, null);
                                 }
                             }
+                            break;
 
-                            break;
                         case XmodemMessageType.KEY_C:
-                            // 通知发头一包CRC
-                            xmodemInfo.CheckMode = XModemCheckMode.CRC16;
-                            if (StartSend != null)
+                            if (SendStage == XmodemSendStage.WaitReceiveRequest)
                             {
-                                StartSend(xmodemInfo, null);
+                                SendStage = XmodemSendStage.PacketSending;
+                                // 通知发头一包CRC
+                                xmodemInfo.CheckMode = XModemCheckMode.CRC16;
+                                if (StartSend != null)
+                                {
+                                    StartSend(xmodemInfo, null);
+                                }
                             }
                             break;
+
                         case XmodemMessageType.ACK:
-                            // 通知发下一包
-                            if (SendNextPacket != null)
+                            if (SendStage == XmodemSendStage.PacketSending)
                             {
-                                SendNextPacket(xmodemInfo, null);
+                                // 通知发下一包
+                                if (SendNextPacket != null)
+                                {
+                                    SendNextPacket(xmodemInfo, null);
+                                }
+                            }
+                            else if (SendStage == XmodemSendStage.WaitReceiveAnswerEndTransmit)
+                            {
+                                // 通知中止
+                                if (AbortTransmit != null)
+                                {
+                                    AbortTransmit(xmodemInfo, null);
+                                }
                             }
                             break;
+
                         case XmodemMessageType.CAN:
                             // 通知中止
                             if (AbortTransmit != null)
@@ -429,30 +451,40 @@ namespace XMX.FileTransmit
                                 AbortTransmit(xmodemInfo, null);
                             }
                             break;
+
                         default:
-                            reTryCount++;
                             break;
                     }
+                }
+
+            }
+            else
+            {
+                if (waitReceiveEvent.WaitOne(3000))
+                {
+                    waitReceiveEvent.Reset();
+
                 }
                 else
                 {
                     reTryCount++;
-                }
-
-                if (reTryCount > RetryMax)
-                {
-                    //通知发送超时
-                    if (TransmitTimeOut != null)
+                    if (reTryCount > RetryMax)
                     {
-                        TransmitTimeOut(xmodemInfo, null);
+                        IsStart = false;
+                        //通知接收超时
+                        if (TransmitTimeOut != null)
+                        {
+                            TransmitTimeOut(xmodemInfo, null);
+                        }
                     }
                 }
             }
+
         }
 
         void ReceiveHandler()
         {
-            if (WaitForFirstPacket)
+            if (ReceiveStage == XmodemReceiveStage.WaitForFirstPacket)
             {
                 if (reTryCount % 2 == 0)
                 {
@@ -466,25 +498,21 @@ namespace XMX.FileTransmit
                 }
             }
 
-
-            if (waitReceiveEvent.WaitOne(3000))
+            if (msgQueue.Count > 0)
             {
-                waitReceiveEvent.Reset();
-                if (ReceivedMessage != null)
+                XmodemMessage msg = msgQueue.Dequeue();
+                if (msg != null)
                 {
                     reTryCount = 0;
 
-                    switch (ReceivedMessage.MessageType)
+                    switch (msg.MessageType)
                     {
                         case XmodemMessageType.PACKET:
-                            WaitForFirstPacket = false;
-
+                            ReceiveStage = XmodemReceiveStage.PacketReceiving;
                             SendACK();
-
-
                             if (ReceivedPacket != null)
                             {
-                                PacketEventArgs e = ReceivedMessage.Value as PacketEventArgs;
+                                PacketEventArgs e = msg.Value as PacketEventArgs;
                                 ReceivedPacket(xmodemInfo, new PacketEventArgs(e.PacketNo, e.Packet));
                             }
 
@@ -519,25 +547,32 @@ namespace XMX.FileTransmit
                             }
                             break;
                         default:
-                            SendNAK();
-                            reTryCount++;
                             break;
                     }
+                }
+            }
+            else
+            {
+                if (waitReceiveEvent.WaitOne(3000))
+                {
+                    waitReceiveEvent.Reset();
                 }
                 else
                 {
                     reTryCount++;
-                }
-
-                if (reTryCount > RetryMax)
-                {
-                    //通知接收超时
-                    if (TransmitTimeOut != null)
+                    if (reTryCount > RetryMax)
                     {
-                        TransmitTimeOut(xmodemInfo, null);
+                        IsStart = false;
+                        //通知接收超时
+                        if (TransmitTimeOut != null)
+                        {
+                            TransmitTimeOut(xmodemInfo, null);
+                        }
                     }
+
                 }
             }
+
         }
 
 

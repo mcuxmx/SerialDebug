@@ -26,6 +26,8 @@ namespace SerialDebug
 
     public partial class FormFileSend : Form
     {
+
+        private readonly int ReTryMax = 10;
         FileTransmitMode _FileTransMode = FileTransmitMode.ASCII;
 
         IFileTramsmit FileTransProtocol;
@@ -84,19 +86,19 @@ namespace SerialDebug
                     FileTransProtocol = new BinarySend(Convert.ToInt32(numDelayTime.Value));
                     break;
                 case FileTransmitMode.Xmodem: // Xmodem
-                    FileTransProtocol = new XModem(TransmitMode.Send, XModemType.XModem, 6);
+                    FileTransProtocol = new XModem(TransmitMode.Send, XModemType.XModem, ReTryMax);
                     PacketLen = 128;
                     break;
                 case FileTransmitMode.Xmodem_1K: // Xmodem-1k
-                    FileTransProtocol = new XModem(TransmitMode.Send, XModemType.XModem_1K, 6);
+                    FileTransProtocol = new XModem(TransmitMode.Send, XModemType.XModem_1K, ReTryMax);
                     PacketLen = 1024;
                     break;
                 case FileTransmitMode.Ymodem:
-                    FileTransProtocol = new YModem(TransmitMode.Send, YModemType.YModem, 6);
+                    FileTransProtocol = new YModem(TransmitMode.Send, YModemType.YModem, ReTryMax);
                     PacketLen = 128;
                     break;
                 case FileTransmitMode.Ymodem_G:
-                    FileTransProtocol = new YModem(TransmitMode.Send, YModemType.YModem_G, 6);
+                    FileTransProtocol = new YModem(TransmitMode.Send, YModemType.YModem_G, ReTryMax);
                     PacketLen = 1024;
                     break;
                 default:
@@ -113,6 +115,7 @@ namespace SerialDebug
                 FileTransProtocol.TransmitTimeOut += new EventHandler(xmodem_TransmitTimeOut);
                 FileTransProtocol.StartSend += new EventHandler(xmodem_StartSend);
                 FileTransProtocol.SendToUartEvent += new SendToUartEventHandler(xmodem_SendToUartEvent);
+                
             }
 
             packetNo = 1;
@@ -127,7 +130,7 @@ namespace SerialDebug
 
         public void Stop()
         {
-            FileTransProtocol.Stop();
+            FileTransProtocol.Abort();
 
             SetEndTransmit();
 
@@ -140,6 +143,8 @@ namespace SerialDebug
                 FileTransProtocol.TransmitTimeOut -= new EventHandler(xmodem_TransmitTimeOut);
                 FileTransProtocol.StartSend -= new EventHandler(xmodem_StartSend);
                 FileTransProtocol.SendToUartEvent -= new SendToUartEventHandler(xmodem_SendToUartEvent);
+
+               // FileTransProtocol = null;
             }
         }
 
