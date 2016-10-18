@@ -75,7 +75,7 @@
             this.btnEnd = new System.Windows.Forms.Button();
             this.btnHelp = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
-            this.chkDisplay = new System.Windows.Forms.CheckBox();
+            this.chkShowReceive = new System.Windows.Forms.CheckBox();
             this.groupReceive = new System.Windows.Forms.GroupBox();
             this.btnNormalToHyperTerminal = new System.Windows.Forms.Button();
             this.chkShowSend = new System.Windows.Forms.CheckBox();
@@ -585,27 +585,27 @@
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
-            // chkDisplay
+            // chkShowReceive
             // 
-            this.chkDisplay.AutoSize = true;
-            this.chkDisplay.Checked = true;
-            this.chkDisplay.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDisplay.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkDisplay.Location = new System.Drawing.Point(10, 20);
-            this.chkDisplay.Name = "chkDisplay";
-            this.chkDisplay.Size = new System.Drawing.Size(78, 17);
-            this.chkDisplay.TabIndex = 39;
-            this.chkDisplay.Text = "是否显示";
-            this.chkDisplay.UseVisualStyleBackColor = true;
+            this.chkShowReceive.AutoSize = true;
+            this.chkShowReceive.Checked = true;
+            this.chkShowReceive.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkShowReceive.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkShowReceive.Location = new System.Drawing.Point(10, 20);
+            this.chkShowReceive.Name = "chkShowReceive";
+            this.chkShowReceive.Size = new System.Drawing.Size(78, 17);
+            this.chkShowReceive.TabIndex = 39;
+            this.chkShowReceive.Text = "显示接收";
+            this.chkShowReceive.UseVisualStyleBackColor = true;
             // 
             // groupReceive
             // 
+            this.groupReceive.Controls.Add(this.chkReceiveHex);
             this.groupReceive.Controls.Add(this.btnNormalToHyperTerminal);
             this.groupReceive.Controls.Add(this.chkShowSend);
             this.groupReceive.Controls.Add(this.chkTimeStamp);
             this.groupReceive.Controls.Add(this.chkWrap);
-            this.groupReceive.Controls.Add(this.chkReceiveHex);
-            this.groupReceive.Controls.Add(this.chkDisplay);
+            this.groupReceive.Controls.Add(this.chkShowReceive);
             this.groupReceive.Location = new System.Drawing.Point(2, 215);
             this.groupReceive.Name = "groupReceive";
             this.groupReceive.Size = new System.Drawing.Size(161, 88);
@@ -628,7 +628,7 @@
             // 
             this.chkShowSend.AutoSize = true;
             this.chkShowSend.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkShowSend.Location = new System.Drawing.Point(83, 42);
+            this.chkShowSend.Location = new System.Drawing.Point(81, 20);
             this.chkShowSend.Name = "chkShowSend";
             this.chkShowSend.Size = new System.Drawing.Size(78, 17);
             this.chkShowSend.TabIndex = 6;
@@ -663,7 +663,7 @@
             // 
             this.chkReceiveHex.AutoSize = true;
             this.chkReceiveHex.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkReceiveHex.Location = new System.Drawing.Point(83, 20);
+            this.chkReceiveHex.Location = new System.Drawing.Point(81, 42);
             this.chkReceiveHex.Name = "chkReceiveHex";
             this.chkReceiveHex.Size = new System.Drawing.Size(72, 17);
             this.chkReceiveHex.TabIndex = 6;
@@ -1112,7 +1112,7 @@
         internal System.Windows.Forms.Button btnEnd;
         internal System.Windows.Forms.Button btnHelp;
         internal System.Windows.Forms.Button btnClear;
-        private System.Windows.Forms.CheckBox chkDisplay;
+        private System.Windows.Forms.CheckBox chkShowReceive;
         internal System.Windows.Forms.GroupBox groupReceive;
         internal System.Windows.Forms.CheckBox chkWrap;
         internal System.Windows.Forms.CheckBox chkReceiveHex;

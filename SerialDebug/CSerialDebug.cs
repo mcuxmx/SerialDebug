@@ -28,10 +28,17 @@ namespace SerialDebug
 
         public delegate void SendCompletedEventHandler(object sender, SendCompletedEventArgs e);
         public event SendCompletedEventHandler SendCompletedEvent;
+        public event EventHandler SendOverEvent;
 
 
         private AutoResetEvent waitReceiveEvent = new AutoResetEvent(false);
         private ManualResetEvent waitParseEvent = new ManualResetEvent(false);
+        private ManualResetEvent uartReceivedEvent = new ManualResetEvent(false);
+
+        public CSerialDebug(SerialPort sport)
+        {
+            _serialPort = sport;
+        }
 
         public SerialPort serialPort
         {
@@ -43,34 +50,70 @@ namespace SerialDebug
 
         public void Start()
         {
-            //waitReceiveEvent = new AutoResetEvent(false);
 
-            IsReceiveStart = true;
-            lock (receiveQueue)
+            try
             {
-                receiveQueue.Clear();
+                IsReceiveStart = true;
+                lock (receiveQueue)
+                {
+                    receiveQueue.Clear();
+                }
+
+                lock (sendList)
+                {
+                    sendList.Clear();
+                }
+
+                uartReceivedEvent.Reset();
+                waitReceiveEvent.Reset();
+                waitParseEvent.Reset();
+
+                if (serialPort.IsOpen)
+                {
+                    serialPort.Close();
+                }
+                serialPort.Open();
+                serialPort.DataReceived += new SerialDataReceivedEventHandler(serialPort_DataReceived);
+
+                releaseThread(receiveThread);
+                releaseThread(sendThread);
+
+                receiveThread = new Thread(new ThreadStart(ReceiveThreadHandler));
+                receiveThread.IsBackground = true;
+                receiveThread.Name = "receiveThread";
+                receiveThread.Start();
+
+                parseThread = new Thread(new ThreadStart(ParseThreadHandler));
+                parseThread.IsBackground = true;
+                parseThread.Name = "parseThread";
+                parseThread.Start();
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
             }
 
-            lock (sendList)
-            {
-                sendList.Clear();
-            }
-
-            receiveThread = new Thread(new ThreadStart(ReceiveThreadHandler));
-            receiveThread.IsBackground = true;
-            receiveThread.Name = "receiveThread";
-            receiveThread.Start();
-
-            parseThread = new Thread(new ThreadStart(ParseThreadHandler));
-            parseThread.IsBackground = true;
-            parseThread.Name = "parseThread";
-            parseThread.Start();
         }
+
+
 
         public void Stop()
         {
-            IsReceiveStart = false;
-            IsSendStart = false;
+            try
+            {
+                IsReceiveStart = false;
+                IsSendStart = false;
+
+                serialPort.DataReceived -= new SerialDataReceivedEventHandler(serialPort_DataReceived);
+
+                serialPort.Close();
+
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         public void StopReceive()
@@ -89,24 +132,19 @@ namespace SerialDebug
         }
         public void Send(List<CSendParam> list, int loop)
         {
+
+            if (sendThread != null)
+            {
+                if (sendThread.IsAlive)
+                {
+                    releaseThread(sendThread);
+                }
+            }
+
+
             LoopCount = loop;
             sendList = list;
             IsSendStart = true;
-
-            try
-            {
-                if (sendThread != null)
-                {
-                    if (sendThread.IsAlive)
-                    {
-                        sendThread.Abort();
-                    }
-                }
-            }
-            catch (System.Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
 
             sendThread = new Thread(new ThreadStart(SendThreadHandler));
             sendThread.IsBackground = true;
@@ -114,16 +152,36 @@ namespace SerialDebug
             sendThread.Start();
         }
 
-        //public Queue<SerialDebugReceiveData> ReceiveQueue
-        //{
-        //    get { return receiveQueue; }
-        //}
+        void releaseThread(Thread th)
+        {
+            try
+            {
+                if (th != null)
+                {
+                    if (th.IsAlive)
+                    {
+                        th.Abort();
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+            }
+        }
+
+        void serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            uartReceivedEvent.Set();
+        }
 
         /// <summary>
         /// 接收线程
         /// </summary>
         private void ReceiveThreadHandler()
         {
+
+            byte[] receiveBytes = new byte[serialPort.ReadBufferSize];
             while (IsReceiveStart)
             {
                 try
@@ -131,38 +189,32 @@ namespace SerialDebug
                     if (_serialPort.IsOpen)
                     {
 
-                        DateTime startTime = DateTime.Now;
-
-                        int dataLen = _serialPort.BytesToRead;
-
-                        do
+                        try
                         {
-                            dataLen = _serialPort.BytesToRead;
-
-                            while (true)
+                            int dataLen;
+                            if (uartReceivedEvent.WaitOne())
                             {
-                                Thread.Sleep(delayTime);
-                                TimeSpan ts = DateTime.Now - startTime;
-                                if (ts.TotalMilliseconds >= 3)
+                                serialPort.ReadTimeout = 3;
+                                dataLen = serialPort.Read(receiveBytes, 0, receiveBytes.Length);
+                                if (dataLen > 0)
                                 {
-                                    break;
+                                    byte[] bytes = new byte[dataLen];
+                                    Array.Copy(receiveBytes, bytes, dataLen);
+                                    lock (receiveQueue)
+                                    {
+                                        receiveQueue.Enqueue(new SerialDebugReceiveData(bytes));
+                                    }
+                                    waitReceiveEvent.Set();
                                 }
                             }
-
-                        } while (dataLen != _serialPort.BytesToRead);
-
-                        if (dataLen != 0)
-                        {
-                            byte[] bytes = new byte[dataLen];
-                            _serialPort.Read(bytes, 0, dataLen);
-
-                            lock (receiveQueue)
-                            {
-                                receiveQueue.Enqueue(new SerialDebugReceiveData(bytes));
-                            }
-
-                            waitReceiveEvent.Set();
+                            uartReceivedEvent.Reset();
                         }
+                        catch (System.Exception ex)
+                        {
+                            Debug.WriteLine(ex.ToString());
+                        }
+
+
                     }
                     else
                     {
@@ -251,9 +303,7 @@ namespace SerialDebug
                         }
                         else if (sendParam.Mode == SendParamMode.SendAfterReceived)
                         {
-
                             waitParseEvent.WaitOne();
-
                         }
 
 
@@ -268,31 +318,38 @@ namespace SerialDebug
                             } while (ts.TotalMilliseconds <= sendParam.DelayTime);
                         }
 
-                        waitParseEvent.Reset();
+
                         if (_serialPort.IsOpen)
                         {
                             _serialPort.Write(sendParam.DataBytes, 0, sendParam.DataBytes.Length);
 
                             if (SendCompletedEvent != null)
                             {
-                                SendCompletedEvent(this, new SendCompletedEventArgs(sendParam));
+                                //SendCompletedEvent(this, new SendCompletedEventArgs(sendParam));
+                                SendCompletedEventHandler handler = SendCompletedEvent;
+                                handler(this, new SendCompletedEventArgs(sendParam));
                             }
                         }
                         else
                         {
                             IsSendStart = false;
                         }
+                        waitParseEvent.Reset();
                     }
 
                 }
 
             }
 
-
-            if (SendCompletedEvent != null)
+            if (SendOverEvent!=null)
             {
-                SendCompletedEvent(this, new SendCompletedEventArgs(null));
+                SendOverEvent(this, null);
             }
+
+            //if (SendCompletedEvent != null)
+            //{
+            //    SendCompletedEvent(this, new SendCompletedEventArgs(null));
+            //}
 
         }
     }
@@ -380,6 +437,18 @@ namespace SerialDebug
         {
             _SendTime = DateTime.Now;
             _SendParam = sendParam;
+
+            //if (sendParam!=null)
+            //{
+            //    _SendParam = new CSendParam(sendParam.Format,
+            //    sendParam.Mode,
+            //    sendParam.DelayTime,
+            //    sendParam.DataBytes, 0, sendParam.DataLen);
+            //}
+            //else
+            //{
+            //    _SendParam = null;
+            //}
         }
 
         public DateTime SendTime

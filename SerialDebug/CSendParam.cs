@@ -114,6 +114,35 @@ namespace SerialDebug
             get { return _Data; }
         }
 
+        public string HexString
+        {
+            get
+            {
+                return string.Format("{0} ", BitConverter.ToString(_DataBytes).Replace('-', ' '));
+            }
+        }
+
+        public string ASCIIString
+        {
+            get { return System.Text.ASCIIEncoding.Default.GetString(_DataBytes); }
+        }
+
+        public string DecString
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+
+                foreach (byte b in _DataBytes)
+                {
+                    sb.AppendFormat("{0} ", Convert.ToInt32(b));
+                }
+
+                return sb.ToString();
+            }
+
+        }
+
         public byte[] DataBytes
         {
             get

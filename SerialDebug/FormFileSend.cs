@@ -115,7 +115,7 @@ namespace SerialDebug
                 FileTransProtocol.TransmitTimeOut += new EventHandler(xmodem_TransmitTimeOut);
                 FileTransProtocol.StartSend += new EventHandler(xmodem_StartSend);
                 FileTransProtocol.SendToUartEvent += new SendToUartEventHandler(xmodem_SendToUartEvent);
-                
+
             }
 
             packetNo = 1;
@@ -143,8 +143,6 @@ namespace SerialDebug
                 FileTransProtocol.TransmitTimeOut -= new EventHandler(xmodem_TransmitTimeOut);
                 FileTransProtocol.StartSend -= new EventHandler(xmodem_StartSend);
                 FileTransProtocol.SendToUartEvent -= new SendToUartEventHandler(xmodem_SendToUartEvent);
-
-               // FileTransProtocol = null;
             }
         }
 
@@ -242,56 +240,80 @@ namespace SerialDebug
 
         private string ReadLineFromFile()
         {
+            string line = "";
             FileStream fs = new FileStream(txtFile.Text, FileMode.Open);
             StreamReader sr = new StreamReader(fs, Encoding.Default);
             // BinaryReader br = new BinaryReader(fs);
             try
             {
-
                 if (fileIndex < fs.Length)
                 {
                     fs.Seek(fileIndex, SeekOrigin.Begin);
 
-                    string line = "";
+                    int chValue;
                     char c;
-                    while (sr.Peek() == '\r' || sr.Peek() == '\n')
+
+                    while (true)
                     {
-                        fileIndex++;
-                        c = Convert.ToChar(sr.Read());
-                        if (chkSendCRRF.Checked)
+                        chValue = sr.Peek();
+                        if (chValue != 13 && chValue != 10)
                         {
-                            line += c;
+                            break;
                         }
-
+                        else
+                        {
+                            chValue = sr.Read();
+                            c = Convert.ToChar(chValue);
+                            fileIndex++;
+                            //if (chkSendCRRF.Checked)
+                            //{
+                            //    line += c;
+                            //}
+                        }
                     }
-
+   
                     string str = sr.ReadLine();
                     fileIndex += System.Text.ASCIIEncoding.Default.GetBytes(str).Length;
                     line += str;
 
 
-                    while (sr.Peek() == '\r' || sr.Peek() == '\n')
+                    while (true)
                     {
-                        fileIndex++;
-                        c = Convert.ToChar(sr.Read());
-                        if (chkSendCRRF.Checked)
+                        chValue = sr.Peek();
+                        if (chValue != 13 && chValue != 10)
                         {
-                            line += c;
+                            break;
+                        }
+                        else
+                        {
+                            chValue = sr.Read();
+                            c = Convert.ToChar(chValue);
+                            fileIndex++;
+                            //if (chkSendCRRF.Checked)
+                            //{
+                            //    line += c;
+                            //}
                         }
                     }
 
-
-                    return line;
                 }
                 else
                 {
                     return null;
                 }
+
+                if (chkSendCRRF.Checked)
+                {
+                    if (line != string.Empty)
+                    {
+                        line += "\r\n";
+                    }
+                }
+                return line;
             }
             catch (Exception ex)
             {
                 throw ex;
-                //MessageBox.Show(ex.Message, oFileDlg.Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -435,11 +457,11 @@ namespace SerialDebug
                 }
                 else
                 {
-                    if (_FileTransMode == FileTransmitMode.Ymodem || _FileTransMode== FileTransmitMode.Ymodem_G)
+                    if (_FileTransMode == FileTransmitMode.Ymodem || _FileTransMode == FileTransmitMode.Ymodem_G)
                     {
-                        if (readBytes<PacketLen)
+                        if (readBytes < PacketLen)
                         {
-                            for (int i = readBytes; i < PacketLen;i++ )
+                            for (int i = readBytes; i < PacketLen; i++)
                             {
                                 PacketBuff[i] = 0x1A;
                             }
