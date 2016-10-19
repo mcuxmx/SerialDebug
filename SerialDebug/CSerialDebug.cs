@@ -181,7 +181,7 @@ namespace SerialDebug
         private void ReceiveThreadHandler()
         {
 
-            byte[] receiveBytes = new byte[serialPort.ReadBufferSize];
+            byte[] receiveBytes = new byte[4 * 1024];
             while (IsReceiveStart)
             {
                 try
@@ -341,7 +341,7 @@ namespace SerialDebug
 
             }
 
-            if (SendOverEvent!=null)
+            if (SendOverEvent != null)
             {
                 SendOverEvent(this, null);
             }

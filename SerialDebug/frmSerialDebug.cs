@@ -245,7 +245,7 @@ namespace SerialDebug
                     serialPort.DataBits = (int)cbDataBit.SelectedItem;
                     serialPort.StopBits = (System.IO.Ports.StopBits)cbStopBit.SelectedItem;
 
-                    serialPort.ReadBufferSize = 4 * 1024 * 1024;//33554432;           // 32M
+                    serialPort.ReadBufferSize = 2 * 1024 * 1024;           // 2M
                     //serialPort.Open();
 
                     sp.Start();

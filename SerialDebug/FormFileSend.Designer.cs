@@ -117,7 +117,7 @@
             // 
             this.numPacketLen.Location = new System.Drawing.Point(156, 73);
             this.numPacketLen.Maximum = new decimal(new int[] {
-            999999,
+            4096,
             0,
             0,
             0});
