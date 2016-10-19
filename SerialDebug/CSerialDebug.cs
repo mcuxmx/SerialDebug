@@ -21,7 +21,8 @@ namespace SerialDebug
         private bool IsSendStart = false;
         private Thread sendThread;
         private TimeSpan delayTime = new TimeSpan(10 * 400);
-
+        private int LoopCount = 0;
+        private int _ReceiveTimeOut = 3;
 
         public delegate void ReceivedEventHandler(object sender, SerialDebugReceiveData e);
         public event ReceivedEventHandler ReceivedEvent;
@@ -46,7 +47,11 @@ namespace SerialDebug
             set { _serialPort = value; }
         }
 
-        private int LoopCount = 0;
+        public int ReceiveTimeOut
+        {
+            get { return _ReceiveTimeOut; }
+            set { _ReceiveTimeOut = value; }
+        }
 
         public void Start()
         {
@@ -94,8 +99,6 @@ namespace SerialDebug
             }
 
         }
-
-
 
         public void Stop()
         {
@@ -181,33 +184,46 @@ namespace SerialDebug
         private void ReceiveThreadHandler()
         {
 
-            byte[] receiveBytes = new byte[4 * 1024];
+            //byte[] receiveBytes = new byte[4 * 1024];
             while (IsReceiveStart)
             {
                 try
                 {
                     if (_serialPort.IsOpen)
                     {
-
                         try
                         {
                             int dataLen;
                             if (uartReceivedEvent.WaitOne())
                             {
-                                serialPort.ReadTimeout = 3;
-                                dataLen = serialPort.Read(receiveBytes, 0, receiveBytes.Length);
-                                if (dataLen > 0)
+                                uartReceivedEvent.Reset();
+
+                                DateTime beginTime = DateTime.Now;
+                                int buffSize = 0;
+                                do
                                 {
-                                    byte[] bytes = new byte[dataLen];
-                                    Array.Copy(receiveBytes, bytes, dataLen);
-                                    lock (receiveQueue)
+                                    buffSize = serialPort.BytesToRead;
+                                    Thread.Sleep(ReceiveTimeOut);
+                                } while (buffSize != serialPort.BytesToRead);
+
+                                if (buffSize > 0)
+                                {
+                                    byte[] receiveBytes = new byte[buffSize];
+                                    // serialPort.ReadTimeout = ReceiveTimeOut;
+                                    dataLen = serialPort.Read(receiveBytes, 0, receiveBytes.Length);
+                                    if (dataLen > 0)
                                     {
-                                        receiveQueue.Enqueue(new SerialDebugReceiveData(bytes));
+                                        byte[] bytes = new byte[dataLen];
+                                        Array.Copy(receiveBytes, bytes, dataLen);
+                                        lock (receiveQueue)
+                                        {
+                                            receiveQueue.Enqueue(new SerialDebugReceiveData(bytes));
+                                        }
+                                        waitReceiveEvent.Set();
                                     }
-                                    waitReceiveEvent.Set();
                                 }
                             }
-                            uartReceivedEvent.Reset();
+                            
                         }
                         catch (System.Exception ex)
                         {
@@ -315,7 +331,7 @@ namespace SerialDebug
                             {
                                 Thread.Sleep(delayTime);
                                 ts = DateTime.Now - startTime;
-                            } while (ts.TotalMilliseconds <= sendParam.DelayTime);
+                            } while (ts.TotalMilliseconds < sendParam.DelayTime);
                         }
 
 

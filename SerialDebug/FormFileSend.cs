@@ -28,6 +28,7 @@ namespace SerialDebug
     {
 
         private readonly int ReTryMax = 10;
+        DateTime startTime;
         FileTransmitMode _FileTransMode = FileTransmitMode.ASCII;
 
         IFileTramsmit FileTransProtocol;
@@ -60,6 +61,7 @@ namespace SerialDebug
             cbFileProtocol.SelectedIndex = 0;
             _FileTransMode = FileTransmitMode.ASCII;
 
+            labReport.Text = "";
         }
 
         public FileTransmitMode Mode
@@ -67,6 +69,10 @@ namespace SerialDebug
             get { return _FileTransMode; }
         }
 
+        public bool ShowDataStream
+        {
+            get { return chkShowDataStream.Checked; }
+        }
 
         public void Start()
         {
@@ -108,13 +114,13 @@ namespace SerialDebug
 
             if (FileTransProtocol != null)
             {
-                FileTransProtocol.EndOfTransmit += new EventHandler(xmodem_EndOfTransmit);
-                FileTransProtocol.AbortTransmit += new EventHandler(xmodem_AbortTransmit);
-                FileTransProtocol.ReSendPacket += new EventHandler(xmodem_ReSendPacket);
-                FileTransProtocol.SendNextPacket += new EventHandler(xmodem_SendNextPacket);
-                FileTransProtocol.TransmitTimeOut += new EventHandler(xmodem_TransmitTimeOut);
-                FileTransProtocol.StartSend += new EventHandler(xmodem_StartSend);
-                FileTransProtocol.SendToUartEvent += new SendToUartEventHandler(xmodem_SendToUartEvent);
+                FileTransProtocol.EndOfTransmit += new EventHandler(FileTransProtocol_EndOfTransmit);
+                FileTransProtocol.AbortTransmit += new EventHandler(FileTransProtocol_AbortTransmit);
+                FileTransProtocol.ReSendPacket += new EventHandler(FileTransProtocol_ReSendPacket);
+                FileTransProtocol.SendNextPacket += new EventHandler(FileTransProtocol_SendNextPacket);
+                FileTransProtocol.TransmitTimeOut += new EventHandler(FileTransProtocol_TransmitTimeOut);
+                FileTransProtocol.StartSend += new EventHandler(FileTransProtocol_StartSend);
+                FileTransProtocol.SendToUartEvent += new SendToUartEventHandler(FileTransProtocol_SendToUartEvent);
 
             }
 
@@ -136,19 +142,35 @@ namespace SerialDebug
 
             if (FileTransProtocol != null)
             {
-                FileTransProtocol.EndOfTransmit -= new EventHandler(xmodem_EndOfTransmit);
-                FileTransProtocol.AbortTransmit -= new EventHandler(xmodem_AbortTransmit);
-                FileTransProtocol.ReSendPacket -= new EventHandler(xmodem_ReSendPacket);
-                FileTransProtocol.SendNextPacket -= new EventHandler(xmodem_SendNextPacket);
-                FileTransProtocol.TransmitTimeOut -= new EventHandler(xmodem_TransmitTimeOut);
-                FileTransProtocol.StartSend -= new EventHandler(xmodem_StartSend);
-                FileTransProtocol.SendToUartEvent -= new SendToUartEventHandler(xmodem_SendToUartEvent);
+                FileTransProtocol.EndOfTransmit -= new EventHandler(FileTransProtocol_EndOfTransmit);
+                FileTransProtocol.AbortTransmit -= new EventHandler(FileTransProtocol_AbortTransmit);
+                FileTransProtocol.ReSendPacket -= new EventHandler(FileTransProtocol_ReSendPacket);
+                FileTransProtocol.SendNextPacket -= new EventHandler(FileTransProtocol_SendNextPacket);
+                FileTransProtocol.TransmitTimeOut -= new EventHandler(FileTransProtocol_TransmitTimeOut);
+                FileTransProtocol.StartSend -= new EventHandler(FileTransProtocol_StartSend);
+                FileTransProtocol.SendToUartEvent -= new SendToUartEventHandler(FileTransProtocol_SendToUartEvent);
             }
         }
 
         public void ReceivedFromUart(byte[] data)
         {
             FileTransProtocol.ReceivedFromUart(data);
+        }
+
+
+        private void ShowTextReprot(string text)
+        {
+            if (labReport.InvokeRequired)
+            {
+                labReport.BeginInvoke(new MethodInvoker(delegate
+                {
+                    ShowTextReprot(text);
+                }));
+            }
+            else
+            {
+                labReport.Text = text;
+            }
         }
 
         private void ShowProgressReport(bool IsShow, int value, int max)
@@ -236,8 +258,6 @@ namespace SerialDebug
             }
         }
 
-
-
         private string ReadLineFromFile()
         {
             string line = "";
@@ -271,7 +291,7 @@ namespace SerialDebug
                             //}
                         }
                     }
-   
+
                     string str = sr.ReadLine();
                     fileIndex += System.Text.ASCIIEncoding.Default.GetBytes(str).Length;
                     line += str;
@@ -322,7 +342,7 @@ namespace SerialDebug
             }
         }
 
-        void xmodem_SendToUartEvent(object sender, SendToUartEventArgs e)
+        void FileTransProtocol_SendToUartEvent(object sender, SendToUartEventArgs e)
         {
             if (SendToUartEvent != null)
             {
@@ -330,7 +350,7 @@ namespace SerialDebug
             }
         }
 
-        void xmodem_StartSend(object sender, EventArgs e)
+        void FileTransProtocol_StartSend(object sender, EventArgs e)
         {
             PacketBuff = new byte[PacketLen];
 
@@ -346,6 +366,7 @@ namespace SerialDebug
                 {
                     FileTransProtocol.SendPacket(new PacketEventArgs(packetNo, PacketBuff));
                 }
+                startTime = DateTime.Now;
             }
             else if (_FileTransMode == FileTransmitMode.Ymodem || _FileTransMode == FileTransmitMode.Ymodem_G)
             {
@@ -369,18 +390,29 @@ namespace SerialDebug
                 packetNo = 0;
 
                 //fileInfo.Name;
+                startTime = DateTime.Now;
             }
+
+            ShowTextReprot(string.Format("开始发送数据"));
         }
 
-        void xmodem_TransmitTimeOut(object sender, EventArgs e)
+        void FileTransProtocol_TransmitTimeOut(object sender, EventArgs e)
         {
+            ShowTextReprot(string.Format("传输超时"));
             SetEndTransmit();
         }
 
-        void xmodem_SendNextPacket(object sender, EventArgs e)
+        void FileTransProtocol_SendNextPacket(object sender, EventArgs e)
         {
+
+            ShowTextReprot(string.Format("开始传输第{0}包数据", packetNo));
             if (_FileTransMode == FileTransmitMode.ASCII)
             {
+                if (packetNo == 1)
+                {
+                    startTime = DateTime.Now;
+                }
+
                 if (chkSendByLine.Checked)
                 {
                     string line = ReadLineFromFile();
@@ -410,6 +442,11 @@ namespace SerialDebug
             }
             else if (_FileTransMode == FileTransmitMode.Binary)
             {
+                if (packetNo == 1)
+                {
+                    startTime = DateTime.Now;
+                }
+
                 if (chkSlipPacket.Checked)
                 {
                     PacketBuff = new byte[PacketLen];
@@ -475,19 +512,24 @@ namespace SerialDebug
 
         }
 
-        void xmodem_ReSendPacket(object sender, EventArgs e)
+        void FileTransProtocol_ReSendPacket(object sender, EventArgs e)
         {
             FileTransProtocol.SendPacket(new PacketEventArgs(packetNo, PacketBuff));
+            ShowTextReprot(string.Format("重发第{0}包数据"));
         }
 
-        void xmodem_AbortTransmit(object sender, EventArgs e)
+        void FileTransProtocol_AbortTransmit(object sender, EventArgs e)
         {
             SetEndTransmit();
+            ShowTextReprot(string.Format("传输中止"));
         }
 
-        void xmodem_EndOfTransmit(object sender, EventArgs e)
+        void FileTransProtocol_EndOfTransmit(object sender, EventArgs e)
         {
             SetEndTransmit();
+
+            TimeSpan ts = DateTime.Now - startTime;
+            ShowTextReprot(string.Format("传输完成，用时{0:D2}:{1:D2}:{2:D3}.{3:D3}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds));
         }
 
         private void btnSelectFile_Click(object sender, EventArgs e)
@@ -515,7 +557,7 @@ namespace SerialDebug
             labDelayTime.Visible = false;
             numDelayTime.Visible = false;
 
-
+            labReport.Text = "";
             _FileTransMode = (FileTransmitMode)cbFileProtocol.SelectedIndex;
             switch (_FileTransMode)
             {

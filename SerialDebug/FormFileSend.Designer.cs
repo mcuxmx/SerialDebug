@@ -40,6 +40,8 @@
             this.labDelayTime = new System.Windows.Forms.Label();
             this.numDelayTime = new System.Windows.Forms.NumericUpDown();
             this.chkSendCRRF = new System.Windows.Forms.CheckBox();
+            this.chkShowDataStream = new System.Windows.Forms.CheckBox();
+            this.labReport = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numPacketLen)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDelayTime)).BeginInit();
             this.SuspendLayout();
@@ -78,7 +80,7 @@
             // 
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(20, 107);
+            this.progressBar1.Location = new System.Drawing.Point(20, 113);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(499, 23);
             this.progressBar1.TabIndex = 3;
@@ -106,7 +108,7 @@
             // chkSlipPacket
             // 
             this.chkSlipPacket.AutoSize = true;
-            this.chkSlipPacket.Location = new System.Drawing.Point(20, 75);
+            this.chkSlipPacket.Location = new System.Drawing.Point(20, 72);
             this.chkSlipPacket.Name = "chkSlipPacket";
             this.chkSlipPacket.Size = new System.Drawing.Size(144, 16);
             this.chkSlipPacket.TabIndex = 6;
@@ -115,7 +117,7 @@
             // 
             // numPacketLen
             // 
-            this.numPacketLen.Location = new System.Drawing.Point(156, 73);
+            this.numPacketLen.Location = new System.Drawing.Point(156, 70);
             this.numPacketLen.Maximum = new decimal(new int[] {
             4096,
             0,
@@ -133,7 +135,7 @@
             // chkSendByLine
             // 
             this.chkSendByLine.AutoSize = true;
-            this.chkSendByLine.Location = new System.Drawing.Point(20, 75);
+            this.chkSendByLine.Location = new System.Drawing.Point(20, 72);
             this.chkSendByLine.Name = "chkSendByLine";
             this.chkSendByLine.Size = new System.Drawing.Size(72, 16);
             this.chkSendByLine.TabIndex = 6;
@@ -143,7 +145,7 @@
             // labDelayTime
             // 
             this.labDelayTime.AutoSize = true;
-            this.labDelayTime.Location = new System.Drawing.Point(238, 77);
+            this.labDelayTime.Location = new System.Drawing.Point(238, 74);
             this.labDelayTime.Name = "labDelayTime";
             this.labDelayTime.Size = new System.Drawing.Size(89, 12);
             this.labDelayTime.TabIndex = 8;
@@ -151,7 +153,7 @@
             // 
             // numDelayTime
             // 
-            this.numDelayTime.Location = new System.Drawing.Point(324, 73);
+            this.numDelayTime.Location = new System.Drawing.Point(324, 70);
             this.numDelayTime.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -169,18 +171,39 @@
             // chkSendCRRF
             // 
             this.chkSendCRRF.AutoSize = true;
-            this.chkSendCRRF.Location = new System.Drawing.Point(129, 75);
+            this.chkSendCRRF.Location = new System.Drawing.Point(129, 72);
             this.chkSendCRRF.Name = "chkSendCRRF";
             this.chkSendCRRF.Size = new System.Drawing.Size(84, 16);
             this.chkSendCRRF.TabIndex = 6;
             this.chkSendCRRF.Text = "发送换行符";
             this.chkSendCRRF.UseVisualStyleBackColor = true;
             // 
+            // chkShowDataStream
+            // 
+            this.chkShowDataStream.AutoSize = true;
+            this.chkShowDataStream.Location = new System.Drawing.Point(301, 10);
+            this.chkShowDataStream.Name = "chkShowDataStream";
+            this.chkShowDataStream.Size = new System.Drawing.Size(84, 16);
+            this.chkShowDataStream.TabIndex = 9;
+            this.chkShowDataStream.Text = "显示数据流";
+            this.chkShowDataStream.UseVisualStyleBackColor = true;
+            // 
+            // labReport
+            // 
+            this.labReport.AutoSize = true;
+            this.labReport.Location = new System.Drawing.Point(21, 98);
+            this.labReport.Name = "labReport";
+            this.labReport.Size = new System.Drawing.Size(41, 12);
+            this.labReport.TabIndex = 10;
+            this.labReport.Text = "label3";
+            // 
             // FormFileSend
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(536, 142);
+            this.Controls.Add(this.labReport);
+            this.Controls.Add(this.chkShowDataStream);
             this.Controls.Add(this.numDelayTime);
             this.Controls.Add(this.labDelayTime);
             this.Controls.Add(this.numPacketLen);
@@ -218,5 +241,7 @@
         private System.Windows.Forms.Label labDelayTime;
         private System.Windows.Forms.NumericUpDown numDelayTime;
         private System.Windows.Forms.CheckBox chkSendCRRF;
+        private System.Windows.Forms.CheckBox chkShowDataStream;
+        private System.Windows.Forms.Label labReport;
     }
 }

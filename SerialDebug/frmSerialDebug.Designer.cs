@@ -77,11 +77,11 @@
             this.btnClear = new System.Windows.Forms.Button();
             this.chkShowReceive = new System.Windows.Forms.CheckBox();
             this.groupReceive = new System.Windows.Forms.GroupBox();
+            this.chkReceiveHex = new System.Windows.Forms.CheckBox();
             this.btnNormalToHyperTerminal = new System.Windows.Forms.Button();
             this.chkShowSend = new System.Windows.Forms.CheckBox();
             this.chkTimeStamp = new System.Windows.Forms.CheckBox();
             this.chkWrap = new System.Windows.Forms.CheckBox();
-            this.chkReceiveHex = new System.Windows.Forms.CheckBox();
             this.groupSend = new System.Windows.Forms.GroupBox();
             this.radSendModeFile = new System.Windows.Forms.RadioButton();
             this.radSendModeQueue = new System.Windows.Forms.RadioButton();
@@ -116,6 +116,8 @@
             this.Label7 = new System.Windows.Forms.Label();
             this.lnkOpen = new System.Windows.Forms.LinkLabel();
             this.fontDlg = new System.Windows.Forms.FontDialog();
+            this.numReceiveTimeOut = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPortState)).BeginInit();
             this.cmenuStrip.SuspendLayout();
@@ -129,6 +131,7 @@
             this.splitContainer1.SuspendLayout();
             this.groupHyperTerminal.SuspendLayout();
             this.panelNormalSend.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numReceiveTimeOut)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -613,6 +616,17 @@
             this.groupReceive.TabStop = false;
             this.groupReceive.Text = "接收显示";
             // 
+            // chkReceiveHex
+            // 
+            this.chkReceiveHex.AutoSize = true;
+            this.chkReceiveHex.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkReceiveHex.Location = new System.Drawing.Point(81, 42);
+            this.chkReceiveHex.Name = "chkReceiveHex";
+            this.chkReceiveHex.Size = new System.Drawing.Size(72, 17);
+            this.chkReceiveHex.TabIndex = 6;
+            this.chkReceiveHex.Text = "HEX显示";
+            this.chkReceiveHex.UseVisualStyleBackColor = true;
+            // 
             // btnNormalToHyperTerminal
             // 
             this.btnNormalToHyperTerminal.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -658,17 +672,6 @@
             this.chkWrap.TabIndex = 26;
             this.chkWrap.Text = "自动换行";
             this.chkWrap.UseVisualStyleBackColor = true;
-            // 
-            // chkReceiveHex
-            // 
-            this.chkReceiveHex.AutoSize = true;
-            this.chkReceiveHex.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkReceiveHex.Location = new System.Drawing.Point(81, 42);
-            this.chkReceiveHex.Name = "chkReceiveHex";
-            this.chkReceiveHex.Size = new System.Drawing.Size(72, 17);
-            this.chkReceiveHex.TabIndex = 6;
-            this.chkReceiveHex.Text = "HEX显示";
-            this.chkReceiveHex.UseVisualStyleBackColor = true;
             // 
             // groupSend
             // 
@@ -818,6 +821,8 @@
             this.splitContainer1.Panel1.Controls.Add(this.Label8);
             this.splitContainer1.Panel1.Controls.Add(this.txtReceive);
             this.splitContainer1.Panel1.Controls.Add(this.lnkSaveData);
+            this.splitContainer1.Panel1.Controls.Add(this.numReceiveTimeOut);
+            this.splitContainer1.Panel1.Controls.Add(this.label6);
             // 
             // splitContainer1.Panel2
             // 
@@ -835,7 +840,7 @@
             this.groupHyperTerminal.Controls.Add(this.label14);
             this.groupHyperTerminal.Controls.Add(this.chkSendByEnter);
             this.groupHyperTerminal.Controls.Add(this.chkHTShowback);
-            this.groupHyperTerminal.Location = new System.Drawing.Point(332, 15);
+            this.groupHyperTerminal.Location = new System.Drawing.Point(332, 45);
             this.groupHyperTerminal.Name = "groupHyperTerminal";
             this.groupHyperTerminal.Size = new System.Drawing.Size(161, 223);
             this.groupHyperTerminal.TabIndex = 43;
@@ -915,7 +920,7 @@
             // labClearReceive
             // 
             this.labClearReceive.AutoSize = true;
-            this.labClearReceive.Location = new System.Drawing.Point(62, 6);
+            this.labClearReceive.Location = new System.Drawing.Point(62, 4);
             this.labClearReceive.Name = "labClearReceive";
             this.labClearReceive.Size = new System.Drawing.Size(77, 12);
             this.labClearReceive.TabIndex = 34;
@@ -956,7 +961,7 @@
             // 
             this.lnkSaveData.AutoSize = true;
             this.lnkSaveData.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.lnkSaveData.Location = new System.Drawing.Point(163, 6);
+            this.lnkSaveData.Location = new System.Drawing.Point(163, 4);
             this.lnkSaveData.Name = "lnkSaveData";
             this.lnkSaveData.Size = new System.Drawing.Size(53, 12);
             this.lnkSaveData.TabIndex = 33;
@@ -1041,6 +1046,38 @@
             this.lnkOpen.Text = "打开文件";
             this.lnkOpen.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkOpen_LinkClicked);
             // 
+            // numReceiveTimeOut
+            // 
+            this.numReceiveTimeOut.Location = new System.Drawing.Point(370, 2);
+            this.numReceiveTimeOut.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numReceiveTimeOut.Minimum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.numReceiveTimeOut.Name = "numReceiveTimeOut";
+            this.numReceiveTimeOut.Size = new System.Drawing.Size(54, 21);
+            this.numReceiveTimeOut.TabIndex = 46;
+            this.numReceiveTimeOut.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.numReceiveTimeOut.ValueChanged += new System.EventHandler(this.numReceiveTimeOut_ValueChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(261, 4);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(113, 12);
+            this.label6.TabIndex = 47;
+            this.label6.Text = "接收超时时间(ms)：";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1083,6 +1120,7 @@
             this.groupHyperTerminal.PerformLayout();
             this.panelNormalSend.ResumeLayout(false);
             this.panelNormalSend.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numReceiveTimeOut)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1175,6 +1213,8 @@
         private System.Windows.Forms.RadioButton radSendModeFile;
         private System.Windows.Forms.RadioButton radSendModeQueue;
         private System.Windows.Forms.RadioButton radSendModeNormal;
+        private System.Windows.Forms.NumericUpDown numReceiveTimeOut;
+        private System.Windows.Forms.Label label6;
 
     }
 }

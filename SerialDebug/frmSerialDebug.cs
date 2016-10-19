@@ -32,7 +32,7 @@ namespace SerialDebug
         FormNormalSend frmNormalSend;
         FormFileSend frmFileSend;
         SendModeType sendModeType = SendModeType.Normal;
-
+        private bool IsShowDataStreamInFileMode = false;
 
         private UInt64 RxCounter = 0;
         private UInt64 TxCounter = 0;
@@ -191,7 +191,7 @@ namespace SerialDebug
 
         }
 
-      
+
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -238,7 +238,7 @@ namespace SerialDebug
                 if (btnPortOpt.Text == "打开串口")
                 {
 
-                   
+
                     serialPort.PortName = cbComName.SelectedItem.ToString();
                     serialPort.BaudRate = Convert.ToInt32(cbBaudRate.Text);
                     serialPort.Parity = (System.IO.Ports.Parity)cbParity.SelectedItem;
@@ -247,7 +247,7 @@ namespace SerialDebug
 
                     serialPort.ReadBufferSize = 2 * 1024 * 1024;           // 2M
                     //serialPort.Open();
-
+                    sp.ReceiveTimeOut = Convert.ToInt32(numReceiveTimeOut.Value);
                     sp.Start();
                     sp.ReceivedEvent += new CSerialDebug.ReceivedEventHandler(sp_ReceivedEvent);
                     sp.SendCompletedEvent += new CSerialDebug.SendCompletedEventHandler(sp_SendCompletedEvent);
@@ -294,7 +294,7 @@ namespace SerialDebug
             }
         }
 
-      
+
 
 
 
@@ -1097,11 +1097,8 @@ namespace SerialDebug
         {
             if (lab.InvokeRequired)
             {
-                ////this.BeginInvoke(SetLableText(lab,text));
-                //this.BeginInvoke(new SetLableTextDel(setLableText));
                 lab.Invoke(new MethodInvoker(delegate
                 {
-                    //lab.Text = text;
                     SetLableText(lab, text);
                 }));
                 return;
@@ -1146,7 +1143,18 @@ namespace SerialDebug
             }
         }
 
-
+        /// <summary>
+        /// 设置接收超时时间
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void numReceiveTimeOut_ValueChanged(object sender, EventArgs e)
+        {
+            if (sp != null)
+            {
+                sp.ReceiveTimeOut = Convert.ToInt32(numReceiveTimeOut.Value);
+            }
+        }
 
 
         #endregion
@@ -1292,6 +1300,7 @@ namespace SerialDebug
                             sendForm = (ISendForm)frmQSend;
                             break;
                         case SendModeType.File:
+                            IsShowDataStreamInFileMode = frmFileSend.ShowDataStream;
                             frmFileSend.Start();
                             break;
                     }
@@ -1383,7 +1392,7 @@ namespace SerialDebug
 
         }
 
-   
+
 
         #endregion
 
@@ -1873,9 +1882,13 @@ namespace SerialDebug
                         sbMsg.Append(Environment.NewLine);
                     }
 
-                    TextBoxReceiveAppend(ReceiveColor, sbMsg.ToString());
+                    if (sendModeType != SendModeType.File || (sendModeType == SendModeType.File && IsShowDataStreamInFileMode))
+                    {
+                        TextBoxReceiveAppend(ReceiveColor, sbMsg.ToString());
+                    }
+
                 }
-                
+
                 RxCounter = RxCounter + (UInt64)e.DataLen;
                 setLableText(labRx, string.Format("RX:{0}", RxCounter));
             }
@@ -1919,15 +1932,17 @@ namespace SerialDebug
                     {
                         sendMsg.AppendFormat("{0}", e.SendParam.ASCIIString);
                     }
-                    
+
 
                     if (chkTimeStamp.Checked || chkWrap.Checked)
                     {
                         sendMsg.Append(Environment.NewLine);
                     }
 
-                    TextBoxReceiveAppend(SendColor, sendMsg.ToString());
-
+                    if (sendModeType != SendModeType.File || (sendModeType == SendModeType.File && IsShowDataStreamInFileMode))
+                    {
+                        TextBoxReceiveAppend(SendColor, sendMsg.ToString());
+                    }
                 }
 
                 TxCounter = TxCounter + (UInt64)(e.SendParam.DataLen);
@@ -2021,6 +2036,7 @@ namespace SerialDebug
                     break;
             }
         }
+
 
 
 
