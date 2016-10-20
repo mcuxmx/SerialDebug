@@ -256,6 +256,14 @@ namespace SerialDebug
                 }
                 else
                 {
+                    if (sendModeType != SendModeType.File)
+                    {
+                        sp.StopSend();
+                    }
+                    else
+                    {
+                        frmFileSend.Stop();
+                    }
 
                     sp.ReceivedEvent -= new CSerialDebug.ReceivedEventHandler(sp_ReceivedEvent);
                     sp.SendCompletedEvent -= new CSerialDebug.SendCompletedEventHandler(sp_SendCompletedEvent);
@@ -293,10 +301,6 @@ namespace SerialDebug
                 }
             }
         }
-
-
-
-
 
         /// <summary>
         /// 选择通信口。
@@ -607,7 +611,7 @@ namespace SerialDebug
             try
             {
                 //string[] strArray = txtBoxMenu.SelectedText.TrimEnd().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                string[] strArray = txtBoxMenu.SelectedText.TrimEnd().Replace(Environment.NewLine, " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] strArray = txtBoxMenu.SelectedText.TrimEnd(new char[] { '\r', '\n', ' ' }).Replace(Environment.NewLine, " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                 byte[] bytes = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(HexStringToByte));
                 // txtBoxMenu.Paste(System.Text.ASCIIEncoding.Default.GetString(bytes));
@@ -1101,7 +1105,6 @@ namespace SerialDebug
                 {
                     SetLableText(lab, text);
                 }));
-                return;
             }
             else
             {
@@ -1125,7 +1128,6 @@ namespace SerialDebug
                 {
                     TextBoxReceiveAppend(color, appendText);
                 }));
-                return;
             }
             else
             {
@@ -1136,6 +1138,9 @@ namespace SerialDebug
                 }
                 else
                 {
+                    txtReceive.SelectionStart = txtReceive.Text.Length;
+                    txtReceive.SelectionLength = 0;
+
                     txtReceive.SelectionColor = color;
                     txtReceive.AppendText(appendText);
                     txtReceive.ScrollToCaret();

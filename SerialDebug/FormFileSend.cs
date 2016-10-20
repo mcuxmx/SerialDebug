@@ -136,8 +136,11 @@ namespace SerialDebug
 
         public void Stop()
         {
-            FileTransProtocol.Abort();
-
+            if (FileTransProtocol!=null)
+            {
+                FileTransProtocol.Abort();
+            }
+            
             SetEndTransmit();
 
             if (FileTransProtocol != null)
@@ -293,8 +296,13 @@ namespace SerialDebug
                     }
 
                     string str = sr.ReadLine();
-                    fileIndex += System.Text.ASCIIEncoding.Default.GetBytes(str).Length;
-                    line += str;
+
+                    if (str!=null)
+                    {
+                        fileIndex += System.Text.ASCIIEncoding.Default.GetBytes(str).Length;
+                        line += str;
+                    }
+                    
 
 
                     while (true)
@@ -315,6 +323,7 @@ namespace SerialDebug
                             //}
                         }
                     }
+                    ShowProgressReport(true, fileIndex, (int)fs.Length);
 
                 }
                 else

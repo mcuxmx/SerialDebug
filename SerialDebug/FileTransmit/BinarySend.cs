@@ -76,7 +76,11 @@ namespace XMX.FileTransmit
 
         public void Abort()
         {
-            Stop();
+            IsStart = false;
+            if (AbortTransmit!=null)
+            {
+                AbortTransmit(this, null);
+            }
         }
 
         #endregion
