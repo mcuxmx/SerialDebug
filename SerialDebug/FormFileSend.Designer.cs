@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.txtFile = new System.Windows.Forms.TextBox();
             this.btnSelectFile = new System.Windows.Forms.Button();
@@ -42,6 +43,7 @@
             this.chkSendCRRF = new System.Windows.Forms.CheckBox();
             this.chkShowDataStream = new System.Windows.Forms.CheckBox();
             this.labReport = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numPacketLen)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDelayTime)).BeginInit();
             this.SuspendLayout();
@@ -186,6 +188,7 @@
             this.chkShowDataStream.Size = new System.Drawing.Size(84, 16);
             this.chkShowDataStream.TabIndex = 9;
             this.chkShowDataStream.Text = "显示数据流";
+            this.toolTip1.SetToolTip(this.chkShowDataStream, "显示文件传输过程中的数据流\r\n同时也需要将接收区对应设置显示");
             this.chkShowDataStream.UseVisualStyleBackColor = true;
             // 
             // labReport
@@ -243,5 +246,6 @@
         private System.Windows.Forms.CheckBox chkSendCRRF;
         private System.Windows.Forms.CheckBox chkShowDataStream;
         private System.Windows.Forms.Label labReport;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

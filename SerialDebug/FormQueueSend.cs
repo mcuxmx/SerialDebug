@@ -168,6 +168,12 @@ namespace SerialDebug
             {
                 return;
             }
+
+            if (dgvSendList.SelectedRows.Count <= 0)
+            {
+                return;
+            }
+
             DataGridViewRow selectedRow = dgvSendList.SelectedRows[0];
 
             if (selectedRow.Index > 0)
@@ -197,6 +203,12 @@ namespace SerialDebug
             {
                 return;
             }
+
+            if (dgvSendList.SelectedRows.Count <= 0)
+            {
+                return;
+            }
+
             DataGridViewRow selectedRow = dgvSendList.SelectedRows[0];
 
             if (selectedRow.Index < dgvSendList.Rows.Count - 1)

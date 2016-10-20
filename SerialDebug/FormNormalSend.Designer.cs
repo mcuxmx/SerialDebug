@@ -89,6 +89,7 @@
             this.numSendCount.Name = "numSendCount";
             this.numSendCount.Size = new System.Drawing.Size(48, 21);
             this.numSendCount.TabIndex = 46;
+            this.toolTip1.SetToolTip(this.numSendCount, "输入0时无限循环");
             // 
             // chkAutoSend
             // 
@@ -132,6 +133,7 @@
             this.numSendInterval.Name = "numSendInterval";
             this.numSendInterval.Size = new System.Drawing.Size(48, 21);
             this.numSendInterval.TabIndex = 43;
+            this.toolTip1.SetToolTip(this.numSendInterval, "输入0时无延时");
             this.numSendInterval.Value = new decimal(new int[] {
             100,
             0,
@@ -172,7 +174,7 @@
             this.numSendOnceBytes.Name = "numSendOnceBytes";
             this.numSendOnceBytes.Size = new System.Drawing.Size(48, 21);
             this.numSendOnceBytes.TabIndex = 40;
-            this.toolTip1.SetToolTip(this.numSendOnceBytes, "0表示不分包");
+            this.toolTip1.SetToolTip(this.numSendOnceBytes, "输入0时表示不分包");
             // 
             // label6
             // 
@@ -231,6 +233,7 @@
             this.txtSend.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtSend.Size = new System.Drawing.Size(530, 97);
             this.txtSend.TabIndex = 32;
+            this.toolTip1.SetToolTip(this.txtSend, "上下键可直接键入历史发送数据\r\nCtrl+Enter快捷发送");
             this.txtSend.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSend_KeyDown);
             this.txtSend.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSend_KeyPress);
             // 

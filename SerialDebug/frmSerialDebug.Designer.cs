@@ -109,6 +109,8 @@
             this.Label8 = new System.Windows.Forms.Label();
             this.txtReceive = new System.Windows.Forms.RichTextBox();
             this.lnkSaveData = new System.Windows.Forms.LinkLabel();
+            this.numReceiveTimeOut = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
             this.panelNormalSend = new System.Windows.Forms.Panel();
             this.txtSend = new System.Windows.Forms.TextBox();
             this.chkSendThenClear = new System.Windows.Forms.CheckBox();
@@ -116,8 +118,6 @@
             this.Label7 = new System.Windows.Forms.Label();
             this.lnkOpen = new System.Windows.Forms.LinkLabel();
             this.fontDlg = new System.Windows.Forms.FontDialog();
-            this.numReceiveTimeOut = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPortState)).BeginInit();
             this.cmenuStrip.SuspendLayout();
@@ -130,8 +130,8 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.groupHyperTerminal.SuspendLayout();
-            this.panelNormalSend.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numReceiveTimeOut)).BeginInit();
+            this.panelNormalSend.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -954,6 +954,7 @@
             this.txtReceive.Size = new System.Drawing.Size(528, 275);
             this.txtReceive.TabIndex = 35;
             this.txtReceive.Text = "";
+            this.ToolTip.SetToolTip(this.txtReceive, "右键菜单有进制转换功能");
             this.txtReceive.MouseEnter += new System.EventHandler(this.txtReceive_MouseEnter);
             this.txtReceive.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtReceive_MouseDown);
             // 
@@ -969,6 +970,39 @@
             this.lnkSaveData.Text = "保存数据";
             this.lnkSaveData.Enter += new System.EventHandler(this.lnkSaveData_Enter);
             this.lnkSaveData.MouseEnter += new System.EventHandler(this.lnkSaveData_Enter);
+            // 
+            // numReceiveTimeOut
+            // 
+            this.numReceiveTimeOut.Location = new System.Drawing.Point(370, 2);
+            this.numReceiveTimeOut.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numReceiveTimeOut.Minimum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.numReceiveTimeOut.Name = "numReceiveTimeOut";
+            this.numReceiveTimeOut.Size = new System.Drawing.Size(54, 21);
+            this.numReceiveTimeOut.TabIndex = 46;
+            this.ToolTip.SetToolTip(this.numReceiveTimeOut, "该值用于接收数据断帧时间");
+            this.numReceiveTimeOut.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.numReceiveTimeOut.ValueChanged += new System.EventHandler(this.numReceiveTimeOut_ValueChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(261, 4);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(113, 12);
+            this.label6.TabIndex = 47;
+            this.label6.Text = "接收超时时间(ms)：";
             // 
             // panelNormalSend
             // 
@@ -1046,38 +1080,6 @@
             this.lnkOpen.Text = "打开文件";
             this.lnkOpen.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkOpen_LinkClicked);
             // 
-            // numReceiveTimeOut
-            // 
-            this.numReceiveTimeOut.Location = new System.Drawing.Point(370, 2);
-            this.numReceiveTimeOut.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.numReceiveTimeOut.Minimum = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.numReceiveTimeOut.Name = "numReceiveTimeOut";
-            this.numReceiveTimeOut.Size = new System.Drawing.Size(54, 21);
-            this.numReceiveTimeOut.TabIndex = 46;
-            this.numReceiveTimeOut.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.numReceiveTimeOut.ValueChanged += new System.EventHandler(this.numReceiveTimeOut_ValueChanged);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(261, 4);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(113, 12);
-            this.label6.TabIndex = 47;
-            this.label6.Text = "接收超时时间(ms)：";
-            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1118,9 +1120,9 @@
             this.splitContainer1.ResumeLayout(false);
             this.groupHyperTerminal.ResumeLayout(false);
             this.groupHyperTerminal.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numReceiveTimeOut)).EndInit();
             this.panelNormalSend.ResumeLayout(false);
             this.panelNormalSend.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numReceiveTimeOut)).EndInit();
             this.ResumeLayout(false);
 
         }

@@ -195,7 +195,7 @@
             this.txtResult.Enabled = false;
             this.txtResult.Location = new System.Drawing.Point(94, 20);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(109, 21);
+            this.txtResult.Size = new System.Drawing.Size(97, 21);
             this.txtResult.TabIndex = 7;
             // 
             // label2
@@ -212,11 +212,11 @@
             this.chkIsLittleEndian.AutoSize = true;
             this.chkIsLittleEndian.Checked = true;
             this.chkIsLittleEndian.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkIsLittleEndian.Location = new System.Drawing.Point(207, 23);
+            this.chkIsLittleEndian.Location = new System.Drawing.Point(195, 23);
             this.chkIsLittleEndian.Name = "chkIsLittleEndian";
-            this.chkIsLittleEndian.Size = new System.Drawing.Size(72, 16);
+            this.chkIsLittleEndian.Size = new System.Drawing.Size(84, 16);
             this.chkIsLittleEndian.TabIndex = 8;
-            this.chkIsLittleEndian.Text = "高位在前";
+            this.chkIsLittleEndian.Text = "高字节在前";
             this.chkIsLittleEndian.UseVisualStyleBackColor = true;
             this.chkIsLittleEndian.CheckedChanged += new System.EventHandler(this.chkIsLittleEndian_CheckedChanged);
             // 

@@ -28,9 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormQueueSend));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panelSendParam = new System.Windows.Forms.Panel();
+            this.chkSendHex = new System.Windows.Forms.CheckBox();
+            this.lnkAddCheckCode = new System.Windows.Forms.LinkLabel();
             this.linkLabelClearData = new System.Windows.Forms.LinkLabel();
             this.btnCancelSaveParam = new System.Windows.Forms.Button();
             this.btnSaveSendParam = new System.Windows.Forms.Button();
@@ -50,8 +53,7 @@
             this.colNo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colMode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colData = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lnkAddCheckCode = new System.Windows.Forms.LinkLabel();
-            this.chkSendHex = new System.Windows.Forms.CheckBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -100,6 +102,29 @@
             this.panelSendParam.Size = new System.Drawing.Size(536, 100);
             this.panelSendParam.TabIndex = 48;
             this.panelSendParam.Visible = false;
+            // 
+            // chkSendHex
+            // 
+            this.chkSendHex.AutoSize = true;
+            this.chkSendHex.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkSendHex.Location = new System.Drawing.Point(6, 7);
+            this.chkSendHex.Name = "chkSendHex";
+            this.chkSendHex.Size = new System.Drawing.Size(72, 17);
+            this.chkSendHex.TabIndex = 37;
+            this.chkSendHex.Text = "HEX发送";
+            this.chkSendHex.UseVisualStyleBackColor = true;
+            // 
+            // lnkAddCheckCode
+            // 
+            this.lnkAddCheckCode.AutoSize = true;
+            this.lnkAddCheckCode.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.lnkAddCheckCode.Location = new System.Drawing.Point(160, 36);
+            this.lnkAddCheckCode.Name = "lnkAddCheckCode";
+            this.lnkAddCheckCode.Size = new System.Drawing.Size(65, 12);
+            this.lnkAddCheckCode.TabIndex = 35;
+            this.lnkAddCheckCode.TabStop = true;
+            this.lnkAddCheckCode.Text = "添加校验码";
+            this.lnkAddCheckCode.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkAddCheckCode_LinkClicked);
             // 
             // linkLabelClearData
             // 
@@ -154,6 +179,7 @@
             this.numSendListDelayTime.Name = "numSendListDelayTime";
             this.numSendListDelayTime.Size = new System.Drawing.Size(80, 21);
             this.numSendListDelayTime.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.numSendListDelayTime, "两种模式下均会延时\r\n若不想延时将该值设为0");
             // 
             // cbSendMode
             // 
@@ -218,6 +244,7 @@
             this.btnSetdownSendList.Name = "btnSetdownSendList";
             this.btnSetdownSendList.Size = new System.Drawing.Size(30, 24);
             this.btnSetdownSendList.TabIndex = 35;
+            this.toolTip1.SetToolTip(this.btnSetdownSendList, "下移");
             this.btnSetdownSendList.UseVisualStyleBackColor = true;
             this.btnSetdownSendList.Click += new System.EventHandler(this.btnSetdownSendList_Click);
             // 
@@ -228,6 +255,7 @@
             this.btnSetupSendList.Name = "btnSetupSendList";
             this.btnSetupSendList.Size = new System.Drawing.Size(30, 24);
             this.btnSetupSendList.TabIndex = 35;
+            this.toolTip1.SetToolTip(this.btnSetupSendList, "上移");
             this.btnSetupSendList.UseVisualStyleBackColor = true;
             this.btnSetupSendList.Click += new System.EventHandler(this.btnSetupSendList_Click);
             // 
@@ -238,6 +266,7 @@
             this.btnDeleteSendList.Name = "btnDeleteSendList";
             this.btnDeleteSendList.Size = new System.Drawing.Size(30, 24);
             this.btnDeleteSendList.TabIndex = 35;
+            this.toolTip1.SetToolTip(this.btnDeleteSendList, "删除选中数据");
             this.btnDeleteSendList.UseVisualStyleBackColor = true;
             this.btnDeleteSendList.Click += new System.EventHandler(this.btnDeleteSendList_Click);
             // 
@@ -248,6 +277,7 @@
             this.btnAddSendList.Name = "btnAddSendList";
             this.btnAddSendList.Size = new System.Drawing.Size(30, 24);
             this.btnAddSendList.TabIndex = 35;
+            this.toolTip1.SetToolTip(this.btnAddSendList, "添加发送数据");
             this.btnAddSendList.UseVisualStyleBackColor = true;
             this.btnAddSendList.Click += new System.EventHandler(this.btnAddSendList_Click);
             // 
@@ -318,29 +348,6 @@
             this.colData.ReadOnly = true;
             this.colData.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
-            // lnkAddCheckCode
-            // 
-            this.lnkAddCheckCode.AutoSize = true;
-            this.lnkAddCheckCode.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.lnkAddCheckCode.Location = new System.Drawing.Point(160, 36);
-            this.lnkAddCheckCode.Name = "lnkAddCheckCode";
-            this.lnkAddCheckCode.Size = new System.Drawing.Size(65, 12);
-            this.lnkAddCheckCode.TabIndex = 35;
-            this.lnkAddCheckCode.TabStop = true;
-            this.lnkAddCheckCode.Text = "添加校验码";
-            this.lnkAddCheckCode.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkAddCheckCode_LinkClicked);
-            // 
-            // chkSendHex
-            // 
-            this.chkSendHex.AutoSize = true;
-            this.chkSendHex.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkSendHex.Location = new System.Drawing.Point(6, 7);
-            this.chkSendHex.Name = "chkSendHex";
-            this.chkSendHex.Size = new System.Drawing.Size(72, 17);
-            this.chkSendHex.TabIndex = 37;
-            this.chkSendHex.Text = "HEX发送";
-            this.chkSendHex.UseVisualStyleBackColor = true;
-            // 
             // FormQueueSend
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -389,5 +396,6 @@
         private System.Windows.Forms.Label label16;
         internal System.Windows.Forms.LinkLabel lnkAddCheckCode;
         internal System.Windows.Forms.CheckBox chkSendHex;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
