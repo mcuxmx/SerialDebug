@@ -223,7 +223,7 @@ namespace SerialDebug
                                     }
                                 }
                             }
-                            
+
                         }
                         catch (System.Exception ex)
                         {
@@ -485,4 +485,5 @@ namespace SerialDebug
             }
         }
     }
+
 }

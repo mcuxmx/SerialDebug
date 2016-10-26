@@ -538,7 +538,7 @@ namespace SerialDebug
             SetEndTransmit();
 
             TimeSpan ts = DateTime.Now - startTime;
-            ShowTextReprot(string.Format("传输完成，用时{0:D2}:{1:D2}:{2:D3}.{3:D3}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds));
+            ShowTextReprot(string.Format("传输完成，用时{0:D2}:{1:D2}:{2:D2}.{3:D3}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds));
         }
 
         private void btnSelectFile_Click(object sender, EventArgs e)

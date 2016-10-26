@@ -107,7 +107,7 @@
             // 
             this.chkSendHex.AutoSize = true;
             this.chkSendHex.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkSendHex.Location = new System.Drawing.Point(6, 7);
+            this.chkSendHex.Location = new System.Drawing.Point(6, 4);
             this.chkSendHex.Name = "chkSendHex";
             this.chkSendHex.Size = new System.Drawing.Size(72, 17);
             this.chkSendHex.TabIndex = 37;
@@ -118,7 +118,7 @@
             // 
             this.lnkAddCheckCode.AutoSize = true;
             this.lnkAddCheckCode.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.lnkAddCheckCode.Location = new System.Drawing.Point(160, 36);
+            this.lnkAddCheckCode.Location = new System.Drawing.Point(160, 29);
             this.lnkAddCheckCode.Name = "lnkAddCheckCode";
             this.lnkAddCheckCode.Size = new System.Drawing.Size(65, 12);
             this.lnkAddCheckCode.TabIndex = 35;
@@ -130,7 +130,7 @@
             // 
             this.linkLabelClearData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabelClearData.AutoSize = true;
-            this.linkLabelClearData.Location = new System.Drawing.Point(62, 36);
+            this.linkLabelClearData.Location = new System.Drawing.Point(62, 29);
             this.linkLabelClearData.Name = "linkLabelClearData";
             this.linkLabelClearData.Size = new System.Drawing.Size(77, 12);
             this.linkLabelClearData.TabIndex = 6;
@@ -140,7 +140,7 @@
             // btnCancelSaveParam
             // 
             this.btnCancelSaveParam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancelSaveParam.Location = new System.Drawing.Point(478, 69);
+            this.btnCancelSaveParam.Location = new System.Drawing.Point(478, 66);
             this.btnCancelSaveParam.Name = "btnCancelSaveParam";
             this.btnCancelSaveParam.Size = new System.Drawing.Size(55, 23);
             this.btnCancelSaveParam.TabIndex = 5;
@@ -151,7 +151,7 @@
             // btnSaveSendParam
             // 
             this.btnSaveSendParam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveSendParam.Location = new System.Drawing.Point(478, 46);
+            this.btnSaveSendParam.Location = new System.Drawing.Point(478, 43);
             this.btnSaveSendParam.Name = "btnSaveSendParam";
             this.btnSaveSendParam.Size = new System.Drawing.Size(55, 23);
             this.btnSaveSendParam.TabIndex = 5;
@@ -162,7 +162,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(4, 36);
+            this.label18.Location = new System.Drawing.Point(4, 29);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(65, 12);
             this.label18.TabIndex = 4;
@@ -170,7 +170,7 @@
             // 
             // numSendListDelayTime
             // 
-            this.numSendListDelayTime.Location = new System.Drawing.Point(423, 5);
+            this.numSendListDelayTime.Location = new System.Drawing.Point(423, 2);
             this.numSendListDelayTime.Maximum = new decimal(new int[] {
             86400000,
             0,
@@ -188,7 +188,7 @@
             this.cbSendMode.Items.AddRange(new object[] {
             "上帧发送完成后",
             "接收到数据帧后"});
-            this.cbSendMode.Location = new System.Drawing.Point(170, 5);
+            this.cbSendMode.Location = new System.Drawing.Point(170, 2);
             this.cbSendMode.Name = "cbSendMode";
             this.cbSendMode.Size = new System.Drawing.Size(139, 20);
             this.cbSendMode.TabIndex = 1;
@@ -198,17 +198,17 @@
             this.txtSend.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSend.Location = new System.Drawing.Point(3, 49);
+            this.txtSend.Location = new System.Drawing.Point(3, 44);
             this.txtSend.Multiline = true;
             this.txtSend.Name = "txtSend";
             this.txtSend.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtSend.Size = new System.Drawing.Size(469, 48);
+            this.txtSend.Size = new System.Drawing.Size(469, 53);
             this.txtSend.TabIndex = 0;
             // 
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(365, 9);
+            this.label17.Location = new System.Drawing.Point(365, 6);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(65, 12);
             this.label17.TabIndex = 3;
@@ -217,7 +217,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(104, 9);
+            this.label16.Location = new System.Drawing.Point(104, 6);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(65, 12);
             this.label16.TabIndex = 3;

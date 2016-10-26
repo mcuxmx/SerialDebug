@@ -233,14 +233,16 @@ namespace SerialDebug
                     crcInfo.RefOut = chkRefOut.Checked;
                     crcInfo.XorOut = chkXorOut.Checked ? 0xFFFFFFFF : 0x00000000;
 
-                    checkResult = DataCheck.GetCRC32(crcInfo, _DataBytes);
+                    
 
                     if (crcType >= CRCType.CRC16_IBM && crcType <= CRCType.CRC16_DNP)
                     {
+                        checkResult = DataCheck.GetCRC16(crcInfo, _DataBytes);
                         dataWidth = 16;
                     }
                     else if (crcType >= CRCType.CRC32 && crcType <= CRCType.CRC32_MPEG2)
                     {
+                        checkResult = DataCheck.GetCRC32(crcInfo, _DataBytes);
                         dataWidth = 32;
                     }
                 }
