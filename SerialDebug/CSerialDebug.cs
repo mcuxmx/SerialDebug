@@ -291,6 +291,8 @@ namespace SerialDebug
         /// </summary>
         private void SendThreadHandler()
         {
+            bool IsFirstSend = true;
+
             if (LoopCount == 0)
             {
                 LoopCount = int.MaxValue;
@@ -313,17 +315,21 @@ namespace SerialDebug
 
                     if (sendParam != null)
                     {
+                        bool DelayEnable = true;
                         if (sendParam.Mode == SendParamMode.SendAfterLastSend)
                         {
-
+                            if (IsFirstSend)
+                            {
+                                DelayEnable = false;
+                            }
                         }
                         else if (sendParam.Mode == SendParamMode.SendAfterReceived)
                         {
                             waitParseEvent.WaitOne();
                         }
+                        IsFirstSend = false;
 
-
-                        if (sendParam.DelayTime > 0)
+                        if (DelayEnable && sendParam.DelayTime > 0)
                         {
                             DateTime startTime = DateTime.Now;
                             TimeSpan ts = DateTime.Now - startTime;

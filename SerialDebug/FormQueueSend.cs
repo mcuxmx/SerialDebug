@@ -10,8 +10,16 @@ namespace SerialDebug
 {
     public partial class FormQueueSend : Form, ISendForm
     {
+        public delegate void ManualSendEventHandler(object sender, ManualSendEventArgs e);
+        public event ManualSendEventHandler ManualSendEvent;
         public event System.EventHandler ParamSetOpend;
         public event System.EventHandler ParamSetClosed;
+
+        private readonly int RowNoIndex = 0;
+        private readonly int RowSendIndex = 1;
+        private readonly int RowEnableIndex = 2;
+        private readonly int RowParamIndex = 3;
+        private readonly int RowContentIndex = 4;
 
         double splitPercent = 0;
         public FormQueueSend()
@@ -109,10 +117,12 @@ namespace SerialDebug
                 Convert.ToInt32(numSendListDelayTime.Value),
                 txtSend.Text);
 
-                object[] array = new object[3];
+                object[] array = new object[5];
                 array[0] = dgvSendList.Rows.Count;
-                array[1] = param.ParameterString;
-                array[2] = param.Data;
+                array[1] = "Send";
+                array[2] = true;
+                array[3] = param.ParameterString;
+                array[4] = param.Data;
                 dgvSendList.Rows.Add(array);
 
                 btnCancelSaveParam.PerformClick();
@@ -134,27 +144,34 @@ namespace SerialDebug
         /// <param name="e"></param>
         private void btnDeleteSendList_Click(object sender, EventArgs e)
         {
-
-            if (dgvSendList.SelectedRows == null)
+            try
             {
-                return;
-            }
+                if (dgvSendList.SelectedRows == null)
+                {
+                    return;
+                }
 
-            if (dgvSendList.SelectedRows.Count <= 0)
+                if (dgvSendList.SelectedRows.Count <= 0)
+                {
+                    return;
+                }
+                DataGridViewRow selectedRow = dgvSendList.SelectedRows[0];
+
+
+                int rowNo = Convert.ToInt32(selectedRow.Cells[0].Value);
+                dgvSendList.Rows.RemoveAt(selectedRow.Index);
+                while (rowNo < dgvSendList.Rows.Count)
+                {
+                    dgvSendList.Rows[rowNo].Cells[0].Value = rowNo;
+                    rowNo++;
+                }
+
+            }
+            catch (System.Exception ex)
             {
-                return;
+                Console.WriteLine(ex.ToString());
             }
-            DataGridViewRow selectedRow = dgvSendList.SelectedRows[0];
-
-
-            int rowNo = Convert.ToInt32(selectedRow.Cells[0].Value);
-            dgvSendList.Rows.RemoveAt(selectedRow.Index);
-            while (rowNo < dgvSendList.Rows.Count)
-            {
-                dgvSendList.Rows[rowNo].Cells[0].Value = rowNo;
-                rowNo++;
-            }
-
+           
         }
 
         /// <summary>
@@ -252,6 +269,18 @@ namespace SerialDebug
             }
         }
 
+        CSendParam getSendParamByMode(string mode, string content)
+        {
+            string[] paramsArray = mode.Split(new char[] { ':' });
+            CSendParam sendParam = new CSendParam(
+                (SendParamFormat)Convert.ToInt32(paramsArray[0]),
+                (SendParamMode)Convert.ToInt32(paramsArray[1]),
+                Convert.ToInt32(paramsArray[2]),
+                content);
+
+            return sendParam;
+        }
+
 
         public int ParamSetHeight
         {
@@ -268,13 +297,20 @@ namespace SerialDebug
             List<CSendParam> list = new List<CSendParam>();
             foreach (DataGridViewRow row in dgvSendList.Rows)
             {
-                string[] paramsArray = row.Cells[1].Value.ToString().Split(new char[] { ':' });
-                CSendParam sendParam = new CSendParam(
-                    (SendParamFormat)Convert.ToInt32(paramsArray[0]),
-                    (SendParamMode)Convert.ToInt32(paramsArray[1]),
-                    Convert.ToInt32(paramsArray[2]),
-                    row.Cells[2].Value.ToString());
-                list.Add(sendParam);
+                if ((bool)row.Cells[RowEnableIndex].Value == true)
+                {
+                    //string[] paramsArray = row.Cells[3].Value.ToString().Split(new char[] { ':' });
+                    //CSendParam sendParam = new CSendParam(
+                    //    (SendParamFormat)Convert.ToInt32(paramsArray[0]),
+                    //    (SendParamMode)Convert.ToInt32(paramsArray[1]),
+                    //    Convert.ToInt32(paramsArray[2]),
+                    //    row.Cells[4].Value.ToString());
+
+                    CSendParam sendParam = getSendParamByMode(row.Cells[RowParamIndex].Value.ToString(),
+                        row.Cells[RowContentIndex].Value.ToString());
+                    list.Add(sendParam);
+                }
+
             }
 
             return list;
@@ -317,6 +353,54 @@ namespace SerialDebug
                 MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
+        }
+
+        private void dgvSendList_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex < 0 || e.RowIndex < 0)
+            {
+                return;
+            }
+
+            DataGridViewRow row = dgvSendList.Rows[e.RowIndex];
+            if (e.ColumnIndex == 1)   // Send button
+            {
+                CSendParam sendParam = getSendParamByMode(row.Cells[RowParamIndex].Value.ToString(),
+                        row.Cells[RowContentIndex].Value.ToString());
+                sendParam.Mode = SendParamMode.SendAfterLastSend;
+                sendParam.DelayTime = 0;
+                if (ManualSendEvent != null)
+                {
+                    ManualSendEvent(this, new ManualSendEventArgs(sendParam));
+                }
+            }
+            else if (e.ColumnIndex == RowEnableIndex) // enable
+            {
+                row.Cells[e.ColumnIndex].Value = !Convert.ToBoolean(row.Cells[e.ColumnIndex].Value);
+            }
+        }
+
+        private void linkLabelClearData_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            txtSend.Clear();
+        }
+    }
+
+
+    public class ManualSendEventArgs : EventArgs
+    {
+        public readonly List<CSendParam> _SendList;
+
+        public ManualSendEventArgs(CSendParam sendParam)
+        {
+            _SendList = new List<CSendParam>();
+            _SendList.Clear();
+            _SendList.Add(sendParam);
+        }
+
+        public List<CSendParam> SendList
+        {
+            get { return _SendList; }
         }
     }
 }

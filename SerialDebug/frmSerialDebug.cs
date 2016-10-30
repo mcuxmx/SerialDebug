@@ -171,6 +171,7 @@ namespace SerialDebug
             frmQSend = new FormQueueSend();
             frmQSend.ParamSetOpend += new EventHandler(frmQSend_ParamSetOpend);
             frmQSend.ParamSetClosed += new EventHandler(frmQSend_ParamSetClosed);
+            frmQSend.ManualSendEvent += new FormQueueSend.ManualSendEventHandler(frmQSend_ManualSendEvent);
             frmQSend.Dock = DockStyle.Fill;
             frmQSend.FormBorderStyle = FormBorderStyle.None;
             frmQSend.TopLevel = false;
@@ -194,6 +195,7 @@ namespace SerialDebug
             splitPercent = (double)splitContainer1.SplitterDistance / splitContainer1.Height;
 
         }
+
 
 
 
@@ -2125,6 +2127,15 @@ namespace SerialDebug
         {
             btnSend.PerformClick();
         }
+
+        void frmQSend_ManualSendEvent(object sender, ManualSendEventArgs e)
+        {
+            if (e != null)
+            {
+                sp.Send(e.SendList); 
+            }
+        }
+
 
         void frmQSend_ParamSetClosed(object sender, EventArgs e)
         {

@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormQueueSend));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panelSendParam = new System.Windows.Forms.Panel();
             this.chkSendHex = new System.Windows.Forms.CheckBox();
@@ -51,6 +52,8 @@
             this.label15 = new System.Windows.Forms.Label();
             this.dgvSendList = new System.Windows.Forms.DataGridView();
             this.colNo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colSend = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.colEnable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.colMode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colData = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -136,6 +139,7 @@
             this.linkLabelClearData.TabIndex = 6;
             this.linkLabelClearData.TabStop = true;
             this.linkLabelClearData.Text = " 清空发送区 ";
+            this.linkLabelClearData.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelClearData_LinkClicked_1);
             // 
             // btnCancelSaveParam
             // 
@@ -306,6 +310,8 @@
             this.dgvSendList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvSendList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colNo,
+            this.colSend,
+            this.colEnable,
             this.colMode,
             this.colData});
             this.dgvSendList.Location = new System.Drawing.Point(3, 26);
@@ -319,16 +325,37 @@
             this.dgvSendList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvSendList.Size = new System.Drawing.Size(530, 112);
             this.dgvSendList.TabIndex = 0;
+            this.dgvSendList.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvSendList_CellClick);
             // 
             // colNo
             // 
             this.colNo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.colNo.DefaultCellStyle = dataGridViewCellStyle1;
             this.colNo.FillWeight = 48.73096F;
             this.colNo.HeaderText = "序号";
             this.colNo.Name = "colNo";
             this.colNo.ReadOnly = true;
             this.colNo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.colNo.Width = 36;
+            // 
+            // colSend
+            // 
+            this.colSend.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.colSend.FillWeight = 104.8391F;
+            this.colSend.HeaderText = "手动";
+            this.colSend.Name = "colSend";
+            this.colSend.ReadOnly = true;
+            this.colSend.Width = 36;
+            // 
+            // colEnable
+            // 
+            this.colEnable.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.colEnable.FillWeight = 127.1243F;
+            this.colEnable.HeaderText = "使能";
+            this.colEnable.Name = "colEnable";
+            this.colEnable.ReadOnly = true;
+            this.colEnable.Width = 36;
             // 
             // colMode
             // 
@@ -342,7 +369,7 @@
             // 
             // colData
             // 
-            this.colData.FillWeight = 114.2795F;
+            this.colData.FillWeight = 82.31606F;
             this.colData.HeaderText = "数据";
             this.colData.Name = "colData";
             this.colData.ReadOnly = true;
@@ -381,9 +408,6 @@
         private System.Windows.Forms.Button btnAddSendList;
         internal System.Windows.Forms.Label label15;
         private System.Windows.Forms.DataGridView dgvSendList;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colNo;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colMode;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colData;
         private System.Windows.Forms.Panel panelSendParam;
         private System.Windows.Forms.LinkLabel linkLabelClearData;
         private System.Windows.Forms.Button btnCancelSaveParam;
@@ -397,5 +421,10 @@
         internal System.Windows.Forms.LinkLabel lnkAddCheckCode;
         internal System.Windows.Forms.CheckBox chkSendHex;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colNo;
+        private System.Windows.Forms.DataGridViewButtonColumn colSend;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn colEnable;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colMode;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colData;
     }
 }

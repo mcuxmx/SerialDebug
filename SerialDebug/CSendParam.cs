@@ -7,9 +7,9 @@ namespace SerialDebug
 {
     public class CSendParam
     {
-        private readonly SendParamFormat _Format;
-        private readonly SendParamMode _Mode;
-        private readonly int _DelayTime;
+        private SendParamFormat _Format;
+        private SendParamMode _Mode;
+        private int _DelayTime;
         private readonly string _Data;
         private readonly byte[] _DataBytes = null;
 
@@ -24,7 +24,7 @@ namespace SerialDebug
                 _DataBytes = new byte[count];
                 Array.Copy(data, startIndex, _DataBytes, 0, count);
 
-                if (Format== SendParamFormat.Hex)
+                if (Format == SendParamFormat.Hex)
                 {
                     _Data = BitConverter.ToString(_DataBytes).Replace('-', ' ').TrimEnd(new char[] { ' ' });
                 }
@@ -82,16 +82,19 @@ namespace SerialDebug
         public SendParamFormat Format
         {
             get { return _Format; }
+            set { _Format = value; }
         }
 
         public SendParamMode Mode
         {
             get { return _Mode; }
+            set { _Mode = value; }
         }
 
         public int DelayTime
         {
             get { return _DelayTime; }
+            set { _DelayTime = value; }
         }
 
         public int DataLen
