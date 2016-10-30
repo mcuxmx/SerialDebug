@@ -992,6 +992,7 @@
             this.lnkSaveData.TabIndex = 33;
             this.lnkSaveData.TabStop = true;
             this.lnkSaveData.Text = "保存数据";
+            this.lnkSaveData.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkSaveData_LinkClicked);
             this.lnkSaveData.Enter += new System.EventHandler(this.lnkSaveData_Enter);
             // 
             // label6

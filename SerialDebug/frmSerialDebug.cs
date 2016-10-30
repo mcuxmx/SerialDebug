@@ -1534,13 +1534,12 @@ namespace SerialDebug
 
         #region 保存文件和打开文件
 
-
         /// <summary>
-        /// 弹出保存菜单。
+        /// 弹出保存菜单
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void lnkSaveData_Enter(object sender, EventArgs e)
+        private void lnkSaveData_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             if (txtReceive.Text == "")
             {
@@ -1551,6 +1550,24 @@ namespace SerialDebug
                 cmenuSave.Enabled = true;
             }
             this.cmenuSave.Show(lnkSaveData, 0, lnkSaveData.Height);
+        }
+
+        /// <summary>
+        /// 弹出保存菜单。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void lnkSaveData_Enter(object sender, EventArgs e)
+        {
+            //if (txtReceive.Text == "")
+            //{
+            //    cmenuSave.Enabled = false;
+            //}
+            //else
+            //{
+            //    cmenuSave.Enabled = true;
+            //}
+            //this.cmenuSave.Show(lnkSaveData, 0, lnkSaveData.Height);
         }
 
 
@@ -2194,6 +2211,7 @@ namespace SerialDebug
             }
         }
 
+      
 
 
 
