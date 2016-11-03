@@ -109,6 +109,8 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <SubType>
+      </SubType>
     </None>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -130,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="port.ico" />
+    <None Include="app.config" />
     <None Include="Resources\round_minus.png" />
     <None Include="Resources\round_plus.png" />
   </ItemGroup>

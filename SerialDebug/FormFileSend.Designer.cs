@@ -223,6 +223,7 @@
             this.Name = "FormFileSend";
             this.Text = "FormNormalSend";
             this.Load += new System.EventHandler(this.FormFileSend_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormFileSend_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.numPacketLen)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDelayTime)).EndInit();
             this.ResumeLayout(false);

@@ -58,6 +58,62 @@ namespace SerialDebug
 
         bool HyperTerminalMode = false;      // ³¬¼¶ÖÕ¶ËÄ£Ê½
 
+        private void LoadConfig()
+        {
+            if (serialPort.IsOpen == false)
+            {
+                if (cbComName.Items.Contains(Properties.Settings.Default.comPort))
+                {
+                    cbComName.Text = Properties.Settings.Default.comPort;
+                }
+                else
+                {
+                    if (cbComName.Items.Count > 0)
+                    {
+                        cbComName.SelectedIndex = 0;
+                    }
+                }
+            }
+           
+
+            cbBaudRate.Text = Properties.Settings.Default.comBaudRate.ToString();
+            cbParity.SelectedIndex = Properties.Settings.Default.comParityBit;
+            cbDataBit.SelectedIndex = Properties.Settings.Default.comDataBits;
+            cbStopBit.SelectedIndex = Properties.Settings.Default.comStopBits;
+            cbStreamControl.SelectedIndex = Properties.Settings.Default.comFlowCtrl;
+            chkRTS.Checked = Properties.Settings.Default.comRTS;
+            chkDTR.Checked = Properties.Settings.Default.comDTR;
+
+            chkShowReceive.Checked = Properties.Settings.Default.dispReceive;
+            chkShowSend.Checked = Properties.Settings.Default.dispSend;
+            chkWrap.Checked = Properties.Settings.Default.dispWrap;
+            chkReceiveHex.Checked = Properties.Settings.Default.dispHex;
+            chkTimeStamp.Checked = Properties.Settings.Default.dispTimeStamp;
+            numReceiveTimeOut.Value = Properties.Settings.Default.dispReceiveTimeOut;
+
+        }
+
+        private void SaveConfig()
+        {
+            Properties.Settings.Default.comPort = cbComName.Text;
+            Properties.Settings.Default.comBaudRate = Convert.ToInt32(cbBaudRate.Text);
+            Properties.Settings.Default.comParityBit = cbParity.SelectedIndex;
+            Properties.Settings.Default.comDataBits = cbDataBit.SelectedIndex;
+            Properties.Settings.Default.comStopBits = cbStopBit.SelectedIndex;
+            Properties.Settings.Default.comFlowCtrl = cbStreamControl.SelectedIndex;
+            Properties.Settings.Default.comRTS = chkRTS.Checked;
+            Properties.Settings.Default.comDTR = chkDTR.Checked;
+
+            Properties.Settings.Default.dispReceive = chkShowReceive.Checked;
+            Properties.Settings.Default.dispSend = chkShowSend.Checked;
+            Properties.Settings.Default.dispWrap = chkWrap.Checked;
+            Properties.Settings.Default.dispHex = chkReceiveHex.Checked;
+            Properties.Settings.Default.dispTimeStamp = chkTimeStamp.Checked;
+            Properties.Settings.Default.dispReceiveTimeOut = (int)numReceiveTimeOut.Value;
+
+            Properties.Settings.Default.Save();
+        }
+
         private void SetMode(bool IsHyperTerminalMode)
         {
             groupReceive.Visible = !IsHyperTerminalMode;
@@ -154,7 +210,7 @@ namespace SerialDebug
             SetLableText = new SetLableTextDel(setLableText);
             cbHTEOFChars.SelectedIndex = 0;
 
-
+            LoadConfig();
 
             panelNormalSend.Visible = false;
 
@@ -176,7 +232,7 @@ namespace SerialDebug
             frmQSend.FormBorderStyle = FormBorderStyle.None;
             frmQSend.TopLevel = false;
             frmQSend.Parent = splitContainer1.Panel2;
-            //frmQSend.Show();
+            frmQSend.Show();
 
 
             frmFileSend = new FormFileSend();
@@ -187,7 +243,7 @@ namespace SerialDebug
             frmFileSend.FormBorderStyle = FormBorderStyle.None;
             frmFileSend.TopLevel = false;
             frmFileSend.Parent = splitContainer1.Panel2;
-            //frmFileSend.Show();
+            frmFileSend.Show();
 
             radSendModeNormal.Checked = true;
             setSendMode(SendModeType.Normal);
@@ -203,10 +259,28 @@ namespace SerialDebug
         {
             try
             {
+                SaveConfig();
+                if (frmNormalSend != null)
+                {
+                    frmNormalSend.Close();
+                }
+
+                if (frmQSend != null)
+                {
+                    frmQSend.Close();
+                }
+
+                if (frmFileSend != null)
+                {
+                    frmFileSend.Close();
+                }
+
                 if (serialPort.IsOpen)
                 {
                     serialPort.Close();
                 }
+
+
 
                 if (recThread != null)
                 {
@@ -322,17 +396,27 @@ namespace SerialDebug
         /// <param name="e"></param>
         private void cbComName_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string portname = serialPort.PortName;
-            try
-            {
-                serialPort.PortName = cbComName.SelectedItem.ToString();
-                UpdatalabText();
-            }
-            catch (Exception ex)
-            {
-                cbComName.SelectedItem = portname;
-                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            //string portname = serialPort.PortName;
+            //try
+            //{
+            //    bool comOpend = serialPort.IsOpen;
+            //    if (comOpend)
+            //    {
+            //        serialPort.Close();
+            //    }
+            //    serialPort.PortName = cbComName.SelectedItem.ToString();
+
+            //    if (comOpend)
+            //    {
+            //        serialPort.Open();
+            //    }
+            //    UpdatalabText();
+            //}
+            //catch (Exception ex)
+            //{
+            //    cbComName.SelectedItem = portname;
+            //    MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
         }
 
         /// <summary>
@@ -458,7 +542,38 @@ namespace SerialDebug
         /// <param name="e"></param>
         private void cbComName_DropDown(object sender, EventArgs e)
         {
+            string portName = cbComName.Text;
+
             cbComName.DataSource = SerialPort.GetPortNames();
+            if (cbComName.Items.Contains(portName))
+            {
+                cbComName.SelectedItem = portName;
+            }
+        }
+
+        private void cbComName_DropDownClosed(object sender, EventArgs e)
+        {
+            //string portname = serialPort.PortName;
+            //try
+            //{
+            //    bool comOpend = serialPort.IsOpen;
+            //    if (comOpend)
+            //    {
+            //        serialPort.Close();
+            //    }
+            //    serialPort.PortName = cbComName.SelectedItem.ToString();
+
+            //    if (comOpend)
+            //    {
+            //        serialPort.Open();
+            //    }
+            //    UpdatalabText();
+            //}
+            //catch (Exception ex)
+            //{
+            //    cbComName.SelectedItem = portname;
+            //    MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
         }
 
         /// <summary>
@@ -864,6 +979,27 @@ namespace SerialDebug
             if (fontDlg.ShowDialog() == DialogResult.OK)
             {
                 txtReceive.Font = fontDlg.Font;
+            }
+        }
+
+        private void picReloadConfig_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Reset();
+            LoadConfig();
+
+            if (frmNormalSend != null)
+            {
+                frmNormalSend.LoadConfig();
+            }
+
+            if (frmQSend != null)
+            {
+                frmQSend.LoadConfig();
+            }
+
+            if (frmFileSend != null)
+            {
+                frmFileSend.LoadConfig();
             }
         }
 
@@ -2149,7 +2285,7 @@ namespace SerialDebug
         {
             if (e != null)
             {
-                sp.Send(e.SendList); 
+                sp.Send(e.SendList);
             }
         }
 
@@ -2211,7 +2347,9 @@ namespace SerialDebug
             }
         }
 
-      
+
+
+
 
 
 

@@ -128,7 +128,11 @@ namespace SerialDebug
         {
             lock (SendTempList)
             {
-                SendTempList.Add(txtSend.Text);
+                if (SendTempList.Count == 0 || SendTempList[SendTempList.Count - 1] != txtSend.Text)
+                {
+                    SendTempList.Add(txtSend.Text);
+                }
+
                 if (chkSendThenClear.Checked)
                 {
                     SendTempIndex = SendTempList.Count;
@@ -151,7 +155,7 @@ namespace SerialDebug
             {
                 List<CSendParam> list = new List<CSendParam>();
 
-                if (txtSend.Text.Trim()==string.Empty)
+                if (txtSend.Text.Trim() == string.Empty)
                 {
                     return list;
                 }
@@ -261,7 +265,7 @@ namespace SerialDebug
             {
                 MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
         }
 
         private void labClearSend_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -269,6 +273,42 @@ namespace SerialDebug
             txtSend.Clear();
         }
 
+        private void FormNormalSend_Load(object sender, EventArgs e)
+        {
+            LoadConfig();
+        }
+
+        private void FormNormalSend_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveConfig();
+        }
+
+
+        public void LoadConfig()
+        {
+            chkSendHex.Checked = Properties.Settings.Default.normalHexSend;
+            chkFormat.Checked = Properties.Settings.Default.normalHexFormat;
+            chkSendThenClear.Checked = Properties.Settings.Default.normalSendClear;
+            chkAutoSend.Checked = Properties.Settings.Default.normalLoopSend;
+            numSendCount.Value = Properties.Settings.Default.normalLoopCount;
+            numSendOnceBytes.Value = Properties.Settings.Default.normalPacketBytes;
+            numSendInterval.Value = Properties.Settings.Default.normalInterval;
+            txtSend.Text = Properties.Settings.Default.normalContent;
+        }
+
+        public void SaveConfig()
+        {
+            Properties.Settings.Default.normalHexSend = chkSendHex.Checked;
+            Properties.Settings.Default.normalHexFormat = chkFormat.Checked;
+            Properties.Settings.Default.normalSendClear = chkSendThenClear.Checked;
+            Properties.Settings.Default.normalLoopSend = chkAutoSend.Checked;
+            Properties.Settings.Default.normalLoopCount = (int)numSendCount.Value;
+            Properties.Settings.Default.normalPacketBytes = (int)numSendOnceBytes.Value;
+            Properties.Settings.Default.normalInterval = (int)numSendInterval.Value;
+            Properties.Settings.Default.normalContent = txtSend.Text;
+
+            Properties.Settings.Default.Save();
+        }
 
     }
 }

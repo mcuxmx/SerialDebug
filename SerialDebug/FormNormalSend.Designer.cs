@@ -291,6 +291,8 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FormNormalSend";
             this.Text = "FormNormalSend";
+            this.Load += new System.EventHandler(this.FormNormalSend_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormNormalSend_FormClosing);
             this.panelNormalSend.ResumeLayout(false);
             this.panelNormalSend.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSendCount)).EndInit();

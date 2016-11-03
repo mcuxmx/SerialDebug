@@ -27,6 +27,54 @@ namespace SerialDebug
             InitializeComponent();
         }
 
+        public void LoadConfig()
+        {
+            chkSendHex.Checked = Properties.Settings.Default.queueHexSend;
+            cbSendMode.SelectedIndex = Properties.Settings.Default.queueSendMode;
+            numSendListDelayTime.Value = Properties.Settings.Default.queueDelayTime;
+            txtSend.Text = Properties.Settings.Default.queueContent;
+
+            dgvSendList.Rows.Clear();
+            string[] listArray = Properties.Settings.Default.queueList.Split(new string[] { "}{" }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string list in listArray)
+            {
+                string[] cells = list.Trim(new char[] { '<', '>' }).Split(new string[] { "><", "{<",">}" }, StringSplitOptions.RemoveEmptyEntries);
+                if (cells.Length == dgvSendList.Columns.Count - 2)
+                {
+                    object[] array = new object[5];
+                    array[0] = dgvSendList.Rows.Count;
+                    array[1] = "Send";
+                    array[2] = Convert.ToBoolean(cells[0]);
+                    array[3] = cells[1];
+                    array[4] = cells[2];
+                    dgvSendList.Rows.Add(array);
+                }
+            }
+
+        }
+
+        public void SaveConfig()
+        {
+            Properties.Settings.Default.queueHexSend = chkSendHex.Checked;
+            Properties.Settings.Default.queueSendMode = cbSendMode.SelectedIndex;
+            Properties.Settings.Default.queueDelayTime = (int)numSendListDelayTime.Value;
+            Properties.Settings.Default.queueContent = txtSend.Text;
+
+            StringBuilder sb = new StringBuilder();
+            foreach (DataGridViewRow row in dgvSendList.Rows)
+            {
+                sb.Append(@"{");
+                for (int i = RowEnableIndex; i < dgvSendList.Columns.Count; i++)
+                {
+                    sb.AppendFormat("<{0}>", row.Cells[i].Value.ToString());
+                }
+                sb.Append(@"}");
+            }
+            Properties.Settings.Default.queueList = sb.ToString();
+
+            Properties.Settings.Default.Save();
+        }
+
         private void FormQueueSend_Load(object sender, EventArgs e)
         {
             chkSendHex.Checked = true;
@@ -35,6 +83,13 @@ namespace SerialDebug
 
             splitPercent = (double)splitContainer1.SplitterDistance / splitContainer1.Height;
             splitContainer1.Panel1Collapsed = true;
+
+            LoadConfig();
+        }
+
+        private void FormQueueSend_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveConfig();
         }
 
         private void btnAddSendList_Click(object sender, EventArgs e)
@@ -171,7 +226,7 @@ namespace SerialDebug
             {
                 Console.WriteLine(ex.ToString());
             }
-           
+
         }
 
         /// <summary>
@@ -384,6 +439,8 @@ namespace SerialDebug
         {
             txtSend.Clear();
         }
+
+
     }
 
 

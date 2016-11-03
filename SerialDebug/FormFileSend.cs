@@ -46,6 +46,31 @@ namespace SerialDebug
             InitializeComponent();
         }
 
+        public void LoadConfig()
+        {
+            cbFileProtocol.SelectedIndex = Properties.Settings.Default.fileTransMode;
+            chkShowDataStream.Checked = Properties.Settings.Default.fileShowStream;
+            txtFile.Text = Properties.Settings.Default.filePath;
+            chkSendByLine.Checked = Properties.Settings.Default.fileSendByLine;
+            chkSendCRRF.Checked = Properties.Settings.Default.fileSendCRLF;
+            numDelayTime.Value = (int)Properties.Settings.Default.fileSendDelay;
+            chkSlipPacket.Enabled = Properties.Settings.Default.fileSendByPacket;
+            numPacketLen.Value = Properties.Settings.Default.filePacketLen;
+        }
+
+        public void SaveConfig()
+        {
+            Properties.Settings.Default.fileTransMode = cbFileProtocol.SelectedIndex;
+            Properties.Settings.Default.fileShowStream = chkShowDataStream.Checked;
+            Properties.Settings.Default.filePath = txtFile.Text;
+            Properties.Settings.Default.fileSendByLine = chkSendByLine.Checked;
+            Properties.Settings.Default.fileSendCRLF = chkSendCRRF.Checked;
+            (int)Properties.Settings.Default.fileSendDelay = (int)numDelayTime.Value;
+            Properties.Settings.Default.fileSendByPacket = chkSlipPacket.Enabled;
+            Properties.Settings.Default.filePacketLen = (int)numPacketLen.Value;
+
+            Properties.Settings.Default.Save();
+        }
 
         private void FormFileSend_Load(object sender, EventArgs e)
         {
@@ -62,6 +87,12 @@ namespace SerialDebug
             _FileTransMode = FileTransmitMode.ASCII;
 
             labReport.Text = "";
+            LoadConfig();
+        }
+
+        private void FormFileSend_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveConfig();
         }
 
         public FileTransmitMode Mode
@@ -584,6 +615,8 @@ namespace SerialDebug
                     break;
             }
         }
+
+        
 
 
     }

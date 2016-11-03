@@ -385,6 +385,7 @@
             this.Name = "FormQueueSend";
             this.Text = "FormNormalSend";
             this.Load += new System.EventHandler(this.FormQueueSend_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormQueueSend_FormClosing);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);

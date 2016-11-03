@@ -92,6 +92,8 @@
             this.picReceiveFont = new System.Windows.Forms.PictureBox();
             this.txtReceive = new System.Windows.Forms.RichTextBox();
             this.numReceiveTimeOut = new System.Windows.Forms.NumericUpDown();
+            this.picSetFont = new System.Windows.Forms.PictureBox();
+            this.picReloadConfig = new System.Windows.Forms.PictureBox();
             this.sFileDlg = new System.Windows.Forms.SaveFileDialog();
             this.cmenuSave = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuSaveStringToText = new System.Windows.Forms.ToolStripMenuItem();
@@ -126,6 +128,8 @@
             this.groupSend.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picReceiveFont)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numReceiveTimeOut)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSetFont)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picReloadConfig)).BeginInit();
             this.cmenuSave.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -285,6 +289,7 @@
             this.cbComName.Size = new System.Drawing.Size(102, 20);
             this.cbComName.TabIndex = 0;
             this.cbComName.SelectedIndexChanged += new System.EventHandler(this.cbComName_SelectedIndexChanged);
+            this.cbComName.DropDownClosed += new System.EventHandler(this.cbComName_DropDownClosed);
             this.cbComName.DropDown += new System.EventHandler(this.cbComName_DropDown);
             // 
             // label13
@@ -753,6 +758,7 @@
             this.picReceiveFont.TabIndex = 45;
             this.picReceiveFont.TabStop = false;
             this.ToolTip.SetToolTip(this.picReceiveFont, "设置接收区字体");
+            this.picReceiveFont.Visible = false;
             this.picReceiveFont.Click += new System.EventHandler(this.picReceiveFont_Click);
             // 
             // txtReceive
@@ -795,6 +801,36 @@
             0,
             0});
             this.numReceiveTimeOut.ValueChanged += new System.EventHandler(this.numReceiveTimeOut_ValueChanged);
+            // 
+            // picSetFont
+            // 
+            this.picSetFont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.picSetFont.BackColor = System.Drawing.SystemColors.Control;
+            this.picSetFont.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picSetFont.Image = ((System.Drawing.Image)(resources.GetObject("picSetFont.Image")));
+            this.picSetFont.Location = new System.Drawing.Point(491, 1);
+            this.picSetFont.Name = "picSetFont";
+            this.picSetFont.Size = new System.Drawing.Size(18, 18);
+            this.picSetFont.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.picSetFont.TabIndex = 45;
+            this.picSetFont.TabStop = false;
+            this.ToolTip.SetToolTip(this.picSetFont, "设置接收区字体");
+            this.picSetFont.Click += new System.EventHandler(this.picReceiveFont_Click);
+            // 
+            // picReloadConfig
+            // 
+            this.picReloadConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.picReloadConfig.BackColor = System.Drawing.SystemColors.Control;
+            this.picReloadConfig.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picReloadConfig.Image = ((System.Drawing.Image)(resources.GetObject("picReloadConfig.Image")));
+            this.picReloadConfig.Location = new System.Drawing.Point(512, 2);
+            this.picReloadConfig.Name = "picReloadConfig";
+            this.picReloadConfig.Size = new System.Drawing.Size(18, 18);
+            this.picReloadConfig.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.picReloadConfig.TabIndex = 45;
+            this.picReloadConfig.TabStop = false;
+            this.ToolTip.SetToolTip(this.picReloadConfig, "恢复默认设置");
+            this.picReloadConfig.Click += new System.EventHandler(this.picReloadConfig_Click);
             // 
             // sFileDlg
             // 
@@ -857,6 +893,8 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.groupHyperTerminal);
+            this.splitContainer1.Panel1.Controls.Add(this.picSetFont);
+            this.splitContainer1.Panel1.Controls.Add(this.picReloadConfig);
             this.splitContainer1.Panel1.Controls.Add(this.picReceiveFont);
             this.splitContainer1.Panel1.Controls.Add(this.labClearReceive);
             this.splitContainer1.Panel1.Controls.Add(this.Label8);
@@ -1114,6 +1152,8 @@
             this.groupSend.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picReceiveFont)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numReceiveTimeOut)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSetFont)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picReloadConfig)).EndInit();
             this.cmenuSave.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
@@ -1217,6 +1257,8 @@
         private System.Windows.Forms.RadioButton radSendModeNormal;
         private System.Windows.Forms.NumericUpDown numReceiveTimeOut;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.PictureBox picReloadConfig;
+        private System.Windows.Forms.PictureBox picSetFont;
 
     }
 }
