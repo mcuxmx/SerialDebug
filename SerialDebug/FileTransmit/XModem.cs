@@ -437,10 +437,15 @@ namespace XMX.FileTransmit
                             else if (SendStage == XmodemSendStage.WaitReceiveAnswerEndTransmit)
                             {
                                 // Í¨ÖªÖÐÖ¹
-                                if (AbortTransmit != null)
+                                //if (AbortTransmit != null)
+                                //{
+                                //    AbortTransmit(xmodemInfo, null);
+                                //}
+                                if (EndOfTransmit!=null)
                                 {
-                                    AbortTransmit(xmodemInfo, null);
+                                    EndOfTransmit(xmodemInfo, null);
                                 }
+                                IsStart = false;
                             }
                             break;
 
