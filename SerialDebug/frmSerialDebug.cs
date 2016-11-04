@@ -201,7 +201,7 @@ namespace SerialDebug
             cbComName.DataSource = SerialPort.GetPortNames();
             cbStreamControl.SelectedIndex = 0;
             serialPort.RtsEnable = chkRTS.Checked;
-            this.Text = string.Format("{0} V{1} Beta3      作者：启岩   QQ：516409354", Application.ProductName, Application.ProductVersion.Substring(0, 3));
+            this.Text = string.Format("{0} V{1}     作者：启岩   QQ：516409354", Application.ProductName, Application.ProductVersion);
 
             CheckForIllegalCrossThreadCalls = false;
 

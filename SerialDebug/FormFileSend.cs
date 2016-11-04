@@ -54,7 +54,7 @@ namespace SerialDebug
             chkSendByLine.Checked = Properties.Settings.Default.fileSendByLine;
             chkSendCRRF.Checked = Properties.Settings.Default.fileSendCRLF;
             numDelayTime.Value = (int)Properties.Settings.Default.fileSendDelay;
-            chkSlipPacket.Enabled = Properties.Settings.Default.fileSendByPacket;
+            chkSlipPacket.Checked = Properties.Settings.Default.fileSendByPacket;
             numPacketLen.Value = Properties.Settings.Default.filePacketLen;
         }
 
@@ -66,7 +66,7 @@ namespace SerialDebug
             Properties.Settings.Default.fileSendByLine = chkSendByLine.Checked;
             Properties.Settings.Default.fileSendCRLF = chkSendCRRF.Checked;
             (int)Properties.Settings.Default.fileSendDelay = (int)numDelayTime.Value;
-            Properties.Settings.Default.fileSendByPacket = chkSlipPacket.Enabled;
+            Properties.Settings.Default.fileSendByPacket = chkSlipPacket.Checked;
             Properties.Settings.Default.filePacketLen = (int)numPacketLen.Value;
 
             Properties.Settings.Default.Save();

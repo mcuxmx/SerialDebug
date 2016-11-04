@@ -20,7 +20,7 @@ namespace SerialDebug
         private Thread parseThread;
         private bool IsSendStart = false;
         private Thread sendThread;
-        private TimeSpan delayTime = new TimeSpan(200);
+        private TimeSpan delayTime = new TimeSpan(500);
         private int LoopCount = 0;
         private int _ReceiveTimeOut = 3;
 

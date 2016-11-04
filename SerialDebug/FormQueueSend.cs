@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace SerialDebug
 {
@@ -27,18 +28,14 @@ namespace SerialDebug
             InitializeComponent();
         }
 
-        public void LoadConfig()
-        {
-            chkSendHex.Checked = Properties.Settings.Default.queueHexSend;
-            cbSendMode.SelectedIndex = Properties.Settings.Default.queueSendMode;
-            numSendListDelayTime.Value = Properties.Settings.Default.queueDelayTime;
-            txtSend.Text = Properties.Settings.Default.queueContent;
 
+        private void LoadSendQueueByContent(string content)
+        {
             dgvSendList.Rows.Clear();
-            string[] listArray = Properties.Settings.Default.queueList.Split(new string[] { "}{" }, StringSplitOptions.RemoveEmptyEntries);
+            string[] listArray = content.Split(new string[] { "}{" }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string list in listArray)
             {
-                string[] cells = list.Trim(new char[] { '<', '>' }).Split(new string[] { "><", "{<",">}" }, StringSplitOptions.RemoveEmptyEntries);
+                string[] cells = list.Trim(new char[] { '<', '>' }).Split(new string[] { "><", "{<", ">}" }, StringSplitOptions.RemoveEmptyEntries);
                 if (cells.Length == dgvSendList.Columns.Count - 2)
                 {
                     object[] array = new object[5];
@@ -50,16 +47,21 @@ namespace SerialDebug
                     dgvSendList.Rows.Add(array);
                 }
             }
+        }
+
+        public void LoadConfig()
+        {
+            chkSendHex.Checked = Properties.Settings.Default.queueHexSend;
+            cbSendMode.SelectedIndex = Properties.Settings.Default.queueSendMode;
+            numSendListDelayTime.Value = Properties.Settings.Default.queueDelayTime;
+            txtSend.Text = Properties.Settings.Default.queueContent;
+
+            LoadSendQueueByContent(Properties.Settings.Default.queueList);
 
         }
 
-        public void SaveConfig()
+        private string GetSendQueueString()
         {
-            Properties.Settings.Default.queueHexSend = chkSendHex.Checked;
-            Properties.Settings.Default.queueSendMode = cbSendMode.SelectedIndex;
-            Properties.Settings.Default.queueDelayTime = (int)numSendListDelayTime.Value;
-            Properties.Settings.Default.queueContent = txtSend.Text;
-
             StringBuilder sb = new StringBuilder();
             foreach (DataGridViewRow row in dgvSendList.Rows)
             {
@@ -70,7 +72,19 @@ namespace SerialDebug
                 }
                 sb.Append(@"}");
             }
-            Properties.Settings.Default.queueList = sb.ToString();
+
+            return sb.ToString();
+        }
+
+        public void SaveConfig()
+        {
+            Properties.Settings.Default.queueHexSend = chkSendHex.Checked;
+            Properties.Settings.Default.queueSendMode = cbSendMode.SelectedIndex;
+            Properties.Settings.Default.queueDelayTime = (int)numSendListDelayTime.Value;
+            Properties.Settings.Default.queueContent = txtSend.Text;
+
+
+            Properties.Settings.Default.queueList = GetSendQueueString();
 
             Properties.Settings.Default.Save();
         }
@@ -438,6 +452,76 @@ namespace SerialDebug
         private void linkLabelClearData_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
         {
             txtSend.Clear();
+        }
+
+        private readonly string QueueFileHeader = "Serial Debug Queue List V1.0";
+
+        private void btnOpen_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog oFileDlg = new OpenFileDialog();
+                oFileDlg.Filter = "Serial Debug List(*.sdlist)|*.sdlist";
+                oFileDlg.DefaultExt = Application.StartupPath;
+                oFileDlg.Multiselect = false;
+
+                if (oFileDlg.ShowDialog() == DialogResult.OK)
+                {
+                    FileStream fs = new FileStream(oFileDlg.FileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    StreamReader sr = new StreamReader(oFileDlg.FileName, Encoding.Unicode);
+                    string header = sr.ReadLine();
+                    if (header == QueueFileHeader)
+                    {
+                        string content = sr.ReadToEnd();
+                        LoadSendQueueByContent(content);
+                    }
+
+                    sr.Close();
+                    fs.Close();
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
+
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SaveFileDialog sFileDlg = new SaveFileDialog();
+                sFileDlg.Filter = "Serial Debug List(*.sdlist)|*.sdlist";
+                sFileDlg.DefaultExt = "*.sdlist";
+                sFileDlg.FileName = "serial_debug_sendlist";
+                sFileDlg.InitialDirectory = Application.StartupPath;
+                sFileDlg.OverwritePrompt = true;
+
+                if (sFileDlg.ShowDialog() == DialogResult.OK)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine(QueueFileHeader);
+                    sb.Append(GetSendQueueString());
+
+
+                    FileStream fs = new FileStream(sFileDlg.FileName, FileMode.OpenOrCreate);
+                    StreamWriter sr = new StreamWriter(fs, Encoding.Unicode);
+
+                    sr.Write(sb.ToString());
+                    sr.Close();
+                    fs.Close();
+
+                    //File.WriteAllText(sFileDlg.FileName, sb.ToString());
+                    //MessageBox.Show("文件已保存到\n" + sFileDlg.FileName, sFileDlg.Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
         }
 
 

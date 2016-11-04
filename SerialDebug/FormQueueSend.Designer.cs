@@ -45,6 +45,8 @@
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.panelSendList = new System.Windows.Forms.Panel();
+            this.btnOpen = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             this.btnSetdownSendList = new System.Windows.Forms.Button();
             this.btnSetupSendList = new System.Windows.Forms.Button();
             this.btnDeleteSendList = new System.Windows.Forms.Button();
@@ -229,6 +231,8 @@
             // 
             // panelSendList
             // 
+            this.panelSendList.Controls.Add(this.btnOpen);
+            this.panelSendList.Controls.Add(this.btnSave);
             this.panelSendList.Controls.Add(this.btnSetdownSendList);
             this.panelSendList.Controls.Add(this.btnSetupSendList);
             this.panelSendList.Controls.Add(this.btnDeleteSendList);
@@ -240,6 +244,30 @@
             this.panelSendList.Name = "panelSendList";
             this.panelSendList.Size = new System.Drawing.Size(536, 141);
             this.panelSendList.TabIndex = 47;
+            // 
+            // btnOpen
+            // 
+            this.btnOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOpen.Image = ((System.Drawing.Image)(resources.GetObject("btnOpen.Image")));
+            this.btnOpen.Location = new System.Drawing.Point(473, 0);
+            this.btnOpen.Name = "btnOpen";
+            this.btnOpen.Size = new System.Drawing.Size(30, 24);
+            this.btnOpen.TabIndex = 35;
+            this.toolTip1.SetToolTip(this.btnOpen, "从文件中加载发送队列");
+            this.btnOpen.UseVisualStyleBackColor = true;
+            this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Image = ((System.Drawing.Image)(resources.GetObject("btnSave.Image")));
+            this.btnSave.Location = new System.Drawing.Point(503, 0);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(30, 24);
+            this.btnSave.TabIndex = 35;
+            this.toolTip1.SetToolTip(this.btnSave, "保存发送队列");
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnSetdownSendList
             // 
@@ -427,5 +455,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn colEnable;
         private System.Windows.Forms.DataGridViewTextBoxColumn colMode;
         private System.Windows.Forms.DataGridViewTextBoxColumn colData;
+        private System.Windows.Forms.Button btnOpen;
+        private System.Windows.Forms.Button btnSave;
     }
 }
