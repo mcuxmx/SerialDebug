@@ -32,10 +32,10 @@ namespace SerialDebug
         private void LoadSendQueueByContent(string content)
         {
             dgvSendList.Rows.Clear();
-            string[] listArray = content.Split(new string[] { "}{" }, StringSplitOptions.RemoveEmptyEntries);
+            string[] listArray = content.Split(new string[] { "}{", "}\r\n{", "}\n{" }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string list in listArray)
             {
-                string[] cells = list.Trim(new char[] { '<', '>' }).Split(new string[] { "><", "{<", ">}" }, StringSplitOptions.RemoveEmptyEntries);
+                string[] cells = list.Trim(new char[] { '\r', '\n' }).Trim(new char[] { '<', '>' }).Split(new string[] { "><", "{<", ">}", ">}\r\n", ">}\n" }, StringSplitOptions.RemoveEmptyEntries);
                 if (cells.Length == dgvSendList.Columns.Count - 2)
                 {
                     object[] array = new object[5];
@@ -68,9 +68,10 @@ namespace SerialDebug
                 sb.Append(@"{");
                 for (int i = RowEnableIndex; i < dgvSendList.Columns.Count; i++)
                 {
-                    sb.AppendFormat("<{0}>", row.Cells[i].Value.ToString());
+                    sb.AppendFormat(@"<{0}>", row.Cells[i].Value.ToString());
                 }
                 sb.Append(@"}");
+                sb.Append("\r\n");
             }
 
             return sb.ToString();
@@ -469,15 +470,30 @@ namespace SerialDebug
                 {
                     FileStream fs = new FileStream(oFileDlg.FileName, FileMode.Open, FileAccess.Read, FileShare.Read);
                     StreamReader sr = new StreamReader(oFileDlg.FileName, Encoding.Unicode);
-                    string header = sr.ReadLine();
-                    if (header == QueueFileHeader)
-                    {
-                        string content = sr.ReadToEnd();
-                        LoadSendQueueByContent(content);
-                    }
 
-                    sr.Close();
-                    fs.Close();
+                    try
+                    {
+                        string header = sr.ReadLine();
+                        if (header == QueueFileHeader)
+                        {
+                            string content = sr.ReadToEnd();
+                            LoadSendQueueByContent(content);
+                        }
+                        else
+                        {
+                            MessageBox.Show("无法识别该文件", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    finally
+                    {
+                        sr.Close();
+                        fs.Close();
+                    }
+                   
                 }
             }
             catch (System.Exception ex)
@@ -506,7 +522,7 @@ namespace SerialDebug
                     sb.Append(GetSendQueueString());
 
 
-                    FileStream fs = new FileStream(sFileDlg.FileName, FileMode.OpenOrCreate);
+                    FileStream fs = new FileStream(sFileDlg.FileName, FileMode.Create, FileAccess.Write);
                     StreamWriter sr = new StreamWriter(fs, Encoding.Unicode);
 
                     sr.Write(sb.ToString());

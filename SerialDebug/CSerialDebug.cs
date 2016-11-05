@@ -20,7 +20,7 @@ namespace SerialDebug
         private Thread parseThread;
         private bool IsSendStart = false;
         private Thread sendThread;
-        private TimeSpan delayTime = new TimeSpan(500);
+        private TimeSpan delayTime = new TimeSpan(10 * 100); // 100us
         private int LoopCount = 0;
         private int _ReceiveTimeOut = 3;
 
@@ -92,6 +92,8 @@ namespace SerialDebug
                 parseThread.IsBackground = true;
                 parseThread.Name = "parseThread";
                 parseThread.Start();
+
+                Send(sendList,1);
             }
             catch (System.Exception ex)
             {
@@ -275,7 +277,7 @@ namespace SerialDebug
                     }
                     else
                     {
-                        waitReceiveEvent.WaitOne(10);
+                        waitReceiveEvent.WaitOne(100);
                     }
 
                 }
@@ -333,11 +335,11 @@ namespace SerialDebug
                         {
                             DateTime startTime = DateTime.Now;
                             TimeSpan ts = DateTime.Now - startTime;
-                            do
+                            while (ts.TotalMilliseconds < sendParam.DelayTime)
                             {
                                 Thread.Sleep(delayTime);
                                 ts = DateTime.Now - startTime;
-                            } while (ts.TotalMilliseconds < sendParam.DelayTime);
+                            };
                         }
 
 

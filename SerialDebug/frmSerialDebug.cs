@@ -17,6 +17,8 @@ namespace SerialDebug
 {
     public partial class frmMain : Form
     {
+        private readonly string Version = Application.ProductVersion;
+
         private Queue<SerialStreamContent> dataDispQueue = new Queue<SerialStreamContent>();
         private Thread dataStreamDisplayThread;
         private bool IsStart = false;
@@ -201,7 +203,7 @@ namespace SerialDebug
             cbComName.DataSource = SerialPort.GetPortNames();
             cbStreamControl.SelectedIndex = 0;
             serialPort.RtsEnable = chkRTS.Checked;
-            this.Text = string.Format("{0} V{1}     ×÷Õß£ºÆôÑÒ   QQ£º516409354", Application.ProductName, Application.ProductVersion);
+            this.Text = string.Format("{0} V{1}    ×÷Õß£ºÆôÑÒ  QQ£º516409354", Application.ProductName, Version);
 
             CheckForIllegalCrossThreadCalls = false;
 
@@ -1013,12 +1015,12 @@ namespace SerialDebug
             this.TopMost = !this.TopMost;
             if (this.TopMost == true)
             {
-                this.Text = Application.ProductName + " V" + Application.ProductVersion.Substring(0, 3) + "  [ÖÃ¶¥]";
+                this.Text = Application.ProductName + " V" + Version + "  [ÖÃ¶¥]";
                 picTop.Image = imglistTop.Images["nailon"];
             }
             else
             {
-                this.Text = Application.ProductName + " V" + Application.ProductVersion.Substring(0, 3);
+                this.Text = Application.ProductName + " V" + Version;
                 picTop.Image = imglistTop.Images["nailoff"];
             }
 
@@ -1585,14 +1587,18 @@ namespace SerialDebug
                         }
                         else
                         {
+                            SetSendEnable(true);
                             sp.Send(list, sendForm.LoopCount);
                         }
 
                     }
+                    else
+                    {
+                        SetSendEnable(true);
+                    }
 
-
-                    SetSendEnable(true);
-                    setLableText(labTx, string.Format("TX:{0}", TxCounter));
+                    //SetSendEnable(true);
+                    //setLableText(labTx, string.Format("TX:{0}", TxCounter));
                 }
                 else
                 {
