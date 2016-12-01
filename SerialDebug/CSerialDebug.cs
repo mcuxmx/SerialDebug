@@ -31,7 +31,6 @@ namespace SerialDebug
         public event SendCompletedEventHandler SendCompletedEvent;
         public event EventHandler SendOverEvent;
 
-
         private AutoResetEvent waitReceiveEvent = new AutoResetEvent(false);
         private ManualResetEvent waitParseEvent = new ManualResetEvent(false);
         private ManualResetEvent uartReceivedEvent = new ManualResetEvent(false);
@@ -52,6 +51,8 @@ namespace SerialDebug
             get { return _ReceiveTimeOut; }
             set { _ReceiveTimeOut = value; }
         }
+
+
 
         public void Start()
         {
@@ -93,7 +94,7 @@ namespace SerialDebug
                 parseThread.Name = "parseThread";
                 parseThread.Start();
 
-                Send(sendList,1);
+                Send(sendList, 1);
             }
             catch (System.Exception ex)
             {
@@ -195,23 +196,29 @@ namespace SerialDebug
                     {
                         try
                         {
+                            bool IsNeedContinueReceive = false;
                             int dataLen;
-                            if (uartReceivedEvent.WaitOne())
+                            if (uartReceivedEvent.WaitOne() || IsNeedContinueReceive)
                             {
                                 uartReceivedEvent.Reset();
 
-                                DateTime beginTime = DateTime.Now;
+                                //DateTime beginTime = DateTime.Now;
                                 int buffSize = 0;
                                 do
                                 {
                                     buffSize = serialPort.BytesToRead;
+                                    if (buffSize >= 4 * 1024)
+                                    {
+                                        IsNeedContinueReceive = true;
+                                        break;
+                                    }
                                     Thread.Sleep(ReceiveTimeOut);
+
                                 } while (buffSize != serialPort.BytesToRead);
 
                                 if (buffSize > 0)
                                 {
                                     byte[] receiveBytes = new byte[buffSize];
-                                    // serialPort.ReadTimeout = ReceiveTimeOut;
                                     dataLen = serialPort.Read(receiveBytes, 0, receiveBytes.Length);
                                     if (dataLen > 0)
                                     {
@@ -231,7 +238,6 @@ namespace SerialDebug
                         {
                             Debug.WriteLine(ex.ToString());
                         }
-
 
                     }
                     else
@@ -299,81 +305,87 @@ namespace SerialDebug
             {
                 LoopCount = int.MaxValue;
             }
-            while (LoopCount > 0 && IsSendStart)
+
+            try
             {
-                LoopCount--;
-
-                waitParseEvent.Reset();
-
-                int index = 0;
-                while (index < sendList.Count && IsSendStart)
+                while (LoopCount > 0 && IsSendStart)
                 {
-                    CSendParam sendParam = null;
-                    lock (sendList)
+                    LoopCount--;
+
+                    waitParseEvent.Reset();
+
+                    int index = 0;
+                    while (index < sendList.Count && IsSendStart)
                     {
-                        sendParam = sendList[index];
-                    }
-                    index++;
-
-                    if (sendParam != null)
-                    {
-                        bool DelayEnable = true;
-                        if (sendParam.Mode == SendParamMode.SendAfterLastSend)
+                        CSendParam sendParam = null;
+                        lock (sendList)
                         {
-                            if (IsFirstSend)
+                            sendParam = sendList[index];
+                        }
+                        index++;
+
+                        if (sendParam != null)
+                        {
+                            bool DelayEnable = true;
+                            if (sendParam.Mode == SendParamMode.SendAfterLastSend)
                             {
-                                DelayEnable = false;
+                                if (IsFirstSend)
+                                {
+                                    DelayEnable = false;
+                                }
                             }
-                        }
-                        else if (sendParam.Mode == SendParamMode.SendAfterReceived)
-                        {
-                            waitParseEvent.WaitOne();
-                        }
-                        IsFirstSend = false;
-
-                        if (DelayEnable && sendParam.DelayTime > 0)
-                        {
-                            DateTime startTime = DateTime.Now;
-                            TimeSpan ts = DateTime.Now - startTime;
-                            while (ts.TotalMilliseconds < sendParam.DelayTime)
+                            else if (sendParam.Mode == SendParamMode.SendAfterReceived)
                             {
-                                Thread.Sleep(delayTime);
-                                ts = DateTime.Now - startTime;
-                            };
-                        }
-
-
-                        if (_serialPort.IsOpen)
-                        {
-                            _serialPort.Write(sendParam.DataBytes, 0, sendParam.DataBytes.Length);
-
-                            if (SendCompletedEvent != null)
-                            {
-                                //SendCompletedEvent(this, new SendCompletedEventArgs(sendParam));
-                                SendCompletedEventHandler handler = SendCompletedEvent;
-                                handler(this, new SendCompletedEventArgs(sendParam));
+                                waitParseEvent.WaitOne();
                             }
+                            IsFirstSend = false;
+
+                            if (DelayEnable && sendParam.DelayTime > 0)
+                            {
+                                DateTime startTime = DateTime.Now;
+                                TimeSpan ts = DateTime.Now - startTime;
+                                while (ts.TotalMilliseconds < sendParam.DelayTime)
+                                {
+                                    Thread.Sleep(delayTime);
+                                    ts = DateTime.Now - startTime;
+                                };
+                            }
+
+
+                            if (_serialPort.IsOpen)
+                            {
+                                _serialPort.Write(sendParam.DataBytes, 0, sendParam.DataBytes.Length);
+
+                                if (SendCompletedEvent != null)
+                                {
+                                    SendCompletedEventHandler handler = SendCompletedEvent;
+                                    handler(this, new SendCompletedEventArgs(sendParam));
+                                }
+                            }
+                            else
+                            {
+                                IsSendStart = false;
+                            }
+                            waitParseEvent.Reset();
                         }
-                        else
-                        {
-                            IsSendStart = false;
-                        }
-                        waitParseEvent.Reset();
+
                     }
 
                 }
 
             }
-
-            if (SendOverEvent != null)
+            catch (System.Exception ex)
             {
-                SendOverEvent(this, null);
+                Debug.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                if (SendOverEvent != null)
+                {
+                    SendOverEvent(this, null);
+                }
             }
 
-            //if (SendCompletedEvent != null)
-            //{
-            //    SendCompletedEvent(this, new SendCompletedEventArgs(null));
-            //}
 
         }
     }

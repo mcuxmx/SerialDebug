@@ -485,21 +485,24 @@ namespace SerialDebug
                 if (packetNo == 1)
                 {
                     startTime = DateTime.Now;
+                    fileIndex = 0;
                 }
 
                 if (chkSlipPacket.Checked)
                 {
                     PacketBuff = new byte[PacketLen];
-                    packetNo++;
-                    fileIndex += PacketLen;
 
-                    if (ReadPacketFromFile(fileIndex, PacketBuff, PacketLen) <= 0)
+                    int readLen = ReadPacketFromFile(fileIndex, PacketBuff, PacketLen);
+
+                    if (readLen <= 0)
                     {
                         FileTransProtocol.Stop();
                     }
                     else
                     {
                         FileTransProtocol.SendPacket(new PacketEventArgs(packetNo, PacketBuff));
+                        packetNo++;
+                        fileIndex += readLen;
                     }
                 }
                 else

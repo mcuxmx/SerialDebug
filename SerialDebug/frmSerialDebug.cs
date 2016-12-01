@@ -11,13 +11,14 @@ using System.Threading;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using XMX.FileTransmit;
+using System.Reflection;
 
 
 namespace SerialDebug
 {
     public partial class frmMain : Form
     {
-        private readonly string Version = Application.ProductVersion;
+        private string Version = Application.ProductVersion;
 
         private Queue<SerialStreamContent> dataDispQueue = new Queue<SerialStreamContent>();
         private Thread dataStreamDisplayThread;
@@ -203,6 +204,8 @@ namespace SerialDebug
             cbComName.DataSource = SerialPort.GetPortNames();
             cbStreamControl.SelectedIndex = 0;
             serialPort.RtsEnable = chkRTS.Checked;
+
+            Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             this.Text = string.Format("{0} V{1}    ×÷Õß£ºÆôÑÒ  QQ£º516409354", Application.ProductName, Version);
 
             CheckForIllegalCrossThreadCalls = false;
