@@ -558,7 +558,7 @@ namespace SerialDebug
         void FileTransProtocol_ReSendPacket(object sender, EventArgs e)
         {
             FileTransProtocol.SendPacket(new PacketEventArgs(packetNo, PacketBuff));
-            ShowTextReprot(string.Format("重发第{0}包数据"));
+            ShowTextReprot(string.Format("重发第{0}包数据",packetNo));
         }
 
         void FileTransProtocol_AbortTransmit(object sender, EventArgs e)
