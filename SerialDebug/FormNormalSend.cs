@@ -276,6 +276,7 @@ namespace SerialDebug
         private void FormNormalSend_Load(object sender, EventArgs e)
         {
             LoadConfig();
+            
         }
 
         private void FormNormalSend_FormClosing(object sender, FormClosingEventArgs e)
@@ -308,6 +309,11 @@ namespace SerialDebug
             Properties.Settings.Default.normalContent = txtSend.Text;
 
             Properties.Settings.Default.Save();
+        }
+
+        private void panelNormalSend_Paint(object sender, PaintEventArgs e)
+        {
+            //txtSend.Font = Properties.Settings.Default.receiveFont;
         }
 
     }

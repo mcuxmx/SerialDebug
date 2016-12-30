@@ -76,6 +76,7 @@
             this.panelNormalSend.Name = "panelNormalSend";
             this.panelNormalSend.Size = new System.Drawing.Size(536, 142);
             this.panelNormalSend.TabIndex = 37;
+            this.panelNormalSend.Paint += new System.Windows.Forms.PaintEventHandler(this.panelNormalSend_Paint);
             // 
             // numSendCount
             // 

@@ -55,7 +55,7 @@ namespace SerialDebug
             cbSendMode.SelectedIndex = Properties.Settings.Default.queueSendMode;
             numSendListDelayTime.Value = Properties.Settings.Default.queueDelayTime;
             txtSend.Text = Properties.Settings.Default.queueContent;
-
+            //txtSend.Font = Properties.Settings.Default.receiveFont;
             LoadSendQueueByContent(Properties.Settings.Default.queueList);
 
         }

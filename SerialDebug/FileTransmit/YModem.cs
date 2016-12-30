@@ -15,7 +15,7 @@ namespace XMX.FileTransmit
     public enum YModemType
     {
         YModem,
-        YModem_G
+        YModem_1K
     }
 
     /// <summary>
@@ -637,7 +637,7 @@ namespace XMX.FileTransmit
 
             checkLen = 2;
 
-            if (ymodemInfo.Type == YModemType.YModem_G)
+            if (ymodemInfo.Type == YModemType.YModem_1K)
             {
                 packetLen = 1024;
             }
@@ -649,7 +649,7 @@ namespace XMX.FileTransmit
             data = new byte[3 + packetLen + checkLen];
 
             data[0] = SOH;
-            if (ymodemInfo.Type == YModemType.YModem_G)
+            if (ymodemInfo.Type == YModemType.YModem_1K)
             {
                 data[0] = STX;
             }

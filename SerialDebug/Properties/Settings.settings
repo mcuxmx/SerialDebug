@@ -42,7 +42,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="dispReceiveTimeOut" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
+      <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="normalHexSend" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -106,6 +106,12 @@
     </Setting>
     <Setting Name="filePacketLen" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="sendModeIndex" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="receiveFont" Type="System.Drawing.Font" Scope="User">
+      <Value Profile="(Default)">宋体, 9pt</Value>
     </Setting>
   </Settings>
 </SettingsFile>

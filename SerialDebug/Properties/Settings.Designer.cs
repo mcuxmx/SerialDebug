@@ -181,7 +181,7 @@ namespace SerialDebug.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
         public int dispReceiveTimeOut {
             get {
                 return ((int)(this["dispReceiveTimeOut"]));
@@ -440,6 +440,30 @@ namespace SerialDebug.Properties {
             }
             set {
                 this["filePacketLen"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int sendModeIndex {
+            get {
+                return ((int)(this["sendModeIndex"]));
+            }
+            set {
+                this["sendModeIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("宋体, 9pt")]
+        public global::System.Drawing.Font receiveFont {
+            get {
+                return ((global::System.Drawing.Font)(this["receiveFont"]));
+            }
+            set {
+                this["receiveFont"] = value;
             }
         }
     }

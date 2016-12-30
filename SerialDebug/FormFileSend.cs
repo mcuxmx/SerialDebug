@@ -18,7 +18,7 @@ namespace SerialDebug
         Xmodem,
         Xmodem_1K,
         Ymodem,
-        Ymodem_G
+        Ymodem_1K
     }
 
 
@@ -80,7 +80,7 @@ namespace SerialDebug
             cbFileProtocol.Items.Add("Xmodem");
             cbFileProtocol.Items.Add("Xmodem-1K");
             cbFileProtocol.Items.Add("Ymodem");
-            cbFileProtocol.Items.Add("Ymodem-G");
+            cbFileProtocol.Items.Add("Ymodem-1K");
 
 
             cbFileProtocol.SelectedIndex = 0;
@@ -134,8 +134,8 @@ namespace SerialDebug
                     FileTransProtocol = new YModem(TransmitMode.Send, YModemType.YModem, ReTryMax);
                     PacketLen = 128;
                     break;
-                case FileTransmitMode.Ymodem_G:
-                    FileTransProtocol = new YModem(TransmitMode.Send, YModemType.YModem_G, ReTryMax);
+                case FileTransmitMode.Ymodem_1K:
+                    FileTransProtocol = new YModem(TransmitMode.Send, YModemType.YModem_1K, ReTryMax);
                     PacketLen = 1024;
                     break;
                 default:
@@ -167,11 +167,11 @@ namespace SerialDebug
 
         public void Stop()
         {
-            if (FileTransProtocol!=null)
+            if (FileTransProtocol != null)
             {
                 FileTransProtocol.Abort();
             }
-            
+
             SetEndTransmit();
 
             if (FileTransProtocol != null)
@@ -238,10 +238,13 @@ namespace SerialDebug
         private int ReadPacketFromFile(int filePos, byte[] data, int packetLen)
         {
 
-            FileStream fs = new FileStream(txtFile.Text, FileMode.Open);
-            BinaryReader br = new BinaryReader(fs);
+            FileStream fs=null;
+            BinaryReader br=null;
             try
             {
+                fs = new FileStream(txtFile.Text, FileMode.Open, FileAccess.Read);
+                br = new BinaryReader(fs);
+
                 if (filePos < fs.Length)
                 {
                     fs.Seek(filePos, SeekOrigin.Begin);
@@ -263,17 +266,19 @@ namespace SerialDebug
             }
             finally
             {
-                br.Close();
-                fs.Close();
+                if (br != null) br.Close();
+                if (fs != null) fs.Close();
             }
         }
 
         private byte[] ReadAllFromFile()
         {
-            FileStream fs = new FileStream(txtFile.Text, FileMode.Open);
-            BinaryReader br = new BinaryReader(fs);
+            FileStream fs=null;
+            BinaryReader br=null;
             try
             {
+                fs = new FileStream(txtFile.Text, FileMode.Open, FileAccess.Read);
+                br = new BinaryReader(fs);
 
                 byte[] bytes = new byte[(UInt32)fs.Length];
                 br.Read(bytes, 0, bytes.Length);
@@ -287,19 +292,22 @@ namespace SerialDebug
             }
             finally
             {
-                br.Close();
-                fs.Close();
+                if (br != null) br.Close();
+                if (fs != null) fs.Close();
             }
         }
 
         private string ReadLineFromFile()
         {
             string line = "";
-            FileStream fs = new FileStream(txtFile.Text, FileMode.Open);
-            StreamReader sr = new StreamReader(fs, Encoding.Default);
+            FileStream fs = null;
+            StreamReader sr = null;
             // BinaryReader br = new BinaryReader(fs);
             try
             {
+                fs = new FileStream(txtFile.Text, FileMode.Open, FileAccess.Read);
+                sr = new StreamReader(fs, Encoding.Default);
+
                 if (fileIndex < fs.Length)
                 {
                     fs.Seek(fileIndex, SeekOrigin.Begin);
@@ -328,12 +336,12 @@ namespace SerialDebug
 
                     string str = sr.ReadLine();
 
-                    if (str!=null)
+                    if (str != null)
                     {
                         fileIndex += System.Text.ASCIIEncoding.Default.GetBytes(str).Length;
                         line += str;
                     }
-                    
+
 
 
                     while (true)
@@ -377,8 +385,8 @@ namespace SerialDebug
             }
             finally
             {
-                sr.Close();
-                fs.Close();
+                if (sr != null) sr.Close();
+                if (fs != null) fs.Close();
             }
         }
 
@@ -408,7 +416,7 @@ namespace SerialDebug
                 }
                 startTime = DateTime.Now;
             }
-            else if (_FileTransMode == FileTransmitMode.Ymodem || _FileTransMode == FileTransmitMode.Ymodem_G)
+            else if (_FileTransMode == FileTransmitMode.Ymodem || _FileTransMode == FileTransmitMode.Ymodem_1K)
             {
                 packetNo = 0;
 
@@ -537,7 +545,7 @@ namespace SerialDebug
                 }
                 else
                 {
-                    if (_FileTransMode == FileTransmitMode.Ymodem || _FileTransMode == FileTransmitMode.Ymodem_G)
+                    if (_FileTransMode == FileTransmitMode.Ymodem || _FileTransMode == FileTransmitMode.Ymodem_1K)
                     {
                         if (readBytes < PacketLen)
                         {
@@ -558,7 +566,7 @@ namespace SerialDebug
         void FileTransProtocol_ReSendPacket(object sender, EventArgs e)
         {
             FileTransProtocol.SendPacket(new PacketEventArgs(packetNo, PacketBuff));
-            ShowTextReprot(string.Format("重发第{0}包数据",packetNo));
+            ShowTextReprot(string.Format("重发第{0}包数据", packetNo));
         }
 
         void FileTransProtocol_AbortTransmit(object sender, EventArgs e)
@@ -619,7 +627,7 @@ namespace SerialDebug
             }
         }
 
-        
+
 
 
     }

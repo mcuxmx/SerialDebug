@@ -27,11 +27,11 @@ namespace SerialDebug
         private readonly Color ReceiveColor = Color.DarkRed;
         private readonly Color SendColor = Color.Blue;
         CSerialDebug sp;
+        private RadioButton[] rbtnSendMod;
 
-
-        enum SendModeType
+        enum SendModeType : int
         {
-            Normal,
+            Normal = 0,
             Queue,
             File,
         }
@@ -77,7 +77,7 @@ namespace SerialDebug
                     }
                 }
             }
-           
+
 
             cbBaudRate.Text = Properties.Settings.Default.comBaudRate.ToString();
             cbParity.SelectedIndex = Properties.Settings.Default.comParityBit;
@@ -93,6 +93,8 @@ namespace SerialDebug
             chkReceiveHex.Checked = Properties.Settings.Default.dispHex;
             chkTimeStamp.Checked = Properties.Settings.Default.dispTimeStamp;
             numReceiveTimeOut.Value = Properties.Settings.Default.dispReceiveTimeOut;
+
+            txtReceive.Font = Properties.Settings.Default.receiveFont;
 
         }
 
@@ -204,7 +206,7 @@ namespace SerialDebug
             cbComName.DataSource = SerialPort.GetPortNames();
             cbStreamControl.SelectedIndex = 0;
             serialPort.RtsEnable = chkRTS.Checked;
-
+            
             Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             this.Text = string.Format("{0} V{1}    作者：启岩  QQ：516409354", Application.ProductName, Version);
 
@@ -251,7 +253,20 @@ namespace SerialDebug
             frmFileSend.Show();
 
             radSendModeNormal.Checked = true;
-            setSendMode(SendModeType.Normal);
+           // setSendMode(SendModeType.Normal);
+
+            int sendModeIndex = 0;
+            sendModeIndex = Properties.Settings.Default.sendModeIndex;
+            if (sendModeIndex >= 0 && sendModeIndex < 3)
+            {
+                setSendMode((SendModeType)sendModeIndex);
+            }
+            else
+            {
+                sendModeIndex = 0;
+            }
+            rbtnSendMod = new RadioButton[3] { radSendModeNormal, radSendModeQueue, radSendModeFile };
+            rbtnSendMod[sendModeIndex].Checked = true;
 
             splitPercent = (double)splitContainer1.SplitterDistance / splitContainer1.Height;
 
@@ -318,6 +333,7 @@ namespace SerialDebug
         /// <param name="e"></param>
         private void btnPortOpt_Click(object sender, EventArgs e)
         {
+            ////throw new Exception("<xxxxxxxx&\"yyy\"\r\nzzz>");
             try
             {
                 if (btnPortOpt.Text == "打开串口")
@@ -984,6 +1000,9 @@ namespace SerialDebug
             if (fontDlg.ShowDialog() == DialogResult.OK)
             {
                 txtReceive.Font = fontDlg.Font;
+                //txtSend.Font = fontDlg.Font;
+                Properties.Settings.Default.receiveFont = fontDlg.Font;
+                Properties.Settings.Default.Save();
             }
         }
 
@@ -2321,6 +2340,7 @@ namespace SerialDebug
                 return;
             }
 
+        
             if (radSendMode.Name == radSendModeNormal.Name)
             {
                 setSendMode(SendModeType.Normal);
@@ -2354,6 +2374,9 @@ namespace SerialDebug
                     frmFileSend.Show();
                     break;
             }
+
+            Properties.Settings.Default.sendModeIndex = (int)type;
+            Properties.Settings.Default.Save();
         }
 
 
