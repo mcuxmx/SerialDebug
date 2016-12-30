@@ -57,7 +57,7 @@ namespace SerialDebug
                     DialogResult dr = MessageBox.Show("软件发生致命错误，请及时联系作者！\r\n是否将错误信息通过邮件发送给作者？", "系统错误", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
                     if (dr == DialogResult.Yes)
                     {
-                        writeLog(msg.ToString());
+                        //writeLog(msg.ToString());
 
                         string title = string.Format("SerialDebug V{0}异常", Version);
                         string body = msg.ToString();
