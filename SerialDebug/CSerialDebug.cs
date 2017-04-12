@@ -178,7 +178,11 @@ namespace SerialDebug
 
         void serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            uartReceivedEvent.Set();
+            if (uartReceivedEvent != null)
+            {
+                uartReceivedEvent.Set();
+            }
+            
         }
 
         /// <summary>

@@ -206,7 +206,7 @@ namespace SerialDebug
             cbComName.DataSource = SerialPort.GetPortNames();
             cbStreamControl.SelectedIndex = 0;
             serialPort.RtsEnable = chkRTS.Checked;
-            
+
             Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             this.Text = string.Format("{0} V{1}    ×÷Õß£ºÆôÑÒ  QQ£º516409354", Application.ProductName, Version);
 
@@ -253,7 +253,7 @@ namespace SerialDebug
             frmFileSend.Show();
 
             radSendModeNormal.Checked = true;
-           // setSendMode(SendModeType.Normal);
+            // setSendMode(SendModeType.Normal);
 
             int sendModeIndex = 0;
             sendModeIndex = Properties.Settings.Default.sendModeIndex;
@@ -1352,74 +1352,75 @@ namespace SerialDebug
             {
                 SerialStreamContent content = null;
 
-                if (dataDispQueue.Count > 0)
+
+                lock (dataDispQueue)
                 {
-                    lock (dataDispQueue)
+                    if (dataDispQueue.Count > 0)
                     {
                         content = dataDispQueue.Dequeue();
                     }
-                    if (content != null)
+                }
+                if (content != null)
+                {
+                    switch (content.Type)
                     {
-                        switch (content.Type)
-                        {
-                            case SerialStreamType.Receive:
-                                RxCounter += (UInt64)content.DataLen;
-                                if (lastUpdateType != SerialStreamType.Receive)
-                                {
-                                    TextBoxReceiveAppend(ReceiveColor, content.Content);
-                                }
-                                else
-                                {
-                                    rxStrBuff.Append(content.Content);
-                                }
+                        case SerialStreamType.Receive:
+                            RxCounter += (UInt64)content.DataLen;
+                            if (lastUpdateType != SerialStreamType.Receive)
+                            {
+                                TextBoxReceiveAppend(ReceiveColor, content.Content);
+                            }
+                            else
+                            {
+                                rxStrBuff.Append(content.Content);
+                            }
 
-                                //TextBoxReceiveAppend(ReceiveColor, content.Content);
-                                //setLableText(labRx, string.Format("RX:{0}", RxCounter));
-                                break;
-                            case SerialStreamType.Send:
-                                TxCounter += (UInt64)content.DataLen;
-                                if (lastUpdateType != SerialStreamType.Send)
-                                {
-                                    TextBoxReceiveAppend(SendColor, content.Content);
-                                }
-                                else
-                                {
-                                    txStrBuff.Append(content.Content);
-                                }
+                            //TextBoxReceiveAppend(ReceiveColor, content.Content);
+                            //setLableText(labRx, string.Format("RX:{0}", RxCounter));
+                            break;
+                        case SerialStreamType.Send:
+                            TxCounter += (UInt64)content.DataLen;
+                            if (lastUpdateType != SerialStreamType.Send)
+                            {
+                                TextBoxReceiveAppend(SendColor, content.Content);
+                            }
+                            else
+                            {
+                                txStrBuff.Append(content.Content);
+                            }
 
-                                //TextBoxReceiveAppend(SendColor, content.Content);
-                                //setLableText(labTx, string.Format("TX:{0}", TxCounter));
-                                break;
-                            default:
-                                break;
-                        }
-                        lastUpdateType = content.Type;
+                            //TextBoxReceiveAppend(SendColor, content.Content);
+                            //setLableText(labTx, string.Format("TX:{0}", TxCounter));
+                            break;
+                        default:
+                            break;
+                    }
+                    lastUpdateType = content.Type;
+                }
+
+
+
+                TimeSpan ts = DateTime.Now - lastUpdateTime;
+                if (ts.TotalMilliseconds >= 1000)
+                {
+                    if (rxInc != RxCounter)
+                    {
+                        TextBoxReceiveAppend(ReceiveColor, rxStrBuff.ToString());
+                        rxStrBuff = new StringBuilder();
+
+                        setLableText(labRx, string.Format("RX:{0}", RxCounter));
+                        rxInc = RxCounter;
                     }
 
-
-
-                    TimeSpan ts = DateTime.Now - lastUpdateTime;
-                    if (ts.TotalMilliseconds >= 1000)
+                    if (txInc != TxCounter)
                     {
-                        if (rxInc != RxCounter)
-                        {
-                            TextBoxReceiveAppend(ReceiveColor, rxStrBuff.ToString());
-                            rxStrBuff = new StringBuilder();
+                        TextBoxReceiveAppend(SendColor, txStrBuff.ToString());
+                        txStrBuff = new StringBuilder();
 
-                            setLableText(labRx, string.Format("RX:{0}", RxCounter));
-                            rxInc = RxCounter;
-                        }
-
-                        if (txInc != TxCounter)
-                        {
-                            TextBoxReceiveAppend(SendColor, txStrBuff.ToString());
-                            txStrBuff = new StringBuilder();
-
-                            setLableText(labTx, string.Format("TX:{0}", TxCounter));
-                            txInc = TxCounter;
-                        }
-                        lastUpdateTime = DateTime.Now;
+                        setLableText(labTx, string.Format("TX:{0}", TxCounter));
+                        txInc = TxCounter;
                     }
+                    lastUpdateTime = DateTime.Now;
                 }
                 else
                 {
@@ -2340,7 +2341,7 @@ namespace SerialDebug
                 return;
             }
 
-        
+
             if (radSendMode.Name == radSendModeNormal.Name)
             {
                 setSendMode(SendModeType.Normal);

@@ -377,91 +377,94 @@ namespace XMX.FileTransmit
 
         void SendHandler()
         {
-            XmodemMessage msg;
-            if (msgQueue.Count > 0)
+            XmodemMessage msg = null;
+            lock (msgQueue)
             {
-                msg = msgQueue.Dequeue();
-                if (msg != null)
+                if (msgQueue.Count > 0)
                 {
-                    reTryCount = 0;
-
-                    switch (msg.MessageType)
-                    {
-                        case XmodemMessageType.NAK:
-                            if (SendStage == XmodemSendStage.WaitReceiveRequest)
-                            {
-                                SendStage = XmodemSendStage.PacketSending;
-
-                                xmodemInfo.CheckMode = XModemCheckMode.CheckSum;
-                                if (StartSend != null)
-                                {
-                                    StartSend(xmodemInfo, null);
-                                }
-                            }
-                            else if (SendStage == XmodemSendStage.WaitReceiveAnswerEndTransmit)
-                            {
-                                SendEOT();
-                            }
-                            else
-                            {
-                                // 通知重发或发头一包
-                                if (ReSendPacket != null)
-                                {
-                                    ReSendPacket(xmodemInfo, null);
-                                }
-                            }
-                            break;
-
-                        case XmodemMessageType.KEY_C:
-                            if (SendStage == XmodemSendStage.WaitReceiveRequest)
-                            {
-                                SendStage = XmodemSendStage.PacketSending;
-                                // 通知发头一包CRC
-                                xmodemInfo.CheckMode = XModemCheckMode.CRC16;
-                                if (StartSend != null)
-                                {
-                                    StartSend(xmodemInfo, null);
-                                }
-                            }
-                            break;
-
-                        case XmodemMessageType.ACK:
-                            if (SendStage == XmodemSendStage.PacketSending)
-                            {
-                                // 通知发下一包
-                                if (SendNextPacket != null)
-                                {
-                                    SendNextPacket(xmodemInfo, null);
-                                }
-                            }
-                            else if (SendStage == XmodemSendStage.WaitReceiveAnswerEndTransmit)
-                            {
-                                // 通知中止
-                                //if (AbortTransmit != null)
-                                //{
-                                //    AbortTransmit(xmodemInfo, null);
-                                //}
-                                if (EndOfTransmit!=null)
-                                {
-                                    EndOfTransmit(xmodemInfo, null);
-                                }
-                                IsStart = false;
-                            }
-                            break;
-
-                        case XmodemMessageType.CAN:
-                            // 通知中止
-                            if (AbortTransmit != null)
-                            {
-                                AbortTransmit(xmodemInfo, null);
-                            }
-                            break;
-
-                        default:
-                            break;
-                    }
+                    msg = msgQueue.Dequeue();
                 }
+            }
 
+            if (msg != null)
+            {
+                reTryCount = 0;
+
+                switch (msg.MessageType)
+                {
+                    case XmodemMessageType.NAK:
+                        if (SendStage == XmodemSendStage.WaitReceiveRequest)
+                        {
+                            SendStage = XmodemSendStage.PacketSending;
+
+                            xmodemInfo.CheckMode = XModemCheckMode.CheckSum;
+                            if (StartSend != null)
+                            {
+                                StartSend(xmodemInfo, null);
+                            }
+                        }
+                        else if (SendStage == XmodemSendStage.WaitReceiveAnswerEndTransmit)
+                        {
+                            SendEOT();
+                        }
+                        else
+                        {
+                            // 通知重发或发头一包
+                            if (ReSendPacket != null)
+                            {
+                                ReSendPacket(xmodemInfo, null);
+                            }
+                        }
+                        break;
+
+                    case XmodemMessageType.KEY_C:
+                        if (SendStage == XmodemSendStage.WaitReceiveRequest)
+                        {
+                            SendStage = XmodemSendStage.PacketSending;
+                            // 通知发头一包CRC
+                            xmodemInfo.CheckMode = XModemCheckMode.CRC16;
+                            if (StartSend != null)
+                            {
+                                StartSend(xmodemInfo, null);
+                            }
+                        }
+                        break;
+
+                    case XmodemMessageType.ACK:
+                        if (SendStage == XmodemSendStage.PacketSending)
+                        {
+                            // 通知发下一包
+                            if (SendNextPacket != null)
+                            {
+                                SendNextPacket(xmodemInfo, null);
+                            }
+                        }
+                        else if (SendStage == XmodemSendStage.WaitReceiveAnswerEndTransmit)
+                        {
+                            // 通知中止
+                            //if (AbortTransmit != null)
+                            //{
+                            //    AbortTransmit(xmodemInfo, null);
+                            //}
+                            if (EndOfTransmit != null)
+                            {
+                                EndOfTransmit(xmodemInfo, null);
+                            }
+                            IsStart = false;
+                        }
+                        break;
+
+                    case XmodemMessageType.CAN:
+                        // 通知中止
+                        if (AbortTransmit != null)
+                        {
+                            AbortTransmit(xmodemInfo, null);
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
             }
             else
             {
@@ -503,57 +506,63 @@ namespace XMX.FileTransmit
                 }
             }
 
-            if (msgQueue.Count > 0)
+
+            XmodemMessage msg = null;
+            lock (msgQueue)
             {
-                XmodemMessage msg = msgQueue.Dequeue();
-                if (msg != null)
+                if (msgQueue.Count > 0)
                 {
-                    reTryCount = 0;
+                    msg = msgQueue.Dequeue();
+                }
 
-                    switch (msg.MessageType)
-                    {
-                        case XmodemMessageType.PACKET:
-                            ReceiveStage = XmodemReceiveStage.PacketReceiving;
-                            SendACK();
-                            if (ReceivedPacket != null)
-                            {
-                                PacketEventArgs e = msg.Value as PacketEventArgs;
-                                ReceivedPacket(xmodemInfo, new PacketEventArgs(e.PacketNo, e.Packet));
-                            }
+            }
+            if (msg != null)
+            {
+                reTryCount = 0;
 
-                            // 通知发下一包
-                            if (SendNextPacket != null)
-                            {
-                                SendNextPacket(xmodemInfo, null);
-                            }
-                            break;
-                        case XmodemMessageType.PACKET_ERROR:
-                            SendNAK();
-                            // 通知重发
-                            if (ReSendPacket != null)
-                            {
-                                ReSendPacket(xmodemInfo, null);
-                            }
-                            break;
-                        case XmodemMessageType.EOT:
-                            SendACK();
-                            // 通知完成
-                            if (EndOfTransmit != null)
-                            {
-                                EndOfTransmit(xmodemInfo, null);
-                            }
-                            break;
-                        case XmodemMessageType.CAN:
-                            SendACK();
-                            // 通知中止
-                            if (AbortTransmit != null)
-                            {
-                                AbortTransmit(xmodemInfo, null);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
+                switch (msg.MessageType)
+                {
+                    case XmodemMessageType.PACKET:
+                        ReceiveStage = XmodemReceiveStage.PacketReceiving;
+                        SendACK();
+                        if (ReceivedPacket != null)
+                        {
+                            PacketEventArgs e = msg.Value as PacketEventArgs;
+                            ReceivedPacket(xmodemInfo, new PacketEventArgs(e.PacketNo, e.Packet));
+                        }
+
+                        // 通知发下一包
+                        if (SendNextPacket != null)
+                        {
+                            SendNextPacket(xmodemInfo, null);
+                        }
+                        break;
+                    case XmodemMessageType.PACKET_ERROR:
+                        SendNAK();
+                        // 通知重发
+                        if (ReSendPacket != null)
+                        {
+                            ReSendPacket(xmodemInfo, null);
+                        }
+                        break;
+                    case XmodemMessageType.EOT:
+                        SendACK();
+                        // 通知完成
+                        if (EndOfTransmit != null)
+                        {
+                            EndOfTransmit(xmodemInfo, null);
+                        }
+                        break;
+                    case XmodemMessageType.CAN:
+                        SendACK();
+                        // 通知中止
+                        if (AbortTransmit != null)
+                        {
+                            AbortTransmit(xmodemInfo, null);
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
             else

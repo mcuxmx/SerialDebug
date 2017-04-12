@@ -65,7 +65,7 @@ namespace SerialDebug
             Properties.Settings.Default.filePath = txtFile.Text;
             Properties.Settings.Default.fileSendByLine = chkSendByLine.Checked;
             Properties.Settings.Default.fileSendCRLF = chkSendCRRF.Checked;
-            (int)Properties.Settings.Default.fileSendDelay = (int)numDelayTime.Value;
+            Properties.Settings.Default.fileSendDelay = (int)numDelayTime.Value;
             Properties.Settings.Default.fileSendByPacket = chkSlipPacket.Checked;
             Properties.Settings.Default.filePacketLen = (int)numPacketLen.Value;
 
