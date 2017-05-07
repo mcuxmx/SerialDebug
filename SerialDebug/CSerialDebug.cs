@@ -130,6 +130,7 @@ namespace SerialDebug
         public void StopSend()
         {
             IsSendStart = false;
+            releaseThread(sendThread);
         }
         public void Send(List<CSendParam> list)
         {
@@ -147,8 +148,12 @@ namespace SerialDebug
                 }
             }
 
-
+            
             LoopCount = loop;
+            lock (sendList)
+            {
+                sendList.Clear();
+            }
             sendList = list;
             IsSendStart = true;
 
@@ -309,10 +314,9 @@ namespace SerialDebug
             {
                 LoopCount = int.MaxValue;
             }
-
             try
             {
-                while (LoopCount > 0 && IsSendStart)
+                while (LoopCount > 0 && IsSendStart )
                 {
                     LoopCount--;
 

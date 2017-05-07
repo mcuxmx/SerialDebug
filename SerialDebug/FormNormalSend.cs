@@ -295,6 +295,26 @@ namespace SerialDebug
             numSendOnceBytes.Value = Properties.Settings.Default.normalPacketBytes;
             numSendInterval.Value = Properties.Settings.Default.normalInterval;
             txtSend.Text = Properties.Settings.Default.normalContent;
+
+            SendTempIndex = 0;
+            if (Properties.Settings.Default.HistorySendList == null)
+            {
+                Properties.Settings.Default.HistorySendList = new System.Collections.Specialized.StringCollection();
+            }
+            for (int i = 0; i < Properties.Settings.Default.HistorySendList.Count;i++ )
+            {
+                lock (SendTempList)
+                {
+                    SendTempList.Add(Properties.Settings.Default.HistorySendList[i]);
+                    SendTempIndex++;
+                    if (SendTempIndex == 100)
+                    {
+                        SendTempList.RemoveAt(0);
+                        SendTempIndex--;
+                    }
+                }
+                
+            }
         }
 
         public void SaveConfig()
@@ -307,6 +327,12 @@ namespace SerialDebug
             Properties.Settings.Default.normalPacketBytes = (int)numSendOnceBytes.Value;
             Properties.Settings.Default.normalInterval = (int)numSendInterval.Value;
             Properties.Settings.Default.normalContent = txtSend.Text;
+
+            Properties.Settings.Default.HistorySendList.Clear();
+            for (int i = 0; i < SendTempList.Count; i++)
+            {
+                Properties.Settings.Default.HistorySendList.Add(SendTempList[i]);
+            }
 
             Properties.Settings.Default.Save();
         }

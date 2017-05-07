@@ -466,5 +466,16 @@ namespace SerialDebug.Properties {
                 this["receiveFont"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection HistorySendList {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["HistorySendList"]));
+            }
+            set {
+                this["HistorySendList"] = value;
+            }
+        }
     }
 }
