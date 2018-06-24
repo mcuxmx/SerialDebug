@@ -208,7 +208,8 @@ namespace SerialDebug
             serialPort.RtsEnable = chkRTS.Checked;
 
             Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            this.Text = string.Format("{0} V{1}    作者：启岩  QQ：516409354", Application.ProductName, Version);
+            //this.Text = string.Format("{0} V{1}    作者：启岩  QQ：516409354", Application.ProductName, Version);
+            this.Text = string.Format("{0} V{1}", Application.ProductName, Version);
 
             CheckForIllegalCrossThreadCalls = false;
 

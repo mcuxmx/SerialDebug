@@ -120,15 +120,17 @@
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="LogoPictureBox.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAKVJREFUWEftkAkK
-        wCAMBH16nubP0q4S6BEUdVF6DCzWFjNrw8/P09GBDKMi/cH5PKYPVUVA+0oqsI/qXJf/AZzPY8awQT15
-        Ft4NaqGhMcamiAithCsoBXJWAVdQiskZBVxBKUf5aAFXUMq75C0w5eB2u1qYcnAT4B1ikut3phychmMP
-        7NkrwZQbNvAkr4TOVT6V78pBKoA1b+eS5J+9fWJ5gXWEsAH/iweSRDcB6QAAAABJRU5ErkJggg==
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
+        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAApUlEQVRYR+2QCQrAIAwEfXqe5s/SrhLo
+        ERR1UXoMLNYWM2vDz8/T0YEMoyL9wfk8pg9VRUD7Siqwj+pcl/8BnM9jxrBBPXkW3g1qoaExxqaICK2E
+        KygFclYBV1CKyRkFXEEpR/loAVdQyrvkLTDl4Ha7WphycBPgHWKS63emHJyGYw/s2SvBlBs28CSvhM5V
+        PpXvykEqgDVv55Lkn719YnmBdYSwAf+LB5JENwHpAAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="TextBoxDescription.Text" xml:space="preserve">
-    <value>支持多种发送模式：普通模式，队列模式，文件模式。
+    <value>网址：https://github.com/mcuxmx/SerialDebug
+
+支持多种发送模式：普通模式，队列模式，文件模式。
 
 普通模式：在发送模式中按键盘上下键可输入历史发送数据；支持CTRL+Enter快捷键可发送；
 
