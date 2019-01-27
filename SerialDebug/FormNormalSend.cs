@@ -276,7 +276,7 @@ namespace SerialDebug
         private void FormNormalSend_Load(object sender, EventArgs e)
         {
             LoadConfig();
-            
+
         }
 
         private void FormNormalSend_FormClosing(object sender, FormClosingEventArgs e)
@@ -301,11 +301,13 @@ namespace SerialDebug
             {
                 Properties.Settings.Default.HistorySendList = new System.Collections.Specialized.StringCollection();
             }
-            for (int i = 0; i < Properties.Settings.Default.HistorySendList.Count;i++ )
+            for (int i = 0; i < Properties.Settings.Default.HistorySendList.Count; i++)
             {
                 lock (SendTempList)
                 {
-                    SendTempList.Add(Properties.Settings.Default.HistorySendList[i]);
+                    //SendTempList.Add(Properties.Settings.Default.HistorySendList[i]);
+                    CSendParam param = new CSendParam(SendParamFormat.Hex, SendParamMode.SendAfterLastSend, 0, Properties.Settings.Default.HistorySendList[i]);
+                    SendTempList.Add(param.ASCIIString);
                     SendTempIndex++;
                     if (SendTempIndex == 100)
                     {
@@ -313,7 +315,7 @@ namespace SerialDebug
                         SendTempIndex--;
                     }
                 }
-                
+
             }
         }
 
@@ -331,7 +333,9 @@ namespace SerialDebug
             Properties.Settings.Default.HistorySendList.Clear();
             for (int i = 0; i < SendTempList.Count; i++)
             {
-                Properties.Settings.Default.HistorySendList.Add(SendTempList[i]);
+
+                CSendParam param = new CSendParam(SendParamFormat.ASCII, SendParamMode.SendAfterLastSend, 0, SendTempList[i]);
+                Properties.Settings.Default.HistorySendList.Add(param.HexString);
             }
 
             Properties.Settings.Default.Save();

@@ -1550,7 +1550,8 @@ namespace SerialDebug
             }
 
             txtSend.Clear();
-            txtSend.AppendText(text);
+            txtSend.Text = text;
+            //txtSend.AppendText(text);
         }
 
         private bool IsCtrlPressed = false;

@@ -46,20 +46,20 @@ namespace SerialDebug
                 if (ex != null)
                 {
                     StringBuilder msg = new StringBuilder();
-                    msg.AppendFormat("{0}出现应用程序未处理异常：\r\n", DateTime.Now.ToString());
+                    msg.AppendFormat("{0}Unhandled Exception:\r\n", DateTime.Now.ToString());
                     string Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                    msg.AppendFormat("软件版本：{0}\r\n", Version);
-                    msg.AppendFormat("异常类型：{0}\r\n", ex.GetType().Name);
-                    msg.AppendFormat("异常消息：{0}\r\n", ex.Message);
-                    msg.AppendFormat("异常信息：{0}\r\n", ex.StackTrace);
+                    msg.AppendFormat("Version:        {0}\r\n", Version);
+                    msg.AppendFormat("Exception Type: {0}\r\n", ex.GetType().Name);
+                    msg.AppendFormat("Message:        {0}\r\n", ex.Message);
+                    msg.AppendFormat("StackTrace:     {0}\r\n", ex.StackTrace);
 
 
-                    DialogResult dr = MessageBox.Show("软件发生致命错误，请及时联系作者！\r\n是否将错误信息通过邮件发送给作者？", "系统错误", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
+                    DialogResult dr = MessageBox.Show("An application error occurred. Please contact the author\r\nWhether to send e-mail", "system exception", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
                     if (dr == DialogResult.Yes)
                     {
                         //writeLog(msg.ToString());
 
-                        string title = string.Format("SerialDebug V{0}异常", Version);
+                        string title = string.Format("SerialDebug V{0} exception", Version);
                         string body = msg.ToString();
                         sentEmail("516409354@qq.com", title, msg.ToString());
 
@@ -67,7 +67,7 @@ namespace SerialDebug
                 }
                 else
                 {
-                    MessageBox.Show("软件发生致命错误，请及时联系作者！", "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("An application error occurred. Please contact the author", "system exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
             }
