@@ -1,6 +1,6 @@
 # SerialDebug
 基于.net 2.0开发，单文件免费串口调试工具。
-
+![serialdebug](https://github.com/mcuxmx/SerialDebug/blob/master/doc/images/serialdebug.png)
 ## 基本功能
 - 自动识别系统串口号。
 - 支持常用波特率选择，也可手动输入波特率。
@@ -19,7 +19,7 @@
 - 支持文件保存，可存为二进制文件或文本文件。
 - 接收区选中要转换的内容，右键菜单可选择相应的进制转换。
 - 支持接收和发送时间戳显示，精确到毫秒。
-
+![serialdebug](https://github.com/mcuxmx/SerialDebug/blob/master/doc/images/receive.png)
 ## 发送模式
 - 支持多种发送模式：普通模式，队列模式，文件模式。
 
@@ -32,7 +32,7 @@
 - 支持各种CRC校验。
 - 支持发送区内容循环发送功能。
 - 支持发送内容分包发送，每包发送字节数和发送时间间隔可设置。
-
+![serialdebug](https://github.com/mcuxmx/SerialDebug/blob/master/doc/images/checksum.png)
 ### 队列模式：
 - 在队列发送模式中可编辑无限个发送序列。发送可设置为延时发送或接收到数据帧后发送，方便调试某些时序数据帧。
 - 发送可设置为延时发送或接收到数据帧后发送，方便调试某些时序数据帧。
@@ -40,7 +40,7 @@
 - 双击发送行可进行内容修改。
 - 支持设置发送内容标题，免费调试十六进制协议时不便于识别。
 - 支持发送序列的保存与导入功能。
-
+![serialdebug](https://github.com/mcuxmx/SerialDebug/blob/master/doc/images/queue.png)
 ### 文件模式：
 - ASCII文件发送，支持按行发送，支持追加换行符，控制发送间隔。
 - 二进制文件发送，支持分包发送，支持控制发送时间间隔。
