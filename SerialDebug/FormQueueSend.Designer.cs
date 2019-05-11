@@ -53,12 +53,12 @@
             this.btnAddSendList = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
             this.dgvSendList = new System.Windows.Forms.DataGridView();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colNo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colSend = new System.Windows.Forms.DataGridViewButtonColumn();
             this.colEnable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.colMode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colData = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -201,9 +201,9 @@
             // 
             // txtSend
             // 
-            this.txtSend.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSend.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSend.Location = new System.Drawing.Point(3, 44);
             this.txtSend.Multiline = true;
             this.txtSend.Name = "txtSend";
@@ -328,9 +328,9 @@
             // 
             this.dgvSendList.AllowUserToAddRows = false;
             this.dgvSendList.AllowUserToResizeRows = false;
-            this.dgvSendList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvSendList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvSendList.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvSendList.BackgroundColor = System.Drawing.SystemColors.Window;
             this.dgvSendList.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
@@ -354,6 +354,7 @@
             this.dgvSendList.Size = new System.Drawing.Size(530, 112);
             this.dgvSendList.TabIndex = 0;
             this.dgvSendList.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvSendList_CellClick);
+            this.dgvSendList.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvSendList_CellMouseDoubleClick);
             // 
             // colNo
             // 
@@ -374,7 +375,7 @@
             this.colSend.HeaderText = "手动";
             this.colSend.Name = "colSend";
             this.colSend.ReadOnly = true;
-            this.colSend.Width = 36;
+            this.colSend.Width = 64;
             // 
             // colEnable
             // 
@@ -412,8 +413,8 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FormQueueSend";
             this.Text = "FormNormalSend";
-            this.Load += new System.EventHandler(this.FormQueueSend_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormQueueSend_FormClosing);
+            this.Load += new System.EventHandler(this.FormQueueSend_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
@@ -450,12 +451,12 @@
         internal System.Windows.Forms.LinkLabel lnkAddCheckCode;
         internal System.Windows.Forms.CheckBox chkSendHex;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button btnOpen;
+        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.DataGridViewTextBoxColumn colNo;
         private System.Windows.Forms.DataGridViewButtonColumn colSend;
         private System.Windows.Forms.DataGridViewCheckBoxColumn colEnable;
         private System.Windows.Forms.DataGridViewTextBoxColumn colMode;
         private System.Windows.Forms.DataGridViewTextBoxColumn colData;
-        private System.Windows.Forms.Button btnOpen;
-        private System.Windows.Forms.Button btnSave;
     }
 }

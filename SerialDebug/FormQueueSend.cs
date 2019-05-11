@@ -32,20 +32,41 @@ namespace SerialDebug
         private void LoadSendQueueByContent(string content)
         {
             dgvSendList.Rows.Clear();
+            dgvSendList.Columns[1].Width = 64;
             string[] listArray = content.Split(new string[] { "}{", "}\r\n{", "}\n{" }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string list in listArray)
             {
+                object[] array = new object[5];
+                string title = "";
                 string[] cells = list.Trim(new char[] { '\r', '\n' }).Trim(new char[] { '<', '>' }).Split(new string[] { "><", "{<", ">}", ">}\r\n", ">}\n" }, StringSplitOptions.RemoveEmptyEntries);
                 if (cells.Length == dgvSendList.Columns.Count - 2)
                 {
-                    object[] array = new object[5];
+
                     array[0] = dgvSendList.Rows.Count;
                     array[1] = "Send";
                     array[2] = Convert.ToBoolean(cells[0]);
                     array[3] = cells[1];
                     array[4] = cells[2];
-                    dgvSendList.Rows.Add(array);
+
                 }
+                else if (cells.Length == dgvSendList.ColumnCount)
+                {
+                    array[0] = dgvSendList.Rows.Count;
+                    array[1] = cells[1];
+                    array[2] = Convert.ToBoolean(cells[2]);
+                    array[3] = cells[3];
+                    array[4] = cells[4];
+
+                }
+
+                title = Convert.ToString(array[1]);
+                int width = System.Text.ASCIIEncoding.ASCII.GetByteCount(Convert.ToString(array[1])) * 16;
+
+                if (width < 200 && dgvSendList.Columns[1].Width < width)
+                {
+                    dgvSendList.Columns[1].Width = width;
+                }
+                dgvSendList.Rows.Add(array);
             }
         }
 
@@ -66,7 +87,7 @@ namespace SerialDebug
             foreach (DataGridViewRow row in dgvSendList.Rows)
             {
                 sb.Append(@"{");
-                for (int i = RowEnableIndex; i < dgvSendList.Columns.Count; i++)
+                for (int i = 0; i < dgvSendList.Columns.Count; i++)
                 {
                     sb.AppendFormat(@"<{0}>", row.Cells[i].Value.ToString());
                 }
@@ -109,33 +130,52 @@ namespace SerialDebug
 
         private void btnAddSendList_Click(object sender, EventArgs e)
         {
-            if (panelSendParam.Visible == false)
+            //if (panelSendParam.Visible == false)
+            //{
+
+            //    panelSendParam.Visible = true;
+
+
+            //    btnAddSendList.Image = Properties.Resources.round_minus;
+            //    //btnAddSendList.Enabled = false;
+            //    btnDeleteSendList.Enabled = false;
+            //    btnSetupSendList.Enabled = false;
+            //    btnSetdownSendList.Enabled = false;
+
+            //    OpenParamSet(sender, e);
+            //}
+            //else
+            //{
+            //    panelSendParam.Visible = false;
+
+
+            //    btnAddSendList.Image = Properties.Resources.round_plus;
+            //    //btnAddSendList.Enabled = false;
+            //    btnDeleteSendList.Enabled = true;
+            //    btnSetupSendList.Enabled = true;
+            //    btnSetdownSendList.Enabled = true;
+
+            //    CloseParamSet(sender, e);
+            //}
+
+            bool topMost = this.ParentForm.TopMost;
+            this.ParentForm.TopMost = false;
+
+            frmQueueSetting frm = new frmQueueSetting();
+            if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
+                QueueSendObject obj = frm.SendObject;
 
-                panelSendParam.Visible = true;
-
-
-                btnAddSendList.Image = Properties.Resources.round_minus;
-                //btnAddSendList.Enabled = false;
-                btnDeleteSendList.Enabled = false;
-                btnSetupSendList.Enabled = false;
-                btnSetdownSendList.Enabled = false;
-
-                OpenParamSet(sender, e);
+                object[] array = new object[5];
+                array[0] = dgvSendList.Rows.Count;
+                array[1] = obj.Title;
+                array[2] = obj.Enable;
+                array[3] = obj.Mode;
+                array[4] = obj.Content;
+                dgvSendList.Rows.Add(array);
             }
-            else
-            {
-                panelSendParam.Visible = false;
 
-
-                btnAddSendList.Image = Properties.Resources.round_plus;
-                //btnAddSendList.Enabled = false;
-                btnDeleteSendList.Enabled = true;
-                btnSetupSendList.Enabled = true;
-                btnSetdownSendList.Enabled = true;
-
-                CloseParamSet(sender, e);
-            }
+            this.ParentForm.TopMost = topMost;
 
         }
 
@@ -450,12 +490,50 @@ namespace SerialDebug
             }
         }
 
+        private void dgvSendList_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex < 0 || e.RowIndex < 0)
+            {
+                return;
+            }
+
+            if (e.RowIndex >= dgvSendList.RowCount)
+            {
+                return;
+            }
+
+
+            DataGridViewRow row = dgvSendList.Rows[e.RowIndex];
+
+            object[] items = new object[row.Cells.Count];
+            for (int i = 0; i < items.Length; i++)
+            {
+                items[i] = row.Cells[i].Value;
+            }
+
+
+            bool topMost = this.ParentForm.TopMost;
+            this.ParentForm.TopMost = false;
+
+            frmQueueSetting frm = new frmQueueSetting(items);
+            if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                QueueSendObject obj = frm.SendObject;
+                row.Cells[1].Value = obj.Title;
+                row.Cells[2].Value = obj.Enable;
+                row.Cells[3].Value = obj.Mode;
+                row.Cells[4].Value = obj.Content;
+            }
+
+            this.ParentForm.TopMost = topMost;
+        }
+
         private void linkLabelClearData_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
         {
             txtSend.Clear();
         }
 
-        private readonly string QueueFileHeader = "Serial Debug Queue List V1.0";
+        private readonly string QueueFileHeader = "Serial Debug Queue List V1.1";
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
@@ -474,7 +552,7 @@ namespace SerialDebug
                     try
                     {
                         string header = sr.ReadLine();
-                        if (header == QueueFileHeader)
+                        if (header == QueueFileHeader || header.StartsWith("Serial Debug") || header.ToLower().StartsWith("serialdebug"))
                         {
                             string content = sr.ReadToEnd();
                             LoadSendQueueByContent(content);
@@ -493,7 +571,7 @@ namespace SerialDebug
                         sr.Close();
                         fs.Close();
                     }
-                   
+
                 }
             }
             catch (System.Exception ex)
@@ -539,6 +617,8 @@ namespace SerialDebug
             }
 
         }
+
+
 
 
     }
