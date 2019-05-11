@@ -497,7 +497,8 @@ namespace SerialDebug
                 return;
             }
 
-            if (e.RowIndex >= dgvSendList.RowCount)
+            if (e.RowIndex >= dgvSendList.RowCount || 
+                e.ColumnIndex == 1 || e.ColumnIndex == 2)    // 发送列和使能列不允许双击操作
             {
                 return;
             }
