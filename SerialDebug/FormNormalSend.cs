@@ -244,6 +244,9 @@ namespace SerialDebug
                 {
                     bool IsHex = chkSendHex.Checked;
 
+                    bool topMost = this.ParentForm.TopMost;
+                    this.ParentForm.TopMost = false;
+
                     frmDataCheck frm = new frmDataCheck();
                     frm.CalculateCheckData(txtSend.Text, IsHex);
                     if (frm.ShowDialog() == DialogResult.OK)
@@ -259,6 +262,8 @@ namespace SerialDebug
                         }
 
                     }
+
+                    this.ParentForm.TopMost = topMost;
                 }
             }
             catch (System.Exception ex)
