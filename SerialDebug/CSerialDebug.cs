@@ -143,6 +143,9 @@ namespace SerialDebug
         public void StopSend()
         {
             IsSendStart = false;
+            waitParseEvent.Set();
+            waitParseEvent.Reset();
+            
             while (SendThreadBusy)
             {
                 Thread.Sleep(10);
