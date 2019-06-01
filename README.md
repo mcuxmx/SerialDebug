@@ -2,7 +2,7 @@
 基于.net 2.0开发，单文件免费串口调试工具。
 ![serialdebug](https://github.com/mcuxmx/SerialDebug/blob/master/doc/images/serialdebug.png)
 ## 基本功能
-- 自动识别系统串口号。
+- 自动识别系统串口号并显示相应的驱动名称。
 - 支持常用波特率选择，也可手动输入波特率。
 - 支持串口流控控制（使用时需要硬件支持）。
 - 支持十六进制收发功能。
@@ -38,7 +38,7 @@
 - 发送可设置为延时发送或接收到数据帧后发送，方便调试某些时序数据帧。
 - 支持添加、删除、修改、排序相应的发送序列。
 - 双击发送行可进行内容修改。
-- 支持设置发送内容标题，免费调试十六进制协议时不便于识别。
+- 支持设置发送内容标题。
 - 支持发送序列的保存与导入功能。
 ![serialdebug](https://github.com/mcuxmx/SerialDebug/blob/master/doc/images/queue.png)
 ### 文件模式：

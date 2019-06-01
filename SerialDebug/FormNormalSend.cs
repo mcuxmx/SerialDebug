@@ -351,5 +351,6 @@ namespace SerialDebug
             //txtSend.Font = Properties.Settings.Default.receiveFont;
         }
 
+         
     }
 }

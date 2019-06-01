@@ -283,14 +283,17 @@
             // 
             // cbComName
             // 
+            this.cbComName.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cbComName.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cbComName.DropDownWidth = 300;
             this.cbComName.FormattingEnabled = true;
             this.cbComName.Location = new System.Drawing.Point(53, 15);
             this.cbComName.Name = "cbComName";
             this.cbComName.Size = new System.Drawing.Size(102, 20);
             this.cbComName.TabIndex = 0;
+            this.cbComName.DropDown += new System.EventHandler(this.cbComName_DropDown);
             this.cbComName.SelectedIndexChanged += new System.EventHandler(this.cbComName_SelectedIndexChanged);
             this.cbComName.DropDownClosed += new System.EventHandler(this.cbComName_DropDownClosed);
-            this.cbComName.DropDown += new System.EventHandler(this.cbComName_DropDown);
             // 
             // label13
             // 
@@ -388,8 +391,8 @@
             this.menuDecToString});
             this.cmenuStrip.Name = "ContextMenuStrip1";
             this.cmenuStrip.Size = new System.Drawing.Size(197, 298);
-            this.cmenuStrip.Opened += new System.EventHandler(this.cmenuStrip_Opened);
             this.cmenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.cmenuStrip_Closed);
+            this.cmenuStrip.Opened += new System.EventHandler(this.cmenuStrip_Opened);
             // 
             // menuUndo
             // 
@@ -532,8 +535,8 @@
             // 
             // labIsSerialOpen
             // 
-            this.labIsSerialOpen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.labIsSerialOpen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.labIsSerialOpen.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.labIsSerialOpen.Location = new System.Drawing.Point(23, 459);
             this.labIsSerialOpen.Name = "labIsSerialOpen";
@@ -763,9 +766,9 @@
             // 
             // txtReceive
             // 
-            this.txtReceive.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtReceive.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtReceive.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtReceive.Location = new System.Drawing.Point(5, 20);
             this.txtReceive.MaxLength = 0;
@@ -775,8 +778,8 @@
             this.txtReceive.TabIndex = 35;
             this.txtReceive.Text = "";
             this.ToolTip.SetToolTip(this.txtReceive, "右键菜单有进制转换功能");
-            this.txtReceive.MouseEnter += new System.EventHandler(this.txtReceive_MouseEnter);
             this.txtReceive.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtReceive_MouseDown);
+            this.txtReceive.MouseEnter += new System.EventHandler(this.txtReceive_MouseEnter);
             // 
             // numReceiveTimeOut
             // 
@@ -883,9 +886,9 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(166, 6);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -1009,8 +1012,8 @@
             // 
             // Label8
             // 
-            this.Label8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.Label8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.Label8.AutoSize = true;
             this.Label8.BackColor = System.Drawing.Color.Transparent;
             this.Label8.Location = new System.Drawing.Point(3, 4);
@@ -1057,9 +1060,9 @@
             // 
             // txtSend
             // 
-            this.txtSend.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSend.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSend.Location = new System.Drawing.Point(3, 17);
             this.txtSend.MaxLength = 0;
             this.txtSend.Multiline = true;
@@ -1068,8 +1071,8 @@
             this.txtSend.Size = new System.Drawing.Size(530, 122);
             this.txtSend.TabIndex = 32;
             this.txtSend.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSend_KeyDown);
-            this.txtSend.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtSend_MouseDown);
             this.txtSend.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSend_KeyPress);
+            this.txtSend.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtSend_MouseDown);
             this.txtSend.MouseEnter += new System.EventHandler(this.txtSend_MouseEnter);
             // 
             // chkSendThenClear
@@ -1139,8 +1142,8 @@
             this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
-            this.Load += new System.EventHandler(this.frmMain_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
+            this.Load += new System.EventHandler(this.frmMain_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPortState)).EndInit();

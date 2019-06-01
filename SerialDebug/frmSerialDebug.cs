@@ -65,7 +65,7 @@ namespace SerialDebug
         {
             if (serialPort.IsOpen == false)
             {
-                if (cbComName.Items.Contains(Properties.Settings.Default.comPort))
+                if (Properties.Settings.Default.comPort!=string.Empty)
                 {
                     cbComName.Text = Properties.Settings.Default.comPort;
                 }
@@ -345,7 +345,18 @@ namespace SerialDebug
                     dataStreamDisplayThread.IsBackground = true;
                     dataStreamDisplayThread.Start();
 
-                    serialPort.PortName = cbComName.SelectedItem.ToString();
+                    //serialPort.PortName = cbComName.SelectedItem.ToString();
+                    Regex reg = new Regex(@"COM\d+?");
+                    Match matchs = reg.Match(cbComName.Text);
+                    if (matchs != null && matchs.Groups[0].ToString()!=string.Empty)
+                    {
+                        serialPort.PortName = matchs.Groups[0].ToString();
+                    }
+                    else
+                    {
+                        throw new Exception("无法识别的串口。");
+                    }
+
                     serialPort.BaudRate = Convert.ToInt32(cbBaudRate.Text);
                     serialPort.Parity = (System.IO.Ports.Parity)cbParity.SelectedItem;
                     serialPort.DataBits = (int)cbDataBit.SelectedItem;
@@ -566,11 +577,24 @@ namespace SerialDebug
         {
             string portName = cbComName.Text;
 
-            cbComName.DataSource = SerialPort.GetPortNames();
-            if (cbComName.Items.Contains(portName))
+            //cbComName.DataSource = SerialPort.GetPortNames();
+            //if (cbComName.Items.Contains(portName))
+            //{
+            //    cbComName.SelectedItem = portName;
+            //}
+
+
+            string[] portList = SystemHardware.GetSerialPort();
+
+            int iMax = cbComName.Width;
+            foreach (string s in portList)
             {
-                cbComName.SelectedItem = portName;
+                //iMax = s.Length > iMax?s.Length:iMax;
+                iMax = Math.Max(iMax, TextRenderer.MeasureText(s, cbComName.Font).Width);
             }
+            cbComName.DropDownWidth = iMax;
+            cbComName.DataSource = portList;
+            
         }
 
         private void cbComName_DropDownClosed(object sender, EventArgs e)
