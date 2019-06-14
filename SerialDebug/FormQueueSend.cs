@@ -16,8 +16,8 @@ namespace SerialDebug
         public event System.EventHandler ParamSetOpend;
         public event System.EventHandler ParamSetClosed;
 
-        private readonly int RowNoIndex = 0;
-        private readonly int RowSendIndex = 1;
+        //private readonly int RowNoIndex = 0;
+        //private readonly int RowSendIndex = 1;
         private readonly int RowEnableIndex = 2;
         private readonly int RowParamIndex = 3;
         private readonly int RowContentIndex = 4;

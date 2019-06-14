@@ -346,7 +346,7 @@ namespace SerialDebug
                     dataStreamDisplayThread.Start();
 
                     //serialPort.PortName = cbComName.SelectedItem.ToString();
-                    Regex reg = new Regex(@"COM\d+?");
+                    Regex reg = new Regex(@"COM\d+");
                     Match matchs = reg.Match(cbComName.Text);
                     if (matchs != null && matchs.Groups[0].ToString()!=string.Empty)
                     {
