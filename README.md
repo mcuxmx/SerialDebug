@@ -1,4 +1,5 @@
-# SerialDebug
+# SerialDebug 
+###     最新软件：[下载](https://raw.githubusercontent.com/mcuxmx/serialdebug/master/SerialDebug/bin/Debug/SerialDebug.exe)
 基于.net 2.0开发，单文件免费串口调试工具。
 ![serialdebug](https://raw.githubusercontent.com/mcuxmx/serialdebug/master/doc/images/serialdebug.png)
 ## 基本功能
