@@ -18,6 +18,7 @@ namespace SerialDebug
 {
     public partial class frmMain : Form
     {
+        private ISendForm CurrentSendForm = null;
         private string Version = Application.ProductVersion;
 
         private Queue<SerialStreamContent> dataDispQueue = new Queue<SerialStreamContent>();
@@ -206,7 +207,7 @@ namespace SerialDebug
             cbComName.DataSource = SerialPort.GetPortNames();
             cbStreamControl.SelectedIndex = 0;
             serialPort.RtsEnable = chkRTS.Checked;
-
+            
             Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             //this.Text = string.Format("{0} V{1}    作者：启岩  QQ：516409354", Application.ProductName, Version);
             this.Text = string.Format("{0} V{1}", Application.ProductName, Version);
@@ -369,7 +370,7 @@ namespace SerialDebug
                     sp.ReceivedEvent += new CSerialDebug.ReceivedEventHandler(sp_ReceivedEvent);
                     sp.SendCompletedEvent += new CSerialDebug.SendCompletedEventHandler(sp_SendCompletedEvent);
                     sp.SendOverEvent += new EventHandler(sp_SendOverEvent);
-
+                    txtReceive.ReadOnly = true;
                 }
                 else
                 {
@@ -390,7 +391,7 @@ namespace SerialDebug
                     sp.SendOverEvent -= new EventHandler(sp_SendOverEvent);
 
                     sp.Stop();
-
+                    txtReceive.ReadOnly = false;
                     // serialPort.Close();
                 }
             }
@@ -767,7 +768,10 @@ namespace SerialDebug
                 byte[] bytes = System.Text.ASCIIEncoding.Default.GetBytes(txtBoxMenu.SelectedText);
                 // txtBoxMenu.Paste(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
                 Clipboard.SetText(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
+                bool r= txtReceive.ReadOnly;
+                txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
+                txtReceive.ReadOnly = r;
             }
             catch (Exception ex)
             {
@@ -790,7 +794,78 @@ namespace SerialDebug
                 byte[] bytes = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(HexStringToByte));
                 // txtBoxMenu.Paste(System.Text.ASCIIEncoding.Default.GetString(bytes));
                 Clipboard.SetText(System.Text.ASCIIEncoding.Default.GetString(bytes));
+                bool r = txtReceive.ReadOnly;
+                txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
+                txtReceive.ReadOnly = r;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void menuBinaryToHex_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+
+                StringBuilder sb = new StringBuilder();
+                string binString = txtBoxMenu.SelectedText.Replace(" ", "");
+                int i;
+                for (i = 0; i < binString.Length; i += 8)
+                {
+                    int len = 8;
+                    if (i + 8 <= binString.Length)
+                    {
+                        len = 8;
+                    }
+                    else
+                    {
+                        len = binString.Length - i;
+                    }
+                    byte b = Convert.ToByte(binString.Substring(i, len), 2);
+                    sb.AppendFormat("{0:X2} ", b);
+                }
+                Clipboard.SetText(sb.ToString().TrimEnd(new char[] { ' ' }));
+
+                //Clipboard.SetText(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
+                bool r = txtReceive.ReadOnly;
+                txtReceive.ReadOnly = false;
+                txtBoxMenu.Paste();
+                txtReceive.ReadOnly = r;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void menuHexToBinary_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                //string[] strArray = txtBoxMenu.SelectedText.TrimEnd().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] strArray = txtBoxMenu.SelectedText.TrimEnd(new char[] { '\r', '\n', ' ' }).Replace(Environment.NewLine, " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                byte[] bytes = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(HexStringToByte));
+
+                StringBuilder sb = new StringBuilder();
+                foreach (byte b in bytes)
+                {
+                    string s= Convert.ToString(b, 2).PadLeft(8, '0');
+                    sb.Append(s);
+                    sb.Append(" ");
+                }
+
+                Clipboard.SetText(sb.ToString().TrimEnd(new char[] { ' ' }));
+
+                bool r = txtReceive.ReadOnly;
+                txtReceive.ReadOnly = false;
+                txtBoxMenu.Paste();
+                txtReceive.ReadOnly = r;
             }
             catch (Exception ex)
             {
@@ -816,7 +891,10 @@ namespace SerialDebug
                 //txtBoxMenu.Paste(sb.ToString().TrimEnd());
 
                 Clipboard.SetText(sb.ToString().TrimEnd());
+                bool r = txtReceive.ReadOnly;
+                txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
+                txtReceive.ReadOnly = r;
 
             }
             catch (Exception ex)
@@ -838,7 +916,10 @@ namespace SerialDebug
                 byte[] bytes = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(DecStringToByte));
                 //txtBoxMenu.Paste(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
                 Clipboard.SetText(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
+                bool r = txtReceive.ReadOnly;
+                txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
+                txtReceive.ReadOnly = r;
             }
             catch (Exception ex)
             {
@@ -863,7 +944,10 @@ namespace SerialDebug
                 }
                 //txtBoxMenu.Paste(sb.ToString().TrimEnd());
                 Clipboard.SetText(sb.ToString().TrimEnd());
+                bool r = txtReceive.ReadOnly;
+                txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
+                txtReceive.ReadOnly = r;
             }
             catch (Exception ex)
             {
@@ -885,7 +969,10 @@ namespace SerialDebug
                 //txtBoxMenu.Paste(System.Text.ASCIIEncoding.Default.GetString(bytes));
 
                 Clipboard.SetText(System.Text.ASCIIEncoding.Default.GetString(bytes));
+                bool r = txtReceive.ReadOnly;
+                txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
+                txtReceive.ReadOnly = r;
             }
             catch (Exception ex)
             {
@@ -1299,7 +1386,7 @@ namespace SerialDebug
         {
             if (lab.InvokeRequired)
             {
-                lab.Invoke(new MethodInvoker(delegate
+                lab.BeginInvoke(new MethodInvoker(delegate
                 {
                     SetLableText(lab, text);
                 }));
@@ -1340,12 +1427,12 @@ namespace SerialDebug
                 }
                 else
                 {
-                    txtReceive.SelectionStart = txtReceive.Text.Length;
-                    txtReceive.SelectionLength = 0;
+                    //txtReceive.SelectionStart = txtReceive.Text.Length;
+                    //txtReceive.SelectionLength = 0;
 
                     txtReceive.SelectionColor = color;
                     txtReceive.AppendText(appendText);
-                    txtReceive.ScrollToCaret();
+                    //txtReceive.ScrollToCaret();
                 }
             }
         }
@@ -1391,84 +1478,87 @@ namespace SerialDebug
                     {
                         case SerialStreamType.Receive:
                             RxCounter += (UInt64)content.DataLen;
-                            if (lastUpdateType != SerialStreamType.Receive)
-                            {
-                                TextBoxReceiveAppend(ReceiveColor, content.Content);
-                            }
-                            else
-                            {
-                                rxStrBuff.Append(content.Content);
-                            }
+                            //if (lastUpdateType != SerialStreamType.Receive)
+                            //{
+                            //    TextBoxReceiveAppend(ReceiveColor, content.Content);
+                            //}
+                            //else
+                            //{
+                            //    rxStrBuff.Append(content.Content);
+                            //}
 
-                            //TextBoxReceiveAppend(ReceiveColor, content.Content);
-                            //setLableText(labRx, string.Format("RX:{0}", RxCounter));
+                            TextBoxReceiveAppend(ReceiveColor, content.Content);
+                            setLableText(labRx, string.Format("RX:{0}", RxCounter));
                             break;
                         case SerialStreamType.Send:
                             TxCounter += (UInt64)content.DataLen;
-                            if (lastUpdateType != SerialStreamType.Send)
-                            {
-                                TextBoxReceiveAppend(SendColor, content.Content);
-                            }
-                            else
-                            {
-                                txStrBuff.Append(content.Content);
-                            }
+                            //if (lastUpdateType != SerialStreamType.Send)
+                            //{
+                            //    TextBoxReceiveAppend(SendColor, content.Content);
+                            //}
+                            //else
+                            //{
+                            //    txStrBuff.Append(content.Content);
+                            //}
 
-                            //TextBoxReceiveAppend(SendColor, content.Content);
-                            //setLableText(labTx, string.Format("TX:{0}", TxCounter));
+                            TextBoxReceiveAppend(SendColor, content.Content);
+                            setLableText(labTx, string.Format("TX:{0}", TxCounter));
                             break;
                         default:
                             break;
                     }
                     lastUpdateType = content.Type;
                 }
-
-
-
-                TimeSpan ts = DateTime.Now - lastUpdateTime;
-                if (ts.TotalMilliseconds >= 1000)
-                {
-                    if (rxInc != RxCounter)
-                    {
-                        TextBoxReceiveAppend(ReceiveColor, rxStrBuff.ToString());
-                        rxStrBuff = new StringBuilder();
-
-                        setLableText(labRx, string.Format("RX:{0}", RxCounter));
-                        rxInc = RxCounter;
-                    }
-
-                    if (txInc != TxCounter)
-                    {
-                        TextBoxReceiveAppend(SendColor, txStrBuff.ToString());
-                        txStrBuff = new StringBuilder();
-
-                        setLableText(labTx, string.Format("TX:{0}", TxCounter));
-                        txInc = TxCounter;
-                    }
-                    lastUpdateTime = DateTime.Now;
-                }
                 else
                 {
-                    if (rxInc != RxCounter)
-                    {
-                        TextBoxReceiveAppend(ReceiveColor, rxStrBuff.ToString());
-                        rxStrBuff = new StringBuilder();
-
-                        setLableText(labRx, string.Format("RX:{0}", RxCounter));
-                        rxInc = RxCounter;
-                    }
-
-                    if (txInc != TxCounter)
-                    {
-                        TextBoxReceiveAppend(SendColor, txStrBuff.ToString());
-                        txStrBuff = new StringBuilder();
-
-                        setLableText(labTx, string.Format("TX:{0}", TxCounter));
-                        txInc = TxCounter;
-                    }
-
-                    Thread.Sleep(100);
+                    Thread.Sleep(10);
                 }
+
+
+                //TimeSpan ts = DateTime.Now - lastUpdateTime;
+                //if (ts.TotalMilliseconds >= 1000)
+                //{
+                //    if (rxInc != RxCounter)
+                //    {
+                //        TextBoxReceiveAppend(ReceiveColor, rxStrBuff.ToString());
+                //        rxStrBuff = new StringBuilder();
+
+                //        setLableText(labRx, string.Format("RX:{0}", RxCounter));
+                //        rxInc = RxCounter;
+                //    }
+
+                //    if (txInc != TxCounter)
+                //    {
+                //        TextBoxReceiveAppend(SendColor, txStrBuff.ToString());
+                //        txStrBuff = new StringBuilder();
+
+                //        setLableText(labTx, string.Format("TX:{0}", TxCounter));
+                //        txInc = TxCounter;
+                //    }
+                //    lastUpdateTime = DateTime.Now;
+                //}
+                //else
+                //{
+                //    if (rxInc != RxCounter)
+                //    {
+                //        TextBoxReceiveAppend(ReceiveColor, rxStrBuff.ToString());
+                //        rxStrBuff = new StringBuilder();
+
+                //        setLableText(labRx, string.Format("RX:{0}", RxCounter));
+                //        rxInc = RxCounter;
+                //    }
+
+                //    if (txInc != TxCounter)
+                //    {
+                //        TextBoxReceiveAppend(SendColor, txStrBuff.ToString());
+                //        txStrBuff = new StringBuilder();
+
+                //        setLableText(labTx, string.Format("TX:{0}", TxCounter));
+                //        txInc = TxCounter;
+                //    }
+
+                //    Thread.Sleep(100);
+                //}
             }
 
             lock (dataDispQueue)
@@ -1611,16 +1701,17 @@ namespace SerialDebug
                     }
 
 
-                    ISendForm sendForm = (ISendForm)frmNormalSend;
+                    CurrentSendForm = (ISendForm)frmNormalSend;
                     switch (sendModeType)
                     {
                         case SendModeType.Normal:
-                            sendForm = (ISendForm)frmNormalSend;
+                            CurrentSendForm = (ISendForm)frmNormalSend;
                             break;
                         case SendModeType.Queue:
-                            sendForm = (ISendForm)frmQSend;
+                            CurrentSendForm = (ISendForm)frmQSend;
                             break;
                         case SendModeType.File:
+                            CurrentSendForm = (ISendForm)frmFileSend;
                             IsShowDataStreamInFileMode = frmFileSend.ShowDataStream;
                             frmFileSend.Start();
                             break;
@@ -1628,7 +1719,7 @@ namespace SerialDebug
 
                     if (sendModeType != SendModeType.File)
                     {
-                        List<CSendParam> list = sendForm.getSendList();
+                        List<CSendParam> list = CurrentSendForm.GetSendList();
                         if (list.Count <= 0)
                         {
                             MessageBox.Show("没有任何可发送的数据", "发送数据", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -1637,7 +1728,8 @@ namespace SerialDebug
                         else
                         {
                             SetSendEnable(true);
-                            sp.Send(list, sendForm.LoopCount);
+                            sp.Send(list, CurrentSendForm.LoopCount);
+                            
                         }
 
                     }
@@ -1681,39 +1773,50 @@ namespace SerialDebug
         {
             if (this.InvokeRequired)
             {
-                this.Invoke(new MethodInvoker(delegate()
+                this.BeginInvoke(new MethodInvoker(delegate()
                 {
                     SetSendEnable(IsEnable);
                 }));
                 //return;
             }
-
-            if (IsEnable == true)
-            {
-
-                if (btnSend.Text != "停止发送")
-                {
-                    btnSend.Text = "停止发送";
-
-                    radSendModeNormal.Enabled = false;
-                    radSendModeQueue.Enabled = false;
-                    radSendModeFile.Enabled = false;
-                }
-
-            }
             else
             {
-
-                if (btnSend.Text != "开始发送")
+                if (IsEnable == true)
                 {
-                    btnSend.Text = "开始发送";
 
-                    radSendModeNormal.Enabled = true;
-                    radSendModeQueue.Enabled = true;
-                    radSendModeFile.Enabled = true;
+                    if (btnSend.Text != "停止发送")
+                    {
+                        btnSend.Text = "停止发送";
+
+                        radSendModeNormal.Enabled = false;
+                        radSendModeQueue.Enabled = false;
+                        radSendModeFile.Enabled = false;
+                        if (CurrentSendForm != null)
+                        {
+                            CurrentSendForm.EditEnable = false;
+                        }
+                    }
+
                 }
+                else
+                {
 
+                    if (btnSend.Text != "开始发送")
+                    {
+                        btnSend.Text = "开始发送";
+
+                        radSendModeNormal.Enabled = true;
+                        radSendModeQueue.Enabled = true;
+                        radSendModeFile.Enabled = true;
+                        if (CurrentSendForm != null)
+                        {
+                            CurrentSendForm.EditEnable = true;
+                        }
+                    }
+
+                }
             }
+            
 
         }
 
@@ -2121,9 +2224,10 @@ namespace SerialDebug
             {
                 serialPort.Write(new byte[] { (byte)e.KeyChar }, 0, 1);
             }
-            if (chkHTShowback.Checked == false)
+            if (chkHTCharEcho.Checked )
             {
-                e.Handled = true;
+                //e.Handled = true;
+                txtReceive.AppendText(Char.ToString(e.KeyChar));
             }
         }
 
@@ -2405,12 +2509,6 @@ namespace SerialDebug
             Properties.Settings.Default.sendModeIndex = (int)type;
             Properties.Settings.Default.Save();
         }
-
-
-
-
-
-
 
 
     }

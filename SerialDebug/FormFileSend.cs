@@ -24,7 +24,7 @@ namespace SerialDebug
 
 
 
-    public partial class FormFileSend : Form
+    public partial class FormFileSend : Form,ISendForm
     {
 
         private readonly int ReTryMax = 10;
@@ -629,6 +629,29 @@ namespace SerialDebug
 
 
 
+        #region ISendForm ≥…‘±
 
+        public List<CSendParam> GetSendList()
+        {
+            return null;
+        }
+
+        public int LoopCount
+        {
+            get { return 0; }
+        }
+
+        public bool EditEnable
+        {
+            get
+            {
+                return this.Enabled;
+            }
+            set
+            {
+                this.Enabled = value;
+            }
+        }
+        #endregion
     }
 }

@@ -62,6 +62,9 @@
             this.ToolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStringToHex = new System.Windows.Forms.ToolStripMenuItem();
             this.menuHexToString = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.menumBinaryToHex = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuHexToBinary = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.menuHexToDec = new System.Windows.Forms.ToolStripMenuItem();
             this.menuDecToHex = new System.Windows.Forms.ToolStripMenuItem();
@@ -108,7 +111,7 @@
             this.txtEofChars = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
             this.chkSendByEnter = new System.Windows.Forms.CheckBox();
-            this.chkHTShowback = new System.Windows.Forms.CheckBox();
+            this.chkHTCharEcho = new System.Windows.Forms.CheckBox();
             this.labClearReceive = new System.Windows.Forms.LinkLabel();
             this.Label8 = new System.Windows.Forms.Label();
             this.lnkSaveData = new System.Windows.Forms.LinkLabel();
@@ -271,14 +274,16 @@
             "38400",
             "56000",
             "57600",
-            "128000",
             "115200",
-            "256000"});
+            "128000",
+            "256000",
+            "460800",
+            "921600"});
             this.cbBaudRate.Location = new System.Drawing.Point(53, 38);
             this.cbBaudRate.Name = "cbBaudRate";
             this.cbBaudRate.Size = new System.Drawing.Size(102, 20);
             this.cbBaudRate.TabIndex = 1;
-            this.cbBaudRate.Text = "9600";
+            this.cbBaudRate.Text = "115200";
             this.cbBaudRate.SelectedIndexChanged += new System.EventHandler(this.cbBaudRate_SelectedIndexChanged);
             // 
             // cbComName
@@ -383,6 +388,9 @@
             this.ToolStripMenuItem3,
             this.menuStringToHex,
             this.menuHexToString,
+            this.toolStripSeparator1,
+            this.menumBinaryToHex,
+            this.menuHexToBinary,
             this.ToolStripMenuItem4,
             this.menuHexToDec,
             this.menuDecToHex,
@@ -390,7 +398,7 @@
             this.menuStringToDec,
             this.menuDecToString});
             this.cmenuStrip.Name = "ContextMenuStrip1";
-            this.cmenuStrip.Size = new System.Drawing.Size(197, 298);
+            this.cmenuStrip.Size = new System.Drawing.Size(197, 348);
             this.cmenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.cmenuStrip_Closed);
             this.cmenuStrip.Opened += new System.EventHandler(this.cmenuStrip_Opened);
             // 
@@ -470,6 +478,25 @@
             this.menuHexToString.Size = new System.Drawing.Size(196, 22);
             this.menuHexToString.Text = "十六进制数组转字符串";
             this.menuHexToString.Click += new System.EventHandler(this.menuHexToString_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(193, 6);
+            // 
+            // menumBinaryToHex
+            // 
+            this.menumBinaryToHex.Name = "menumBinaryToHex";
+            this.menumBinaryToHex.Size = new System.Drawing.Size(196, 22);
+            this.menumBinaryToHex.Text = "二进制转十六进制";
+            this.menumBinaryToHex.Click += new System.EventHandler(this.menuBinaryToHex_Click);
+            // 
+            // menuHexToBinary
+            // 
+            this.menuHexToBinary.Name = "menuHexToBinary";
+            this.menuHexToBinary.Size = new System.Drawing.Size(196, 22);
+            this.menuHexToBinary.Text = "十六进制转二进制";
+            this.menuHexToBinary.Click += new System.EventHandler(this.menuHexToBinary_Click);
             // 
             // ToolStripMenuItem4
             // 
@@ -921,7 +948,7 @@
             this.groupHyperTerminal.Controls.Add(this.txtEofChars);
             this.groupHyperTerminal.Controls.Add(this.label14);
             this.groupHyperTerminal.Controls.Add(this.chkSendByEnter);
-            this.groupHyperTerminal.Controls.Add(this.chkHTShowback);
+            this.groupHyperTerminal.Controls.Add(this.chkHTCharEcho);
             this.groupHyperTerminal.Location = new System.Drawing.Point(332, 45);
             this.groupHyperTerminal.Name = "groupHyperTerminal";
             this.groupHyperTerminal.Size = new System.Drawing.Size(161, 223);
@@ -986,18 +1013,18 @@
             this.chkSendByEnter.Text = "输入回车发送";
             this.chkSendByEnter.UseVisualStyleBackColor = true;
             // 
-            // chkHTShowback
+            // chkHTCharEcho
             // 
-            this.chkHTShowback.AutoSize = true;
-            this.chkHTShowback.Checked = true;
-            this.chkHTShowback.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkHTShowback.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkHTShowback.Location = new System.Drawing.Point(15, 77);
-            this.chkHTShowback.Name = "chkHTShowback";
-            this.chkHTShowback.Size = new System.Drawing.Size(78, 17);
-            this.chkHTShowback.TabIndex = 27;
-            this.chkHTShowback.Text = "字符回显";
-            this.chkHTShowback.UseVisualStyleBackColor = true;
+            this.chkHTCharEcho.AutoSize = true;
+            this.chkHTCharEcho.Checked = true;
+            this.chkHTCharEcho.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkHTCharEcho.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkHTCharEcho.Location = new System.Drawing.Point(15, 77);
+            this.chkHTCharEcho.Name = "chkHTCharEcho";
+            this.chkHTCharEcho.Size = new System.Drawing.Size(78, 17);
+            this.chkHTCharEcho.TabIndex = 27;
+            this.chkHTCharEcho.Text = "字符回显";
+            this.chkHTCharEcho.UseVisualStyleBackColor = true;
             // 
             // labClearReceive
             // 
@@ -1215,7 +1242,6 @@
         internal System.Windows.Forms.ToolStripMenuItem menuStringToHex;
         internal System.Windows.Forms.ToolStripMenuItem menuHexToString;
         internal System.Windows.Forms.ToolStripSeparator ToolStripMenuItem4;
-        internal System.Windows.Forms.ToolStripMenuItem menuHexToDec;
         internal System.Windows.Forms.ToolStripMenuItem menuDecToHex;
         internal System.Windows.Forms.ToolTip ToolTip;
         internal System.Windows.Forms.SaveFileDialog sFileDlg;
@@ -1241,7 +1267,7 @@
         private System.Windows.Forms.CheckBox chkRTS;
         private System.Windows.Forms.CheckBox chkDTR;
         private System.Windows.Forms.GroupBox groupHyperTerminal;
-        internal System.Windows.Forms.CheckBox chkHTShowback;
+        internal System.Windows.Forms.CheckBox chkHTCharEcho;
         internal System.Windows.Forms.CheckBox chkSendByEnter;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox txtEofChars;
@@ -1262,6 +1288,10 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.PictureBox picReloadConfig;
         private System.Windows.Forms.PictureBox picSetFont;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem menumBinaryToHex;
+        private System.Windows.Forms.ToolStripMenuItem menuHexToBinary;
+        internal System.Windows.Forms.ToolStripMenuItem menuHexToDec;
 
     }
 }

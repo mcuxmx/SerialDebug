@@ -402,7 +402,7 @@ namespace SerialDebug
 
         #region ISendForm ≥…‘±
 
-        public List<CSendParam> getSendList()
+        public List<CSendParam> GetSendList()
         {
             List<CSendParam> list = new List<CSendParam>();
             foreach (DataGridViewRow row in dgvSendList.Rows)
@@ -429,6 +429,24 @@ namespace SerialDebug
         public int LoopCount
         {
             get { return 1; }
+        }
+
+        private bool _EditEnable = true;
+        public bool EditEnable
+        {
+            get
+            {
+                return _EditEnable;
+            }
+            set
+            {
+                _EditEnable = value;
+                //btnAddSendList.Enabled = value;
+                //btnDeleteSendList.Enabled = value;
+                //btnSetupSendList.Enabled = value;
+                //btnSetdownSendList.Enabled = value;
+                this.Enabled = value;
+            }
         }
 
         #endregion

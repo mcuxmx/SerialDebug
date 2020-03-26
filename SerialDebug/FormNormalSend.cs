@@ -149,7 +149,7 @@ namespace SerialDebug
 
         #region ISendForm ≥…‘±
 
-        public List<CSendParam> getSendList()
+        public List<CSendParam> GetSendList()
         {
             try
             {
@@ -231,6 +231,19 @@ namespace SerialDebug
                     return 1;
                 }
 
+            }
+        }
+
+        public bool EditEnable
+        {
+            get
+            {
+                return this.Enabled;
+                //return txtSend.ReadOnly;
+            }
+            set
+            {
+                this.Enabled = value;
             }
         }
 
@@ -351,6 +364,9 @@ namespace SerialDebug
             //txtSend.Font = Properties.Settings.Default.receiveFont;
         }
 
-         
+
+
+
+        
     }
 }
