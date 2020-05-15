@@ -50,7 +50,7 @@ namespace SerialDebug
                 case SendParamFormat.Hex:
 
                     string inputText = Regex.Replace(_Data, @"[0-9A-Fa-f]{2}", "$0 ");
-                    string[] strArray = inputText.Split(new string[] { ",", " ", "0x", ",0X", "£¬", "(", ")" }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] strArray = inputText.Split(new string[] { ",", " ", "0x", ",0X", "£¬", "(", ")","\r","\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 
                     StringBuilder sbOut = new StringBuilder();

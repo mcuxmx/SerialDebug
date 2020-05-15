@@ -66,7 +66,7 @@ namespace SerialDebug
         {
             if (serialPort.IsOpen == false)
             {
-                if (Properties.Settings.Default.comPort!=string.Empty)
+                if (Properties.Settings.Default.comPort != string.Empty)
                 {
                     cbComName.Text = Properties.Settings.Default.comPort;
                 }
@@ -207,7 +207,7 @@ namespace SerialDebug
             cbComName.DataSource = SerialPort.GetPortNames();
             cbStreamControl.SelectedIndex = 0;
             serialPort.RtsEnable = chkRTS.Checked;
-            
+
             Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             //this.Text = string.Format("{0} V{1}    作者：启岩  QQ：516409354", Application.ProductName, Version);
             this.Text = string.Format("{0} V{1}", Application.ProductName, Version);
@@ -349,7 +349,7 @@ namespace SerialDebug
                     //serialPort.PortName = cbComName.SelectedItem.ToString();
                     Regex reg = new Regex(@"COM\d+");
                     Match matchs = reg.Match(cbComName.Text);
-                    if (matchs != null && matchs.Groups[0].ToString()!=string.Empty)
+                    if (matchs != null && matchs.Groups[0].ToString() != string.Empty)
                     {
                         serialPort.PortName = matchs.Groups[0].ToString();
                     }
@@ -595,7 +595,7 @@ namespace SerialDebug
             }
             cbComName.DropDownWidth = iMax;
             cbComName.DataSource = portList;
-            
+
         }
 
         private void cbComName_DropDownClosed(object sender, EventArgs e)
@@ -768,7 +768,7 @@ namespace SerialDebug
                 byte[] bytes = System.Text.ASCIIEncoding.Default.GetBytes(txtBoxMenu.SelectedText);
                 // txtBoxMenu.Paste(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
                 Clipboard.SetText(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
-                bool r= txtReceive.ReadOnly;
+                bool r = txtReceive.ReadOnly;
                 txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
                 txtReceive.ReadOnly = r;
@@ -855,7 +855,7 @@ namespace SerialDebug
                 StringBuilder sb = new StringBuilder();
                 foreach (byte b in bytes)
                 {
-                    string s= Convert.ToString(b, 2).PadLeft(8, '0');
+                    string s = Convert.ToString(b, 2).PadLeft(8, '0');
                     sb.Append(s);
                     sb.Append(" ");
                 }
@@ -1427,12 +1427,12 @@ namespace SerialDebug
                 }
                 else
                 {
-                    //txtReceive.SelectionStart = txtReceive.Text.Length;
+                    txtReceive.SelectionStart = txtReceive.Text.Length;
                     //txtReceive.SelectionLength = 0;
 
                     txtReceive.SelectionColor = color;
                     txtReceive.AppendText(appendText);
-                    //txtReceive.ScrollToCaret();
+                    txtReceive.ScrollToCaret();
                 }
             }
         }
@@ -1450,6 +1450,28 @@ namespace SerialDebug
             }
         }
 
+
+        private void DisplayContent(SerialStreamType type, string text)
+        {
+
+            //上次为发送数据
+            if (text != "")
+            {
+                switch (type)
+                {
+                    case SerialStreamType.Receive:
+                        TextBoxReceiveAppend(ReceiveColor, text.ToString());
+                        setLableText(labRx, string.Format("RX:{0}", RxCounter));
+                        break;
+                    case SerialStreamType.Send:
+                        TextBoxReceiveAppend(SendColor, text.ToString());
+                        setLableText(labTx, string.Format("TX:{0}", TxCounter));
+                        break;
+                }
+
+            }
+
+        }
 
         private void dataDispThreadHandler()
         {
@@ -1477,32 +1499,30 @@ namespace SerialDebug
                     switch (content.Type)
                     {
                         case SerialStreamType.Receive:
-                            RxCounter += (UInt64)content.DataLen;
-                            //if (lastUpdateType != SerialStreamType.Receive)
-                            //{
-                            //    TextBoxReceiveAppend(ReceiveColor, content.Content);
-                            //}
-                            //else
-                            //{
-                            //    rxStrBuff.Append(content.Content);
-                            //}
 
-                            TextBoxReceiveAppend(ReceiveColor, content.Content);
-                            setLableText(labRx, string.Format("RX:{0}", RxCounter));
+                            if (lastUpdateType != SerialStreamType.Receive)
+                            {
+                                DisplayContent(lastUpdateType, txStrBuff.ToString());
+                                txStrBuff.Remove(0, txStrBuff.Length);
+                            }
+
+                            RxCounter += (UInt64)content.DataLen;
+                            lastUpdateType = content.Type;
+                            rxStrBuff.Append(content.Content);
+
                             break;
                         case SerialStreamType.Send:
-                            TxCounter += (UInt64)content.DataLen;
-                            //if (lastUpdateType != SerialStreamType.Send)
-                            //{
-                            //    TextBoxReceiveAppend(SendColor, content.Content);
-                            //}
-                            //else
-                            //{
-                            //    txStrBuff.Append(content.Content);
-                            //}
 
-                            TextBoxReceiveAppend(SendColor, content.Content);
-                            setLableText(labTx, string.Format("TX:{0}", TxCounter));
+                            if (lastUpdateType != SerialStreamType.Send)
+                            {
+                                DisplayContent(lastUpdateType, rxStrBuff.ToString());
+                                rxStrBuff.Remove(0, rxStrBuff.Length);
+                            }
+
+                            TxCounter += (UInt64)content.DataLen;
+                            lastUpdateType = content.Type;
+                            txStrBuff.Append(content.Content);
+
                             break;
                         default:
                             break;
@@ -1511,6 +1531,17 @@ namespace SerialDebug
                 }
                 else
                 {
+                    if (rxStrBuff.Length > 0)
+                    {
+                        DisplayContent(lastUpdateType, rxStrBuff.ToString());
+                        rxStrBuff.Remove(0, rxStrBuff.Length);
+                    }
+
+                    if (txStrBuff.Length > 0)
+                    {
+                        DisplayContent(lastUpdateType, txStrBuff.ToString());
+                        txStrBuff.Remove(0, txStrBuff.Length);
+                    }
                     Thread.Sleep(10);
                 }
 
@@ -1729,7 +1760,7 @@ namespace SerialDebug
                         {
                             SetSendEnable(true);
                             sp.Send(list, CurrentSendForm.LoopCount);
-                            
+
                         }
 
                     }
@@ -1816,7 +1847,7 @@ namespace SerialDebug
 
                 }
             }
-            
+
 
         }
 
@@ -2224,7 +2255,7 @@ namespace SerialDebug
             {
                 serialPort.Write(new byte[] { (byte)e.KeyChar }, 0, 1);
             }
-            if (chkHTCharEcho.Checked )
+            if (chkHTCharEcho.Checked)
             {
                 //e.Handled = true;
                 txtReceive.AppendText(Char.ToString(e.KeyChar));

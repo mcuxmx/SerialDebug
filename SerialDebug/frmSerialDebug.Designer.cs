@@ -798,7 +798,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtReceive.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.txtReceive.Location = new System.Drawing.Point(5, 20);
-            this.txtReceive.MaxLength = 0;
+            this.txtReceive.MaxLength = 1048576;
             this.txtReceive.Name = "txtReceive";
             this.txtReceive.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
             this.txtReceive.Size = new System.Drawing.Size(528, 275);
