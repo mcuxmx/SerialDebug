@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using XMX.FileTransmit;
 using System.Reflection;
+using XMX.LIB;
 
 
 namespace SerialDebug
@@ -272,10 +273,40 @@ namespace SerialDebug
 
             splitPercent = (double)splitContainer1.SplitterDistance / splitContainer1.Height;
 
+
+            string encodingName = Properties.Settings.Default.Encoding;
+
+            cbCharacterEncoding.DataSource = System.Text.Encoding.GetEncodings();
+            cbCharacterEncoding.DisplayMember = "DisplayName";
+            cbCharacterEncoding.ValueMember = "Name";
+
+            if (encodingName == string.Empty)
+            {
+                encodingName = System.Text.Encoding.Default.BodyName;
+            }
+            SelectEncoding(encodingName);
+
         }
 
-
-
+        
+        private void SelectEncoding(string encodingName)
+        {
+            foreach (EncodingInfo e in cbCharacterEncoding.Items)
+            {
+                if (e.Name == encodingName)
+                {
+                    cbCharacterEncoding.SelectedItem = e;
+                    Global.Encode = System.Text.Encoding.GetEncoding(encodingName);
+                    if (encodingName != Properties.Settings.Default.Encoding)
+                    {
+                        Properties.Settings.Default.Encoding = encodingName;
+                        Properties.Settings.Default.Save();
+                    }
+                    
+                    break;
+                }
+            }
+        }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -765,9 +796,11 @@ namespace SerialDebug
         {
             try
             {
-                byte[] bytes = System.Text.ASCIIEncoding.Default.GetBytes(txtBoxMenu.SelectedText);
-                // txtBoxMenu.Paste(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
-                Clipboard.SetText(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
+
+                byte[] arr = StreamConverter.AsciiStringToArray(Global.Encode, txtBoxMenu.SelectedText);
+                string str = StreamConverter.ArrayToHexString(arr);
+
+                Clipboard.SetText(str);
                 bool r = txtReceive.ReadOnly;
                 txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
@@ -788,12 +821,10 @@ namespace SerialDebug
         {
             try
             {
-                //string[] strArray = txtBoxMenu.SelectedText.TrimEnd().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                string[] strArray = txtBoxMenu.SelectedText.TrimEnd(new char[] { '\r', '\n', ' ' }).Replace(Environment.NewLine, " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                byte[] arr = StreamConverter.HexStringToArray(txtBoxMenu.SelectedText);
+                string str = StreamConverter.ArrayToAsciiString(Global.Encode, arr);
 
-                byte[] bytes = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(HexStringToByte));
-                // txtBoxMenu.Paste(System.Text.ASCIIEncoding.Default.GetString(bytes));
-                Clipboard.SetText(System.Text.ASCIIEncoding.Default.GetString(bytes));
+                Clipboard.SetText(str);
                 bool r = txtReceive.ReadOnly;
                 txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
@@ -805,32 +836,20 @@ namespace SerialDebug
             }
         }
 
+        /// <summary>
+        /// 二进制转十六进制
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void menuBinaryToHex_Click(object sender, EventArgs e)
         {
 
             try
             {
+                byte[] arr = StreamConverter.BinaryStringToArray(txtBoxMenu.SelectedText);
+                string str = StreamConverter.ArrayToHexString(arr);
+                Clipboard.SetText(str);
 
-                StringBuilder sb = new StringBuilder();
-                string binString = txtBoxMenu.SelectedText.Replace(" ", "");
-                int i;
-                for (i = 0; i < binString.Length; i += 8)
-                {
-                    int len = 8;
-                    if (i + 8 <= binString.Length)
-                    {
-                        len = 8;
-                    }
-                    else
-                    {
-                        len = binString.Length - i;
-                    }
-                    byte b = Convert.ToByte(binString.Substring(i, len), 2);
-                    sb.AppendFormat("{0:X2} ", b);
-                }
-                Clipboard.SetText(sb.ToString().TrimEnd(new char[] { ' ' }));
-
-                //Clipboard.SetText(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
                 bool r = txtReceive.ReadOnly;
                 txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
@@ -842,25 +861,20 @@ namespace SerialDebug
             }
         }
 
+        /// <summary>
+        /// 十六进制转二进制
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void menuHexToBinary_Click(object sender, EventArgs e)
         {
 
             try
             {
-                //string[] strArray = txtBoxMenu.SelectedText.TrimEnd().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                string[] strArray = txtBoxMenu.SelectedText.TrimEnd(new char[] { '\r', '\n', ' ' }).Replace(Environment.NewLine, " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                byte[] arr = StreamConverter.HexStringToArray(txtBoxMenu.SelectedText);
+                string str = StreamConverter.ArrayToBinaryString(arr);
 
-                byte[] bytes = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(HexStringToByte));
-
-                StringBuilder sb = new StringBuilder();
-                foreach (byte b in bytes)
-                {
-                    string s = Convert.ToString(b, 2).PadLeft(8, '0');
-                    sb.Append(s);
-                    sb.Append(" ");
-                }
-
-                Clipboard.SetText(sb.ToString().TrimEnd(new char[] { ' ' }));
+                Clipboard.SetText(str);
 
                 bool r = txtReceive.ReadOnly;
                 txtReceive.ReadOnly = false;
@@ -882,15 +896,11 @@ namespace SerialDebug
         {
             try
             {
-                string[] strArray = txtBoxMenu.SelectedText.TrimEnd().Replace(Environment.NewLine, " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                StringBuilder sb = new StringBuilder(strArray.Length);
-                foreach (string str in strArray)
-                {
-                    sb.Append(Convert.ToByte(str, 16).ToString() + " ");
-                }
-                //txtBoxMenu.Paste(sb.ToString().TrimEnd());
+                byte[] arr = StreamConverter.HexStringToArray(txtBoxMenu.SelectedText);
+                string str = StreamConverter.ArrayToString(arr, 10);
 
-                Clipboard.SetText(sb.ToString().TrimEnd());
+                Clipboard.SetText(str);
+
                 bool r = txtReceive.ReadOnly;
                 txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
@@ -912,10 +922,11 @@ namespace SerialDebug
         {
             try
             {
-                string[] strArray = txtBoxMenu.SelectedText.TrimEnd().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                byte[] bytes = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(DecStringToByte));
-                //txtBoxMenu.Paste(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
-                Clipboard.SetText(BitConverter.ToString(bytes).Replace('-', ' ').TrimEnd());
+                byte[] arr = StreamConverter.DecimalStringToArray(txtBoxMenu.SelectedText);
+                string str = StreamConverter.ArrayToString(arr, 16);
+
+                Clipboard.SetText(str);
+
                 bool r = txtReceive.ReadOnly;
                 txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
@@ -936,14 +947,11 @@ namespace SerialDebug
         {
             try
             {
-                byte[] bytes = System.Text.ASCIIEncoding.Default.GetBytes(txtBoxMenu.SelectedText);
-                StringBuilder sb = new StringBuilder(bytes.Length * 2);
-                foreach (byte mbyte in bytes)
-                {
-                    sb.Append(mbyte.ToString() + " ");
-                }
-                //txtBoxMenu.Paste(sb.ToString().TrimEnd());
-                Clipboard.SetText(sb.ToString().TrimEnd());
+                byte[] arr = StreamConverter.AsciiStringToArray(Global.Encode, txtBoxMenu.SelectedText);
+                string str = StreamConverter.ArrayToString(arr, 10);
+
+                Clipboard.SetText(str);
+
                 bool r = txtReceive.ReadOnly;
                 txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
@@ -964,11 +972,16 @@ namespace SerialDebug
         {
             try
             {
-                string[] strArray = txtBoxMenu.SelectedText.TrimEnd().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                byte[] bytes = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(DecStringToByte));
-                //txtBoxMenu.Paste(System.Text.ASCIIEncoding.Default.GetString(bytes));
+                byte[] arr = StreamConverter.DecimalStringToArray(txtBoxMenu.SelectedText);
+                List<byte> l = new List<byte>();
+                foreach (int v in arr)
+                {
+                    l.Add(Convert.ToByte(v & 0xFF));
+                }
+                string str = StreamConverter.ArrayToAsciiString(Global.Encode, l.ToArray());
 
-                Clipboard.SetText(System.Text.ASCIIEncoding.Default.GetString(bytes));
+                Clipboard.SetText(str);
+
                 bool r = txtReceive.ReadOnly;
                 txtReceive.ReadOnly = false;
                 txtBoxMenu.Paste();
@@ -2539,6 +2552,15 @@ namespace SerialDebug
 
             Properties.Settings.Default.sendModeIndex = (int)type;
             Properties.Settings.Default.Save();
+        }
+
+        private void cbCharacterEncoding_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbCharacterEncoding.SelectedItem != null)
+            {
+                string EncodingName = (cbCharacterEncoding.SelectedItem as EncodingInfo).Name;
+                SelectEncoding(EncodingName);
+            }
         }
 
 

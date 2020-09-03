@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using XMX.LIB;
 
 namespace SerialDebug
 {
@@ -13,7 +14,7 @@ namespace SerialDebug
         private readonly string _Data;
         private readonly byte[] _DataBytes = null;
 
-        public CSendParam(SendParamFormat format, SendParamMode mode, int delayTime, byte[] data, int startIndex, int count)
+        public CSendParam(  SendParamFormat format, SendParamMode mode, int delayTime, byte[] data, int startIndex, int count)
         {
             _Format = format;
             _Mode = mode;
@@ -26,16 +27,16 @@ namespace SerialDebug
 
                 if (Format == SendParamFormat.Hex)
                 {
-                    _Data = BitConverter.ToString(_DataBytes).Replace('-', ' ').TrimEnd(new char[] { ' ' });
+                    _Data = StreamConverter.ArrayToHexString(data, startIndex, count);
                 }
                 else
                 {
-                    _Data = System.Text.ASCIIEncoding.Default.GetString(_DataBytes);
+                    _Data = StreamConverter.ArrayToAsciiString(Global.Encode, _DataBytes, startIndex, count);
                 }
             }
         }
 
-        public CSendParam(SendParamFormat format, SendParamMode mode, int delayTime, string data)
+        public CSendParam( SendParamFormat format, SendParamMode mode, int delayTime, string data)
         {
             _Format = format;
             _Mode = mode;
@@ -45,24 +46,10 @@ namespace SerialDebug
             switch (_Format)
             {
                 case SendParamFormat.ASCII:
-                    _DataBytes = System.Text.ASCIIEncoding.Default.GetBytes(_Data);
+                    _DataBytes= StreamConverter.AsciiStringToArray(Global.Encode, data);
                     break;
                 case SendParamFormat.Hex:
-
-                    string inputText = Regex.Replace(_Data, @"[0-9A-Fa-f]{2}", "$0 ");
-                    string[] strArray = inputText.Split(new string[] { ",", " ", "0x", ",0X", "£¬", "(", ")","\r","\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-
-                    StringBuilder sbOut = new StringBuilder();
-                    foreach (string s in strArray)
-                    {
-                        sbOut.AppendFormat("{0:X2} ", Convert.ToByte(s, 16));
-                    }
-                    _Data = sbOut.ToString().TrimEnd(' ');
-
-
-                    _DataBytes = Array.ConvertAll<string, byte>(strArray, new Converter<string, byte>(HexStringToByte));
-
+                    _DataBytes = StreamConverter.HexStringToArray(data);
                     break;
                 default:
                     break;
@@ -121,27 +108,23 @@ namespace SerialDebug
         {
             get
             {
-                return string.Format("{0} ", BitConverter.ToString(_DataBytes).Replace('-', ' '));
+                return StreamConverter.ArrayToHexString(_DataBytes);
             }
         }
 
         public string ASCIIString
         {
-            get { return System.Text.ASCIIEncoding.Default.GetString(_DataBytes); }
+            get 
+            {
+                return StreamConverter.ArrayToAsciiString(Global.Encode, _DataBytes);
+            }
         }
 
         public string DecString
         {
             get
             {
-                StringBuilder sb = new StringBuilder();
-
-                foreach (byte b in _DataBytes)
-                {
-                    sb.AppendFormat("{0} ", Convert.ToInt32(b));
-                }
-
-                return sb.ToString();
+                return StreamConverter.ArrayToDecimalString(_DataBytes);
             }
 
         }

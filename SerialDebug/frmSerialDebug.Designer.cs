@@ -85,6 +85,8 @@
             this.chkShowSend = new System.Windows.Forms.CheckBox();
             this.chkTimeStamp = new System.Windows.Forms.CheckBox();
             this.chkWrap = new System.Windows.Forms.CheckBox();
+            this.numReceiveTimeOut = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
             this.groupSend = new System.Windows.Forms.GroupBox();
             this.radSendModeFile = new System.Windows.Forms.RadioButton();
             this.radSendModeQueue = new System.Windows.Forms.RadioButton();
@@ -94,7 +96,6 @@
             this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.picReceiveFont = new System.Windows.Forms.PictureBox();
             this.txtReceive = new System.Windows.Forms.RichTextBox();
-            this.numReceiveTimeOut = new System.Windows.Forms.NumericUpDown();
             this.picSetFont = new System.Windows.Forms.PictureBox();
             this.picReloadConfig = new System.Windows.Forms.PictureBox();
             this.sFileDlg = new System.Windows.Forms.SaveFileDialog();
@@ -105,6 +106,7 @@
             this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
             this.menuSaveHexToBinary = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label9 = new System.Windows.Forms.Label();
             this.groupHyperTerminal = new System.Windows.Forms.GroupBox();
             this.cbHTEOFChars = new System.Windows.Forms.ComboBox();
             this.btnHyperTerminalToNormal = new System.Windows.Forms.Button();
@@ -112,10 +114,10 @@
             this.label14 = new System.Windows.Forms.Label();
             this.chkSendByEnter = new System.Windows.Forms.CheckBox();
             this.chkHTCharEcho = new System.Windows.Forms.CheckBox();
+            this.cbCharacterEncoding = new System.Windows.Forms.ComboBox();
             this.labClearReceive = new System.Windows.Forms.LinkLabel();
             this.Label8 = new System.Windows.Forms.Label();
             this.lnkSaveData = new System.Windows.Forms.LinkLabel();
-            this.label6 = new System.Windows.Forms.Label();
             this.panelNormalSend = new System.Windows.Forms.Panel();
             this.txtSend = new System.Windows.Forms.TextBox();
             this.chkSendThenClear = new System.Windows.Forms.CheckBox();
@@ -128,9 +130,9 @@
             this.cmenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picTop)).BeginInit();
             this.groupReceive.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numReceiveTimeOut)).BeginInit();
             this.groupSend.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picReceiveFont)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numReceiveTimeOut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picSetFont)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picReloadConfig)).BeginInit();
             this.cmenuSave.SuspendLayout();
@@ -539,7 +541,7 @@
             // picTop
             // 
             this.picTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.picTop.Location = new System.Drawing.Point(4, 461);
+            this.picTop.Location = new System.Drawing.Point(4, 540);
             this.picTop.Name = "picTop";
             this.picTop.Size = new System.Drawing.Size(18, 18);
             this.picTop.TabIndex = 38;
@@ -551,7 +553,7 @@
             // 
             this.labTx.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labTx.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.labTx.Location = new System.Drawing.Point(404, 459);
+            this.labTx.Location = new System.Drawing.Point(544, 538);
             this.labTx.Name = "labTx";
             this.labTx.Size = new System.Drawing.Size(88, 20);
             this.labTx.TabIndex = 35;
@@ -565,9 +567,9 @@
             this.labIsSerialOpen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labIsSerialOpen.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.labIsSerialOpen.Location = new System.Drawing.Point(23, 459);
+            this.labIsSerialOpen.Location = new System.Drawing.Point(23, 538);
             this.labIsSerialOpen.Name = "labIsSerialOpen";
-            this.labIsSerialOpen.Size = new System.Drawing.Size(281, 20);
+            this.labIsSerialOpen.Size = new System.Drawing.Size(421, 20);
             this.labIsSerialOpen.TabIndex = 36;
             this.labIsSerialOpen.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -575,7 +577,7 @@
             // 
             this.labRx.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labRx.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.labRx.Location = new System.Drawing.Point(310, 459);
+            this.labRx.Location = new System.Drawing.Point(450, 538);
             this.labRx.Name = "labRx";
             this.labRx.Size = new System.Drawing.Size(88, 20);
             this.labRx.TabIndex = 37;
@@ -589,7 +591,7 @@
             this.btnEnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEnd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnEnd.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnEnd.Location = new System.Drawing.Point(638, 459);
+            this.btnEnd.Location = new System.Drawing.Point(778, 538);
             this.btnEnd.Name = "btnEnd";
             this.btnEnd.Size = new System.Drawing.Size(64, 20);
             this.btnEnd.TabIndex = 33;
@@ -602,7 +604,7 @@
             this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnHelp.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnHelp.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnHelp.Location = new System.Drawing.Point(568, 459);
+            this.btnHelp.Location = new System.Drawing.Point(708, 538);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(64, 20);
             this.btnHelp.TabIndex = 32;
@@ -615,7 +617,7 @@
             this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnClear.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnClear.Location = new System.Drawing.Point(498, 459);
+            this.btnClear.Location = new System.Drawing.Point(638, 538);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(64, 20);
             this.btnClear.TabIndex = 34;
@@ -644,9 +646,11 @@
             this.groupReceive.Controls.Add(this.chkTimeStamp);
             this.groupReceive.Controls.Add(this.chkWrap);
             this.groupReceive.Controls.Add(this.chkShowReceive);
+            this.groupReceive.Controls.Add(this.numReceiveTimeOut);
+            this.groupReceive.Controls.Add(this.label6);
             this.groupReceive.Location = new System.Drawing.Point(2, 215);
             this.groupReceive.Name = "groupReceive";
-            this.groupReceive.Size = new System.Drawing.Size(161, 88);
+            this.groupReceive.Size = new System.Drawing.Size(161, 163);
             this.groupReceive.TabIndex = 40;
             this.groupReceive.TabStop = false;
             this.groupReceive.Text = "接收显示";
@@ -655,7 +659,7 @@
             // 
             this.chkReceiveHex.AutoSize = true;
             this.chkReceiveHex.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkReceiveHex.Location = new System.Drawing.Point(81, 42);
+            this.chkReceiveHex.Location = new System.Drawing.Point(81, 45);
             this.chkReceiveHex.Name = "chkReceiveHex";
             this.chkReceiveHex.Size = new System.Drawing.Size(72, 17);
             this.chkReceiveHex.TabIndex = 6;
@@ -665,7 +669,7 @@
             // btnNormalToHyperTerminal
             // 
             this.btnNormalToHyperTerminal.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnNormalToHyperTerminal.Location = new System.Drawing.Point(81, 62);
+            this.btnNormalToHyperTerminal.Location = new System.Drawing.Point(81, 75);
             this.btnNormalToHyperTerminal.Name = "btnNormalToHyperTerminal";
             this.btnNormalToHyperTerminal.Size = new System.Drawing.Size(69, 24);
             this.btnNormalToHyperTerminal.TabIndex = 40;
@@ -690,7 +694,7 @@
             this.chkTimeStamp.Checked = true;
             this.chkTimeStamp.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkTimeStamp.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkTimeStamp.Location = new System.Drawing.Point(10, 64);
+            this.chkTimeStamp.Location = new System.Drawing.Point(10, 77);
             this.chkTimeStamp.Name = "chkTimeStamp";
             this.chkTimeStamp.Size = new System.Drawing.Size(66, 17);
             this.chkTimeStamp.TabIndex = 26;
@@ -701,12 +705,45 @@
             // 
             this.chkWrap.AutoSize = true;
             this.chkWrap.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkWrap.Location = new System.Drawing.Point(10, 42);
+            this.chkWrap.Location = new System.Drawing.Point(10, 45);
             this.chkWrap.Name = "chkWrap";
             this.chkWrap.Size = new System.Drawing.Size(78, 17);
             this.chkWrap.TabIndex = 26;
             this.chkWrap.Text = "自动换行";
             this.chkWrap.UseVisualStyleBackColor = true;
+            // 
+            // numReceiveTimeOut
+            // 
+            this.numReceiveTimeOut.Location = new System.Drawing.Point(92, 111);
+            this.numReceiveTimeOut.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.numReceiveTimeOut.Minimum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.numReceiveTimeOut.Name = "numReceiveTimeOut";
+            this.numReceiveTimeOut.Size = new System.Drawing.Size(54, 21);
+            this.numReceiveTimeOut.TabIndex = 46;
+            this.ToolTip.SetToolTip(this.numReceiveTimeOut, "该值用于接收数据断帧时间\r\n若接收汉字有乱码可适当调大该值");
+            this.numReceiveTimeOut.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.numReceiveTimeOut.ValueChanged += new System.EventHandler(this.numReceiveTimeOut_ValueChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 115);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(83, 12);
+            this.label6.TabIndex = 47;
+            this.label6.Text = "接收超时ms)：";
             // 
             // groupSend
             // 
@@ -716,7 +753,7 @@
             this.groupSend.Controls.Add(this.radSendModeNormal);
             this.groupSend.Controls.Add(this.btnSend);
             this.groupSend.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.groupSend.Location = new System.Drawing.Point(2, 308);
+            this.groupSend.Location = new System.Drawing.Point(2, 387);
             this.groupSend.Name = "groupSend";
             this.groupSend.Size = new System.Drawing.Size(161, 146);
             this.groupSend.TabIndex = 41;
@@ -781,7 +818,7 @@
             this.picReceiveFont.BackColor = System.Drawing.SystemColors.Control;
             this.picReceiveFont.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picReceiveFont.Image = ((System.Drawing.Image)(resources.GetObject("picReceiveFont.Image")));
-            this.picReceiveFont.Location = new System.Drawing.Point(512, 2);
+            this.picReceiveFont.Location = new System.Drawing.Point(652, 2);
             this.picReceiveFont.Name = "picReceiveFont";
             this.picReceiveFont.Size = new System.Drawing.Size(18, 18);
             this.picReceiveFont.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -801,36 +838,12 @@
             this.txtReceive.MaxLength = 1048576;
             this.txtReceive.Name = "txtReceive";
             this.txtReceive.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-            this.txtReceive.Size = new System.Drawing.Size(528, 275);
+            this.txtReceive.Size = new System.Drawing.Size(668, 327);
             this.txtReceive.TabIndex = 35;
             this.txtReceive.Text = "";
             this.ToolTip.SetToolTip(this.txtReceive, "右键菜单有进制转换功能");
             this.txtReceive.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtReceive_MouseDown);
             this.txtReceive.MouseEnter += new System.EventHandler(this.txtReceive_MouseEnter);
-            // 
-            // numReceiveTimeOut
-            // 
-            this.numReceiveTimeOut.Location = new System.Drawing.Point(370, 2);
-            this.numReceiveTimeOut.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.numReceiveTimeOut.Minimum = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.numReceiveTimeOut.Name = "numReceiveTimeOut";
-            this.numReceiveTimeOut.Size = new System.Drawing.Size(54, 21);
-            this.numReceiveTimeOut.TabIndex = 46;
-            this.ToolTip.SetToolTip(this.numReceiveTimeOut, "该值用于接收数据断帧时间\r\n若接收汉字有乱码可适当调大该值");
-            this.numReceiveTimeOut.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.numReceiveTimeOut.ValueChanged += new System.EventHandler(this.numReceiveTimeOut_ValueChanged);
             // 
             // picSetFont
             // 
@@ -838,7 +851,7 @@
             this.picSetFont.BackColor = System.Drawing.SystemColors.Control;
             this.picSetFont.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picSetFont.Image = ((System.Drawing.Image)(resources.GetObject("picSetFont.Image")));
-            this.picSetFont.Location = new System.Drawing.Point(491, 1);
+            this.picSetFont.Location = new System.Drawing.Point(631, 1);
             this.picSetFont.Name = "picSetFont";
             this.picSetFont.Size = new System.Drawing.Size(18, 18);
             this.picSetFont.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -853,7 +866,7 @@
             this.picReloadConfig.BackColor = System.Drawing.SystemColors.Control;
             this.picReloadConfig.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picReloadConfig.Image = ((System.Drawing.Image)(resources.GetObject("picReloadConfig.Image")));
-            this.picReloadConfig.Location = new System.Drawing.Point(512, 2);
+            this.picReloadConfig.Location = new System.Drawing.Point(652, 2);
             this.picReloadConfig.Name = "picReloadConfig";
             this.picReloadConfig.Size = new System.Drawing.Size(18, 18);
             this.picReloadConfig.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -922,7 +935,9 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.label9);
             this.splitContainer1.Panel1.Controls.Add(this.groupHyperTerminal);
+            this.splitContainer1.Panel1.Controls.Add(this.cbCharacterEncoding);
             this.splitContainer1.Panel1.Controls.Add(this.picSetFont);
             this.splitContainer1.Panel1.Controls.Add(this.picReloadConfig);
             this.splitContainer1.Panel1.Controls.Add(this.picReceiveFont);
@@ -930,16 +945,23 @@
             this.splitContainer1.Panel1.Controls.Add(this.Label8);
             this.splitContainer1.Panel1.Controls.Add(this.txtReceive);
             this.splitContainer1.Panel1.Controls.Add(this.lnkSaveData);
-            this.splitContainer1.Panel1.Controls.Add(this.numReceiveTimeOut);
-            this.splitContainer1.Panel1.Controls.Add(this.label6);
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.panelNormalSend);
-            this.splitContainer1.Size = new System.Drawing.Size(536, 448);
-            this.splitContainer1.SplitterDistance = 300;
+            this.splitContainer1.Size = new System.Drawing.Size(676, 527);
+            this.splitContainer1.SplitterDistance = 352;
             this.splitContainer1.SplitterWidth = 6;
             this.splitContainer1.TabIndex = 42;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(258, 5);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(53, 12);
+            this.label9.TabIndex = 42;
+            this.label9.Text = "字符编码";
             // 
             // groupHyperTerminal
             // 
@@ -1026,6 +1048,17 @@
             this.chkHTCharEcho.Text = "字符回显";
             this.chkHTCharEcho.UseVisualStyleBackColor = true;
             // 
+            // cbCharacterEncoding
+            // 
+            this.cbCharacterEncoding.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cbCharacterEncoding.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cbCharacterEncoding.FormattingEnabled = true;
+            this.cbCharacterEncoding.Location = new System.Drawing.Point(317, 1);
+            this.cbCharacterEncoding.Name = "cbCharacterEncoding";
+            this.cbCharacterEncoding.Size = new System.Drawing.Size(219, 20);
+            this.cbCharacterEncoding.TabIndex = 41;
+            this.cbCharacterEncoding.SelectedIndexChanged += new System.EventHandler(this.cbCharacterEncoding_SelectedIndexChanged);
+            // 
             // labClearReceive
             // 
             this.labClearReceive.AutoSize = true;
@@ -1063,15 +1096,6 @@
             this.lnkSaveData.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkSaveData_LinkClicked);
             this.lnkSaveData.Enter += new System.EventHandler(this.lnkSaveData_Enter);
             // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(261, 4);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(113, 12);
-            this.label6.TabIndex = 47;
-            this.label6.Text = "接收超时时间(ms)：";
-            // 
             // panelNormalSend
             // 
             this.panelNormalSend.Controls.Add(this.txtSend);
@@ -1082,7 +1106,7 @@
             this.panelNormalSend.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelNormalSend.Location = new System.Drawing.Point(0, 0);
             this.panelNormalSend.Name = "panelNormalSend";
-            this.panelNormalSend.Size = new System.Drawing.Size(536, 142);
+            this.panelNormalSend.Size = new System.Drawing.Size(676, 169);
             this.panelNormalSend.TabIndex = 36;
             // 
             // txtSend
@@ -1095,7 +1119,7 @@
             this.txtSend.Multiline = true;
             this.txtSend.Name = "txtSend";
             this.txtSend.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtSend.Size = new System.Drawing.Size(530, 122);
+            this.txtSend.Size = new System.Drawing.Size(670, 149);
             this.txtSend.TabIndex = 32;
             this.txtSend.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSend_KeyDown);
             this.txtSend.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSend_KeyPress);
@@ -1107,7 +1131,7 @@
             this.chkSendThenClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkSendThenClear.AutoSize = true;
             this.chkSendThenClear.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkSendThenClear.Location = new System.Drawing.Point(443, 0);
+            this.chkSendThenClear.Location = new System.Drawing.Point(583, 0);
             this.chkSendThenClear.Name = "chkSendThenClear";
             this.chkSendThenClear.Size = new System.Drawing.Size(90, 17);
             this.chkSendThenClear.TabIndex = 8;
@@ -1152,7 +1176,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 482);
+            this.ClientSize = new System.Drawing.Size(844, 561);
             this.Controls.Add(this.groupSend);
             this.Controls.Add(this.picTop);
             this.Controls.Add(this.labIsSerialOpen);
@@ -1165,7 +1189,7 @@
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.groupBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(720, 520);
+            this.MinimumSize = new System.Drawing.Size(768, 500);
             this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
@@ -1178,10 +1202,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.picTop)).EndInit();
             this.groupReceive.ResumeLayout(false);
             this.groupReceive.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numReceiveTimeOut)).EndInit();
             this.groupSend.ResumeLayout(false);
             this.groupSend.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picReceiveFont)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numReceiveTimeOut)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picSetFont)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picReloadConfig)).EndInit();
             this.cmenuSave.ResumeLayout(false);
@@ -1292,6 +1316,8 @@
         private System.Windows.Forms.ToolStripMenuItem menumBinaryToHex;
         private System.Windows.Forms.ToolStripMenuItem menuHexToBinary;
         internal System.Windows.Forms.ToolStripMenuItem menuHexToDec;
+        private System.Windows.Forms.ComboBox cbCharacterEncoding;
+        private System.Windows.Forms.Label label9;
 
     }
 }

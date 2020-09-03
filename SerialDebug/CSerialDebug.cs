@@ -4,6 +4,7 @@ using System.Text;
 using System.IO.Ports;
 using System.Threading;
 using System.Diagnostics;
+using XMX.LIB;
 
 namespace SerialDebug
 {
@@ -56,6 +57,7 @@ namespace SerialDebug
         {
             get { return _SendThreadBusy; }
         }
+
 
         public void Start()
         {
@@ -493,7 +495,10 @@ namespace SerialDebug
 
         public string ASCIIString
         {
-            get { return System.Text.ASCIIEncoding.Default.GetString(_ReceiveData); }
+            get 
+            {
+                return StreamConverter.ArrayToAsciiString(Global.Encode, _ReceiveData);
+            }
         }
 
         public string DecString

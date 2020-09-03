@@ -84,7 +84,9 @@
     <Compile Include="frmSerialDebug.Designer.cs">
       <DependentUpon>frmSerialDebug.cs</DependentUpon>
     </Compile>
+    <Compile Include="Global.cs" />
     <Compile Include="ISendForm.cs" />
+    <Compile Include="LIB\StreamConverter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemHardware.cs" />
